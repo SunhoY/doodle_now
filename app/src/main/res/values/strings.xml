@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Doodle Now</string>
+
+    <string name="authentication_string">zillaci:1q2w3e4r</string>
+</resources>

@@ -2,9 +2,6 @@ package io.harry.doodlenow.service;
 
 import java.util.List;
 
-import javax.inject.Inject;
-
-import io.harry.doodlenow.DoodleApplication;
 import io.harry.doodlenow.api.ContentApi;
 import io.harry.doodlenow.model.CloudantResponse;
 import io.harry.doodlenow.model.Content;
@@ -13,12 +10,10 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ContentService {
-
-    @Inject
     ContentApi contentApi;
 
-    {
-        DoodleApplication.inject(this);
+    public ContentService(ContentApi contentApi) {
+        this.contentApi = contentApi;
     }
 
     public void getContents(final ServiceCallback<List<Content>> serviceCallback) {

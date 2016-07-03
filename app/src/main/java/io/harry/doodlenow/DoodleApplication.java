@@ -2,19 +2,29 @@ package io.harry.doodlenow;
 
 import android.app.Application;
 
-import dagger.ObjectGraph;
+import io.harry.doodlenow.component.ApplicationComponent;
+import io.harry.doodlenow.component.DaggerApplicationComponent;
+import io.harry.doodlenow.module.NetworkModule;
 
 public class DoodleApplication extends Application {
-
-    private static ObjectGraph objectGraph;
+    private ApplicationComponent component;
 
     @Override
     public void onCreate() {
-        objectGraph = ObjectGraph.create(new ApplicationModule(this));
         super.onCreate();
+
+        initComponent();
     }
 
-    public static void inject(Object object) {
-        objectGraph.inject(object);
+    public ApplicationComponent getComponent() {
+        return component;
+    }
+
+    private void initComponent() {
+        String backendUrl = getString(R.string.backend_url);
+        String authentication = getString(R.string.authentication_string);
+        component = DaggerApplicationComponent.builder()
+                .networkModule(new NetworkModule(backendUrl, authentication))
+                .build();
     }
 }

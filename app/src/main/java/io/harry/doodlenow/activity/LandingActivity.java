@@ -24,20 +24,21 @@ public class LandingActivity extends AppCompatActivity {
     @Inject
     ContentService contentService;
 
-    {
-        DoodleApplication.inject(this);
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        setContentView(R.layout.activity_landing);
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_landing);
+
+        ((DoodleApplication) getApplicationContext()).getComponent().inject(this);
 
         contentListView = (RecyclerView) findViewById(R.id.contentList);
         final LinearLayoutManager contentListLayoutManager = new LinearLayoutManager(LandingActivity.this);
         contentListView.setLayoutManager(contentListLayoutManager);
         contentListView.setAdapter(new ContentListAdapter(this, new ArrayList<String>()));
+    }
 
+    @Override
+    protected void onResume() {
         contentService.getContents(new ServiceCallback<List<Content>>() {
             @Override
             public void onSuccess(List<Content> items) {
@@ -55,5 +56,7 @@ public class LandingActivity extends AppCompatActivity {
 
             }
         });
+
+        super.onResume();
     }
 }

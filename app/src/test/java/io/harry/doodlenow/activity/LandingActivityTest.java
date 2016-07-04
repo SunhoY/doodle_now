@@ -12,6 +12,8 @@ import javax.inject.Inject;
 import io.harry.doodlenow.BuildConfig;
 import io.harry.doodlenow.service.ContentService;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class)
 public class LandingActivityTest {
@@ -22,15 +24,11 @@ public class LandingActivityTest {
 
     @Before
     public void setUp() throws Exception {
-
-
-
         subject = Robolectric.setupActivity(LandingActivity.class);
-
     }
 
     @Test
     public void onResume_callsContentServiceToGetContents() throws Exception {
-
+        assertThat(1).isEqualTo(1);
     }
 }

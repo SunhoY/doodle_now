@@ -10,6 +10,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import io.harry.doodlenow.DoodleApplication;
 import io.harry.doodlenow.R;
 import io.harry.doodlenow.adapter.ContentListAdapter;
@@ -20,10 +22,11 @@ import io.harry.doodlenow.service.ServiceCallback;
 
 public class LandingActivity extends AppCompatActivity {
 
-    private RecyclerView contentListView;
-
     @Inject
     ContentService contentService;
+
+    @BindView(R.id.contentList)
+    RecyclerView contentListView;
 
     {
         ContentComponent contentComponent = ((DoodleApplication) getApplicationContext()).getContentComponent();
@@ -35,7 +38,8 @@ public class LandingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_landing);
 
-        contentListView = (RecyclerView) findViewById(R.id.contentList);
+        ButterKnife.bind(this);
+
         final LinearLayoutManager contentListLayoutManager = new LinearLayoutManager(LandingActivity.this);
         contentListView.setLayoutManager(contentListLayoutManager);
         contentListView.setAdapter(new ContentListAdapter(this, new ArrayList<String>()));

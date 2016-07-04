@@ -3,8 +3,6 @@ package io.harry.doodlenow.component;
 import javax.inject.Singleton;
 
 import dagger.Component;
-import io.harry.doodlenow.activity.LandingActivity;
-import io.harry.doodlenow.api.ContentApi;
 import io.harry.doodlenow.module.ContentModule;
 import io.harry.doodlenow.module.NetworkModule;
 import io.harry.doodlenow.service.ContentService;
@@ -17,5 +15,4 @@ import io.harry.doodlenow.service.ContentService;
 )
 public interface ContentComponent {
     ContentService contentService();
-    ContentApi contentApi();
 }

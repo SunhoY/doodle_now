@@ -5,11 +5,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
 import javax.inject.Inject;
 
 import io.harry.doodlenow.BuildConfig;
+import io.harry.doodlenow.TestDoodleApplication;
+import io.harry.doodlenow.component.ContentComponent;
 import io.harry.doodlenow.service.ContentService;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -24,6 +27,9 @@ public class LandingActivityTest {
 
     @Before
     public void setUp() throws Exception {
+        ContentComponent contentComponent = ((TestDoodleApplication) RuntimeEnvironment.application).getContentComponent();
+        contentService = contentComponent.contentService();
+
         subject = Robolectric.setupActivity(LandingActivity.class);
     }
 

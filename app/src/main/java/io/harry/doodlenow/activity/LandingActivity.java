@@ -13,6 +13,7 @@ import javax.inject.Inject;
 import io.harry.doodlenow.DoodleApplication;
 import io.harry.doodlenow.R;
 import io.harry.doodlenow.adapter.ContentListAdapter;
+import io.harry.doodlenow.component.ContentComponent;
 import io.harry.doodlenow.model.Content;
 import io.harry.doodlenow.service.ContentService;
 import io.harry.doodlenow.service.ServiceCallback;
@@ -24,12 +25,15 @@ public class LandingActivity extends AppCompatActivity {
     @Inject
     ContentService contentService;
 
+    {
+        ContentComponent contentComponent = ((DoodleApplication) getApplicationContext()).getContentComponent();
+        contentService = contentComponent.contentService();
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_landing);
-
-        ((DoodleApplication) getApplicationContext()).getComponent().inject(this);
 
         contentListView = (RecyclerView) findViewById(R.id.contentList);
         final LinearLayoutManager contentListLayoutManager = new LinearLayoutManager(LandingActivity.this);

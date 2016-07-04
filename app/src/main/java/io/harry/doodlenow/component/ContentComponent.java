@@ -4,8 +4,10 @@ import javax.inject.Singleton;
 
 import dagger.Component;
 import io.harry.doodlenow.activity.LandingActivity;
+import io.harry.doodlenow.api.ContentApi;
 import io.harry.doodlenow.module.ContentModule;
 import io.harry.doodlenow.module.NetworkModule;
+import io.harry.doodlenow.service.ContentService;
 
 @Singleton
 @Component(modules = {
@@ -13,6 +15,7 @@ import io.harry.doodlenow.module.NetworkModule;
         NetworkModule.class,
     }
 )
-public interface ApplicationComponent {
-    void inject(LandingActivity target);
+public interface ContentComponent {
+    ContentService contentService();
+    ContentApi contentApi();
 }

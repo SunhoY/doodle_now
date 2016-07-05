@@ -33,4 +33,8 @@ public class ContentService {
             public void onFailure(Call<CloudantResponse<Content>> call, Throwable t) {}
         });
     }
+
+    public void saveContent(ServiceCallback<Void> serviceCallback) {
+
+    }
 }

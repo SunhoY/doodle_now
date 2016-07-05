@@ -22,7 +22,6 @@ import io.harry.doodlenow.service.ServiceCallback;
 
 public class LandingActivity extends AppCompatActivity {
 
-    @Inject
     ContentService contentService;
 
     @BindView(R.id.contentList)

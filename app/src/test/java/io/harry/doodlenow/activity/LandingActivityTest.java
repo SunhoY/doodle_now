@@ -35,7 +35,6 @@ import static org.mockito.Mockito.verify;
 public class LandingActivityTest {
     private LandingActivity subject;
 
-    @Inject
     ContentService contentService;
 
     @Captor

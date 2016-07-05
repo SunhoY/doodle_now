@@ -1,7 +1,5 @@
 package io.harry.doodlenow.api;
 
-import java.util.List;
-
 import io.harry.doodlenow.model.CloudantResponse;
 import io.harry.doodlenow.model.Content;
 import retrofit2.Call;

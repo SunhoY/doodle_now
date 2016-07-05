@@ -3,4 +3,5 @@
 
     <string name="authentication_string">zillaci:1q2w3e4r</string>
     <string name="backend_url">https://zillaci.cloudant.com/doodles/_design/simpledocument/_view/</string>
+    <string name="doodle_anything">doodle anything...</string>
 </resources>

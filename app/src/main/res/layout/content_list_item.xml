@@ -1,7 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/content"
-    android:layout_height="30dp"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:lines="3"
-    />
+    android:layout_height="wrap_content"
+    >
+    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/content"
+        android:layout_height="65dp"
+        android:layout_width="match_parent"
+        android:gravity="center_vertical"
+        android:lines="3"
+        />
+
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/list_divider"/>
+</RelativeLayout>

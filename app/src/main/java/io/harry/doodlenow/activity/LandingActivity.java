@@ -28,17 +28,15 @@ public class LandingActivity extends AppCompatActivity {
     @BindView(R.id.contentList)
     RecyclerView contentListView;
 
-    {
-        ContentComponent contentComponent = ((DoodleApplication) getApplicationContext()).getContentComponent();
-        contentService = contentComponent.contentService();
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_landing);
 
         ButterKnife.bind(this);
+
+        ContentComponent contentComponent = ((DoodleApplication) getApplicationContext()).getContentComponent();
+        contentService = contentComponent.contentService();
 
         final LinearLayoutManager contentListLayoutManager = new LinearLayoutManager(LandingActivity.this);
         contentListView.setLayoutManager(contentListLayoutManager);

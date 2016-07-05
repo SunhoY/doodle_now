@@ -21,19 +21,16 @@ public class ContentService {
         call.enqueue(new Callback<CloudantResponse<Content>>() {
             @Override
             public void onResponse(Call<CloudantResponse<Content>> call, Response<CloudantResponse<Content>> response) {
-                if(response.isSuccessful()) {
-                    CloudantResponse<Content> body = response.body();
-                    serviceCallback.onSuccess(body.rows);
+                if(!response.isSuccessful()) {
+                    return;
                 }
-                else {
-                    serviceCallback.onFailure("err!!!");
-                }
+
+                CloudantResponse<Content> body = response.body();
+                serviceCallback.onSuccess(body.rows);
             }
 
             @Override
-            public void onFailure(Call<CloudantResponse<Content>> call, Throwable t) {
-                serviceCallback.onFailure(t.getMessage());
-            }
+            public void onFailure(Call<CloudantResponse<Content>> call, Throwable t) {}
         });
     }
 }

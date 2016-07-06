@@ -8,7 +8,7 @@ import retrofit2.http.GET;
 import retrofit2.http.POST;
 
 public interface DoodleApi {
-    @GET("/doodles/_all_docs")
+    @GET("/doodles/_all_docs?include_docs=true")
     Call<CloudantResponse<Doodle>> getAllDoodles();
 
     @POST("/doodles")

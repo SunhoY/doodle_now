@@ -39,6 +39,21 @@ public class DoodleService {
         });
     }
 
+    public void saveDoodle(String content, final ServiceCallback<Void> serviceCallback) {
+        Call<Void> postDoodleCall = doodleApi.postDoodle(content);
+        postDoodleCall.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                serviceCallback.onSuccess(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+
+            }
+        });
+    }
+
     @NonNull
     private <T> List<T> parseCloudantResponse(Response<CloudantResponse<T>> response) {
         CloudantResponse<T> body = response.body();
@@ -50,10 +65,4 @@ public class DoodleService {
         }
         return result;
     }
-
-    public void saveContent(String content, ServiceCallback<Void> serviceCallback) {
-
-    }
-
-
 }

@@ -38,7 +38,7 @@ public class DoodleActivity extends AppCompatActivity {
 
     @OnClick(R.id.submit)
     void onSubmitClick() {
-        doodleService.saveContent(content.getText().toString(), new ServiceCallback<Void>() {
+        doodleService.saveDoodle(content.getText().toString(), new ServiceCallback<Void>() {
             @Override
             public void onSuccess(Void item) {
                 Toast.makeText(DoodleActivity.this, "참 잘했어요! 엄지 척!", Toast.LENGTH_SHORT).show();

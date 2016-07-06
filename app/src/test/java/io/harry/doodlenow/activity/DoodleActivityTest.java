@@ -60,7 +60,7 @@ public class DoodleActivityTest {
 
         submit.performClick();
 
-        verify(mockDoodleService).saveContent(eq("dunk jordan dunk!"),
+        verify(mockDoodleService).saveDoodle(eq("dunk jordan dunk!"),
                 Matchers.<ServiceCallback<Void>>any());
     }
 
@@ -109,6 +109,6 @@ public class DoodleActivityTest {
     private void clickSubmitToSaveDoodle() {
         submit.performClick();
 
-        verify(mockDoodleService).saveContent(anyString(), voidServiceCallbackCaptor.capture());
+        verify(mockDoodleService).saveDoodle(anyString(), voidServiceCallbackCaptor.capture());
     }
 }

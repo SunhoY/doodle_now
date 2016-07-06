@@ -23,6 +23,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -38,8 +39,12 @@ public class DoodleServiceTest {
     Call<CloudantResponse<Doodle>> mockCloudantCall;
     @Mock
     ServiceCallback<List<Doodle>> mockServiceCallback;
+    @Mock
+    Call<Void> mockVoidCall;
     @Captor
     ArgumentCaptor<Callback<CloudantResponse<Doodle>>> cloudantCallbackCaptor;
+    @Captor
+    ArgumentCaptor<Callback<Void>> voidCallbackCaptor;
 
     @Before
     public void setUp() throws Exception {
@@ -77,6 +82,36 @@ public class DoodleServiceTest {
                 createDoodleDocument("first id", "first title", "first content").doc,
                 createDoodleDocument("second id", "second title", "second content").doc
         ));
+    }
+
+    @Test
+    public void saveDoodle_getsCallObjectWithContent() throws Exception {
+        subject.saveDoodle("this should be posted", mock(ServiceCallback.class));
+
+        verify(mockDoodleApi).postDoodle("this should be posted");
+    }
+
+    @Test
+    public void saveDoodle_enqueuesCallbackOnCallObject() throws Exception {
+        when(mockDoodleApi.postDoodle(anyString())).thenReturn(mockVoidCall);
+        subject.saveDoodle("any string", mock(ServiceCallback.class));
+
+        verify(mockVoidCall).enqueue(Matchers.<Callback<Void>>any());
+    }
+
+    @Test
+    public void whenPostDoodleSuccessfully_runsSuccessServiceCallback() throws Exception {
+        when(mockDoodleApi.postDoodle(anyString())).thenReturn(mockVoidCall);
+        ServiceCallback mockServiceCallback = mock(ServiceCallback.class);
+        subject.saveDoodle("any string", mockServiceCallback);
+
+        verify(mockVoidCall).enqueue(voidCallbackCaptor.capture());
+
+        Void body = null;
+        Response<Void> response = Response.success(body);
+        voidCallbackCaptor.getValue().onResponse(mockVoidCall, response);
+
+        verify(mockServiceCallback).onSuccess(null);
     }
 
     private CloudantDocument<Doodle> createDoodleDocument(String id, String title, String content) {

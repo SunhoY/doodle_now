@@ -11,43 +11,43 @@ import java.util.List;
 
 import io.harry.doodlenow.R;
 
-public class ContentListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private final List<String> items;
+public class DoodleListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private final List<String> doodles;
     private final Context context;
 
-    public ContentListAdapter(Context context, List<String> contentList) {
+    public DoodleListAdapter(Context context, List<String> contentList) {
         this.context = context;
-        items = contentList;
+        doodles = contentList;
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.content_list_item, null);
+        View view = LayoutInflater.from(context).inflate(R.layout.content_list_item, null);
 
         return new SimpleViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        String content = items.get(position);
+        String content = doodles.get(position);
 
         ((SimpleViewHolder) holder).content.setText(content);
     }
 
     @Override
     public int getItemCount() {
-        return items.size();
+        return doodles.size();
     }
 
-    public void refreshContents(List<String> contentList) {
-        items.clear();
-        items.addAll(contentList);
+    public void refreshDoodles(List<String> doodles) {
+        this.doodles.clear();
+        this.doodles.addAll(doodles);
 
         notifyDataSetChanged();
     }
 
     public class SimpleViewHolder extends RecyclerView.ViewHolder {
-        TextView content;
+        public TextView content;
 
         public SimpleViewHolder(View itemView) {
             super(itemView);

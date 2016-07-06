@@ -40,7 +40,7 @@ public class DoodleService {
     }
 
     public void saveDoodle(String content, final ServiceCallback<Void> serviceCallback) {
-        Call<Void> postDoodleCall = doodleApi.postDoodle(content);
+        Call<Void> postDoodleCall = doodleApi.postDoodle(new Doodle(content));
         postDoodleCall.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {

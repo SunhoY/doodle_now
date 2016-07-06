@@ -23,7 +23,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -86,14 +86,15 @@ public class DoodleServiceTest {
 
     @Test
     public void saveDoodle_getsCallObjectWithContent() throws Exception {
+        when(mockDoodleApi.postDoodle(any(Doodle.class))).thenReturn(mockVoidCall);
         subject.saveDoodle("this should be posted", mock(ServiceCallback.class));
 
-        verify(mockDoodleApi).postDoodle("this should be posted");
+        verify(mockDoodleApi).postDoodle(new Doodle("this should be posted"));
     }
 
     @Test
     public void saveDoodle_enqueuesCallbackOnCallObject() throws Exception {
-        when(mockDoodleApi.postDoodle(anyString())).thenReturn(mockVoidCall);
+        when(mockDoodleApi.postDoodle(any(Doodle.class))).thenReturn(mockVoidCall);
         subject.saveDoodle("any string", mock(ServiceCallback.class));
 
         verify(mockVoidCall).enqueue(Matchers.<Callback<Void>>any());
@@ -101,7 +102,7 @@ public class DoodleServiceTest {
 
     @Test
     public void whenPostDoodleSuccessfully_runsSuccessServiceCallback() throws Exception {
-        when(mockDoodleApi.postDoodle(anyString())).thenReturn(mockVoidCall);
+        when(mockDoodleApi.postDoodle(any(Doodle.class))).thenReturn(mockVoidCall);
         ServiceCallback mockServiceCallback = mock(ServiceCallback.class);
         subject.saveDoodle("any string", mockServiceCallback);
 
@@ -116,10 +117,9 @@ public class DoodleServiceTest {
 
     private CloudantDocument<Doodle> createDoodleDocument(String id, String title, String content) {
         CloudantDocument<Doodle> document = new CloudantDocument<>();
-        document.doc = new Doodle();
+        document.doc = new Doodle(content);
         document.doc._id = id;
         document.doc.title = title;
-        document.doc.content = content;
 
         return document;
     }

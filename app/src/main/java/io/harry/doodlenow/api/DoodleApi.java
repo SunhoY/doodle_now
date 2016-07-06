@@ -1,7 +1,7 @@
 package io.harry.doodlenow.api;
 
-import io.harry.doodlenow.model.cloudant.CloudantResponse;
 import io.harry.doodlenow.model.Doodle;
+import io.harry.doodlenow.model.cloudant.CloudantResponse;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -12,5 +12,5 @@ public interface DoodleApi {
     Call<CloudantResponse<Doodle>> getAllDoodles();
 
     @POST("/doodles")
-    Call<Void> postDoodle(@Body String content);
+    Call<Void> postDoodle(@Body Doodle doodle);
 }

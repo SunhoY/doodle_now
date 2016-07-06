@@ -5,6 +5,10 @@ public class Doodle {
     public String title;
     public String content;
 
+    public Doodle(String content) {
+        this.content = content;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

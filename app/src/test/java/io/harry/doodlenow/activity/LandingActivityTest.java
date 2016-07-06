@@ -58,12 +58,8 @@ public class LandingActivityTest {
         verify(doodleService).getDoodles(contentListServiceCallbackCaptor.capture());
 
         ArrayList<Doodle> items = new ArrayList<>();
-        Doodle firstDoodle = new Doodle();
-        firstDoodle.title = "hello jackson";
-        firstDoodle.content = "beat it";
-        Doodle secondDoodle = new Doodle();
-        secondDoodle.title = "hello jordan";
-        secondDoodle.content = "air walk";
+        Doodle firstDoodle = new Doodle("beat it");
+        Doodle secondDoodle = new Doodle("air walk");
 
         items.add(firstDoodle);
         items.add(secondDoodle);

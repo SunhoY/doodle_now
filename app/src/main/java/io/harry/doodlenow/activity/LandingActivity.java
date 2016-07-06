@@ -12,7 +12,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.harry.doodlenow.DoodleApplication;
 import io.harry.doodlenow.R;
-import io.harry.doodlenow.adapter.ContentListAdapter;
+import io.harry.doodlenow.adapter.DoodleListAdapter;
 import io.harry.doodlenow.component.DoodleComponent;
 import io.harry.doodlenow.model.Doodle;
 import io.harry.doodlenow.service.DoodleService;
@@ -37,7 +37,7 @@ public class LandingActivity extends AppCompatActivity {
 
         final LinearLayoutManager contentListLayoutManager = new LinearLayoutManager(LandingActivity.this);
         contentListView.setLayoutManager(contentListLayoutManager);
-        contentListView.setAdapter(new ContentListAdapter(this, new ArrayList<String>()));
+        contentListView.setAdapter(new DoodleListAdapter(this, new ArrayList<String>()));
     }
 
     @Override
@@ -50,8 +50,8 @@ public class LandingActivity extends AppCompatActivity {
                     contentList.add(doodle.content);
                 }
 
-                ContentListAdapter contentListAdapter = (ContentListAdapter) contentListView.getAdapter();
-                contentListAdapter.refreshContents(contentList);
+                DoodleListAdapter doodleListAdapter = (DoodleListAdapter) contentListView.getAdapter();
+                doodleListAdapter.refreshDoodles(contentList);
             }
 
             @Override

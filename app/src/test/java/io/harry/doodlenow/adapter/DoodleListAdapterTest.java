@@ -3,6 +3,7 @@ package io.harry.doodlenow.adapter;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
@@ -11,7 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.harry.doodlenow.BuildConfig;
+import io.harry.doodlenow.model.Doodle;
 
+import static io.harry.doodlenow.adapter.DoodleListAdapter.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(RobolectricGradleTestRunner.class)
@@ -20,14 +23,17 @@ public class DoodleListAdapterTest {
     private DoodleListAdapter subject;
     private final int ANY_VIEW_TYPE = 99;
 
+    @Mock
+    OnDoodleClickListener mockDoodleClickListener;
+
     @Before
     public void setUp() throws Exception {
-        ArrayList<String> strings = new ArrayList<>();
+        ArrayList<Doodle> doodles = new ArrayList<>();
 
-        strings.add("first content");
-        strings.add("second content");
+        doodles.add(new Doodle("first content"));
+        doodles.add(new Doodle("second content"));
 
-        subject = new DoodleListAdapter(RuntimeEnvironment.application, strings);
+        subject = new DoodleListAdapter(RuntimeEnvironment.application, doodles, mockDoodleClickListener);
     }
 
     @Test
@@ -55,10 +61,10 @@ public class DoodleListAdapterTest {
 
     @Test
     public void refreshDoodles_clearsAllDoodlesAndAddNewDoodles() throws Exception {
-        List<String> newDoodles = new ArrayList<>();
-        newDoodles.add("doodle 1");
-        newDoodles.add("doodle 2");
-        newDoodles.add("doodle 3");
+        List<Doodle> newDoodles = new ArrayList<>();
+        newDoodles.add(new Doodle("doodle 1"));
+        newDoodles.add(new Doodle("doodle 2"));
+        newDoodles.add(new Doodle("doodle 3"));
 
         subject.refreshDoodles(newDoodles);
 
@@ -69,5 +75,7 @@ public class DoodleListAdapterTest {
     public void onItemClick_runsOnDoodleClickListener() throws Exception {
         DoodleListAdapter.SimpleViewHolder firstViewHolder =
                 (DoodleListAdapter.SimpleViewHolder) subject.onCreateViewHolder(null, ANY_VIEW_TYPE);
+
+        firstViewHolder.content.performClick();
     }
 }

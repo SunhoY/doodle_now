@@ -18,7 +18,7 @@ import io.harry.doodlenow.model.Doodle;
 import io.harry.doodlenow.service.DoodleService;
 import io.harry.doodlenow.service.ServiceCallback;
 
-public class LandingActivity extends AppCompatActivity {
+public class LandingActivity extends AppCompatActivity implements DoodleListAdapter.OnDoodleClickListener {
 
     DoodleService doodleService;
 
@@ -37,7 +37,7 @@ public class LandingActivity extends AppCompatActivity {
 
         final LinearLayoutManager contentListLayoutManager = new LinearLayoutManager(LandingActivity.this);
         contentListView.setLayoutManager(contentListLayoutManager);
-        contentListView.setAdapter(new DoodleListAdapter(this, new ArrayList<String>()));
+        contentListView.setAdapter(new DoodleListAdapter(this, new ArrayList<Doodle>(), this));
     }
 
     @Override
@@ -45,13 +45,13 @@ public class LandingActivity extends AppCompatActivity {
         doodleService.getDoodles(new ServiceCallback<List<Doodle>>() {
             @Override
             public void onSuccess(List<Doodle> items) {
-                List<String> contentList = new ArrayList<>();
+                List<Doodle> doodles = new ArrayList<>();
                 for(Doodle doodle : items) {
-                    contentList.add(doodle.content);
+                    doodles.add(new Doodle(doodle.content));
                 }
 
                 DoodleListAdapter doodleListAdapter = (DoodleListAdapter) contentListView.getAdapter();
-                doodleListAdapter.refreshDoodles(contentList);
+                doodleListAdapter.refreshDoodles(doodles);
             }
 
             @Override
@@ -61,5 +61,10 @@ public class LandingActivity extends AppCompatActivity {
         });
 
         super.onResume();
+    }
+
+    @Override
+    public void onDoodleClick(Doodle doodle) {
+
     }
 }

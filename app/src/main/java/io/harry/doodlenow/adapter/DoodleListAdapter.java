@@ -10,14 +10,21 @@ import android.widget.TextView;
 import java.util.List;
 
 import io.harry.doodlenow.R;
+import io.harry.doodlenow.model.Doodle;
 
 public class DoodleListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private final List<String> doodles;
+    private final List<Doodle> doodles;
     private final Context context;
+    private final OnDoodleClickListener doodleClickListener;
 
-    public DoodleListAdapter(Context context, List<String> contentList) {
+    public interface OnDoodleClickListener {
+        void onDoodleClick(Doodle doodle);
+    }
+
+    public DoodleListAdapter(Context context, List<Doodle> doodles, OnDoodleClickListener doodleClickListener) {
         this.context = context;
-        doodles = contentList;
+        this.doodles = doodles;
+        this.doodleClickListener = doodleClickListener;
     }
 
     @Override
@@ -29,7 +36,7 @@ public class DoodleListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        String content = doodles.get(position);
+        String content = doodles.get(position).content;
 
         ((SimpleViewHolder) holder).content.setText(content);
     }
@@ -39,7 +46,7 @@ public class DoodleListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         return doodles.size();
     }
 
-    public void refreshDoodles(List<String> doodles) {
+    public void refreshDoodles(List<Doodle> doodles) {
         this.doodles.clear();
         this.doodles.addAll(doodles);
 

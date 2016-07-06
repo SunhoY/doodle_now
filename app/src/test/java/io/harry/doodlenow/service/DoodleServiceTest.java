@@ -118,8 +118,6 @@ public class DoodleServiceTest {
     private CloudantDocument<Doodle> createDoodleDocument(String id, String title, String content) {
         CloudantDocument<Doodle> document = new CloudantDocument<>();
         document.doc = new Doodle(content);
-        document.doc._id = id;
-        document.doc.title = title;
 
         return document;
     }

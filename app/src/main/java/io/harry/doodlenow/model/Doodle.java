@@ -1,11 +1,13 @@
 package io.harry.doodlenow.model;
 
 public class Doodle {
-    public String _id;
-    public String title;
-    public String content;
+    public final String _id;
+    public final String title;
+    public final String content;
 
     public Doodle(String content) {
+        this._id = null;
+        this.title = null;
         this.content = content;
     }
 

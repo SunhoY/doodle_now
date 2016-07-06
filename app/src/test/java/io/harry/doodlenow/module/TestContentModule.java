@@ -1,19 +1,19 @@
 package io.harry.doodlenow.module;
 
-import io.harry.doodlenow.api.ContentApi;
-import io.harry.doodlenow.service.ContentService;
+import io.harry.doodlenow.api.DoodleApi;
+import io.harry.doodlenow.service.DoodleService;
 import retrofit2.Retrofit;
 
 import static org.mockito.Mockito.mock;
 
 public class TestContentModule extends ContentModule {
     @Override
-    public ContentService provideContentService(ContentApi contentApi) {
-        return mock(ContentService.class);
+    public DoodleService provideContentService(DoodleApi doodleApi) {
+        return mock(DoodleService.class);
     }
 
     @Override
-    public ContentApi provideContentApi(Retrofit retrofit) {
-        return mock(ContentApi.class);
+    public DoodleApi provideContentApi(Retrofit retrofit) {
+        return mock(DoodleApi.class);
     }
 }

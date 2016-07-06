@@ -10,8 +10,6 @@ import android.widget.TextView;
 import java.util.List;
 
 import io.harry.doodlenow.R;
-import io.harry.doodlenow.model.Content;
-import io.harry.doodlenow.service.ServiceCallback;
 
 public class ContentListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final List<String> items;

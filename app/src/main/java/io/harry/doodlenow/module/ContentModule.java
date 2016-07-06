@@ -4,19 +4,19 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import io.harry.doodlenow.api.ContentApi;
-import io.harry.doodlenow.service.ContentService;
+import io.harry.doodlenow.api.DoodleApi;
+import io.harry.doodlenow.service.DoodleService;
 import retrofit2.Retrofit;
 
 @Module
 public class ContentModule {
     @Provides @Singleton
-    public ContentService provideContentService(ContentApi contentApi) {
-        return new ContentService(contentApi);
+    public DoodleService provideContentService(DoodleApi doodleApi) {
+        return new DoodleService(doodleApi);
     }
 
     @Provides @Singleton
-    public ContentApi provideContentApi(Retrofit retrofit) {
-        return retrofit.create(ContentApi.class);
+    public DoodleApi provideContentApi(Retrofit retrofit) {
+        return retrofit.create(DoodleApi.class);
     }
 }

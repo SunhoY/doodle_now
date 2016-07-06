@@ -2,12 +2,12 @@ package io.harry.doodlenow;
 
 import android.app.Application;
 
-import io.harry.doodlenow.component.ContentComponent;
-import io.harry.doodlenow.component.DaggerContentComponent;
+import io.harry.doodlenow.component.DaggerDoodleComponent;
+import io.harry.doodlenow.component.DoodleComponent;
 import io.harry.doodlenow.module.NetworkModule;
 
 public class DoodleApplication extends Application {
-    private ContentComponent contentComponent;
+    private DoodleComponent doodleComponent;
 
     @Override
     public void onCreate() {
@@ -16,14 +16,14 @@ public class DoodleApplication extends Application {
         initComponent();
     }
 
-    public ContentComponent getContentComponent() {
-        return contentComponent;
+    public DoodleComponent getDoodleComponent() {
+        return doodleComponent;
     }
 
     private void initComponent() {
         String backendUrl = getString(R.string.backend_url);
         String authentication = getString(R.string.authentication_string);
-        contentComponent = DaggerContentComponent.builder()
+        doodleComponent = DaggerDoodleComponent.builder()
                 .networkModule(new NetworkModule(backendUrl, authentication))
                 .build();
     }

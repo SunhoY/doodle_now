@@ -4,14 +4,14 @@ import org.robolectric.TestLifecycleApplication;
 
 import java.lang.reflect.Method;
 
-import io.harry.doodlenow.component.ContentComponent;
-import io.harry.doodlenow.component.DaggerContentComponent;
+import io.harry.doodlenow.component.DaggerDoodleComponent;
+import io.harry.doodlenow.component.DoodleComponent;
 import io.harry.doodlenow.module.TestContentModule;
 import io.harry.doodlenow.module.TestNetworkModule;
 
 public class TestDoodleApplication extends DoodleApplication implements TestLifecycleApplication {
 
-    private ContentComponent contentComponent;
+    private DoodleComponent doodleComponent;
 
     @Override
     public void onCreate() {
@@ -24,7 +24,7 @@ public class TestDoodleApplication extends DoodleApplication implements TestLife
 
     @Override
     public void prepareTest(Object test) {
-        contentComponent = DaggerContentComponent.builder()
+        doodleComponent = DaggerDoodleComponent.builder()
                 .contentModule(new TestContentModule())
                 .networkModule(new TestNetworkModule("some backend", "some authentication"))
                 .build();
@@ -35,7 +35,7 @@ public class TestDoodleApplication extends DoodleApplication implements TestLife
 
     }
 
-    public ContentComponent getContentComponent() {
-        return contentComponent;
+    public DoodleComponent getDoodleComponent() {
+        return doodleComponent;
     }
 }

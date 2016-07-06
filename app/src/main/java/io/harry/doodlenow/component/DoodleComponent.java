@@ -5,7 +5,7 @@ import javax.inject.Singleton;
 import dagger.Component;
 import io.harry.doodlenow.module.ContentModule;
 import io.harry.doodlenow.module.NetworkModule;
-import io.harry.doodlenow.service.ContentService;
+import io.harry.doodlenow.service.DoodleService;
 
 @Singleton
 @Component(modules = {
@@ -13,6 +13,6 @@ import io.harry.doodlenow.service.ContentService;
         NetworkModule.class,
     }
 )
-public interface ContentComponent {
-    ContentService contentService();
+public interface DoodleComponent {
+    DoodleService contentService();
 }

@@ -1,9 +1,8 @@
-package io.harry.doodlenow.model;
+package io.harry.doodlenow.model.cloudant;
 
 import java.util.List;
 
 public class CloudantResponse<T> {
     public int total_rows;
-    public int offset;
-    public List<T> rows;
+    public List<CloudantDocument<T>> rows;
 }

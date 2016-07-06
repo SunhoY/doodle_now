@@ -8,21 +8,19 @@ import android.support.v7.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.harry.doodlenow.DoodleApplication;
 import io.harry.doodlenow.R;
 import io.harry.doodlenow.adapter.ContentListAdapter;
-import io.harry.doodlenow.component.ContentComponent;
-import io.harry.doodlenow.model.Content;
-import io.harry.doodlenow.service.ContentService;
+import io.harry.doodlenow.component.DoodleComponent;
+import io.harry.doodlenow.model.Doodle;
+import io.harry.doodlenow.service.DoodleService;
 import io.harry.doodlenow.service.ServiceCallback;
 
 public class LandingActivity extends AppCompatActivity {
 
-    ContentService contentService;
+    DoodleService doodleService;
 
     @BindView(R.id.contentList)
     RecyclerView contentListView;
@@ -34,8 +32,8 @@ public class LandingActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
-        ContentComponent contentComponent = ((DoodleApplication) getApplicationContext()).getContentComponent();
-        contentService = contentComponent.contentService();
+        DoodleComponent doodleComponent = ((DoodleApplication) getApplicationContext()).getDoodleComponent();
+        doodleService = doodleComponent.contentService();
 
         final LinearLayoutManager contentListLayoutManager = new LinearLayoutManager(LandingActivity.this);
         contentListView.setLayoutManager(contentListLayoutManager);
@@ -44,12 +42,12 @@ public class LandingActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        contentService.getContents(new ServiceCallback<List<Content>>() {
+        doodleService.getDoodles(new ServiceCallback<List<Doodle>>() {
             @Override
-            public void onSuccess(List<Content> items) {
+            public void onSuccess(List<Doodle> items) {
                 List<String> contentList = new ArrayList<>();
-                for(Content content : items) {
-                    contentList.add(content.value);
+                for(Doodle doodle : items) {
+                    contentList.add(doodle.content);
                 }
 
                 ContentListAdapter contentListAdapter = (ContentListAdapter) contentListView.getAdapter();

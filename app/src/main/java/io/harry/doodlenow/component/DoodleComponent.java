@@ -3,16 +3,20 @@ package io.harry.doodlenow.component;
 import javax.inject.Singleton;
 
 import dagger.Component;
-import io.harry.doodlenow.module.ContentModule;
+import io.harry.doodlenow.activity.DoodleActivity;
+import io.harry.doodlenow.activity.LandingActivity;
+import io.harry.doodlenow.module.DoodleModule;
+import io.harry.doodlenow.module.HTMLModule;
 import io.harry.doodlenow.module.NetworkModule;
-import io.harry.doodlenow.service.DoodleService;
 
 @Singleton
 @Component(modules = {
-        ContentModule.class,
+        DoodleModule.class,
         NetworkModule.class,
+        HTMLModule.class,
     }
 )
 public interface DoodleComponent {
-    DoodleService contentService();
+    void inject(LandingActivity landingActivity);
+    void inject(DoodleActivity doodleActivity);
 }

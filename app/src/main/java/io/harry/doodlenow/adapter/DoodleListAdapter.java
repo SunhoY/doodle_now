@@ -15,30 +15,37 @@ import io.harry.doodlenow.model.Doodle;
 public class DoodleListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final List<Doodle> doodles;
     private final Context context;
-    private final OnDoodleClickListener doodleClickListener;
+    private OnDoodleClickListener doodleClickListener;
 
     public interface OnDoodleClickListener {
         void onDoodleClick(Doodle doodle);
     }
 
-    public DoodleListAdapter(Context context, List<Doodle> doodles, OnDoodleClickListener doodleClickListener) {
+    public DoodleListAdapter(Context context, List<Doodle> doodles) {
         this.context = context;
         this.doodles = doodles;
-        this.doodleClickListener = doodleClickListener;
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.content_list_item, null);
+        View view = LayoutInflater.from(context).inflate(R.layout.doodle_list_item, null);
 
         return new SimpleViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         String content = doodles.get(position).content;
 
-        ((SimpleViewHolder) holder).content.setText(content);
+        TextView doodleView = ((SimpleViewHolder) holder).content;
+        doodleView.setText(content);
+        doodleView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                doodleClickListener.onDoodleClick(doodles.get(position));
+            }
+        });
+
     }
 
     @Override
@@ -59,7 +66,11 @@ public class DoodleListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         public SimpleViewHolder(View itemView) {
             super(itemView);
 
-            content = (TextView) itemView.findViewById(R.id.content);
+            content = (TextView) itemView.findViewById(R.id.doodle_content);
         }
+    }
+
+    public void setDoodleClickListener(OnDoodleClickListener doodleClickListener) {
+        this.doodleClickListener = doodleClickListener;
     }
 }

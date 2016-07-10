@@ -6,20 +6,32 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.harry.doodlenow.DoodleApplication;
 import io.harry.doodlenow.R;
+import io.harry.doodlenow.callback.JsoupCallback;
+import io.harry.doodlenow.model.Doodle;
 import io.harry.doodlenow.service.DoodleService;
 import io.harry.doodlenow.service.ServiceCallback;
+import io.harry.doodlenow.wrapper.JsoupWrapper;
 
 public class DoodleActivity extends AppCompatActivity {
 
-    @BindView(R.id.content)
-    EditText content;
+    private String doodleUrl;
 
-    private DoodleService doodleService;
+    @BindView(R.id.doodle_content)
+    EditText doodleContent;
+    @BindView(R.id.doodle_title)
+    EditText doodleTitle;
+
+    @Inject
+    DoodleService doodleService;
+    @Inject
+    JsoupWrapper jsoupWrapper;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -28,17 +40,33 @@ public class DoodleActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
-        doodleService = ((DoodleApplication) getApplication()).getDoodleComponent().contentService();
+        ((DoodleApplication) getApplication()).getDoodleComponent().inject(this);
 
         Intent intent = getIntent();
+        doodleUrl = intent.getStringExtra(Intent.EXTRA_TEXT);
+
         if(Intent.ACTION_SEND.equals(intent.getAction())) {
-            content.setText(intent.getStringExtra(Intent.EXTRA_TEXT));
+            jsoupWrapper.getDocument(doodleUrl, new JsoupCallback() {
+                @Override
+                public void onSuccess(String title, String content) {
+                    doodleTitle.setText(title);
+                    doodleContent.setText(content);
+                }
+
+                @Override
+                public void onFailure() {
+                    doodleTitle.setText("");
+                    doodleContent.setText("");
+                }
+            });
         }
     }
 
     @OnClick(R.id.submit)
     void onSubmitClick() {
-        doodleService.saveDoodle(content.getText().toString(), new ServiceCallback<Void>() {
+        Doodle doodle = new Doodle("", doodleTitle.getText().toString(), doodleContent.getText().toString(), doodleUrl);
+
+        doodleService.saveDoodle(doodle, new ServiceCallback<Void>() {
             @Override
             public void onSuccess(Void item) {
                 Toast.makeText(DoodleActivity.this, "참 잘했어요! 엄지 척!", Toast.LENGTH_SHORT).show();

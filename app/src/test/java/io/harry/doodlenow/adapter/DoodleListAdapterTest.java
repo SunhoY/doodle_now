@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
@@ -16,6 +17,7 @@ import io.harry.doodlenow.model.Doodle;
 
 import static io.harry.doodlenow.adapter.DoodleListAdapter.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
 
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class)
@@ -28,12 +30,14 @@ public class DoodleListAdapterTest {
 
     @Before
     public void setUp() throws Exception {
+        MockitoAnnotations.initMocks(this);
         ArrayList<Doodle> doodles = new ArrayList<>();
 
-        doodles.add(new Doodle("first content"));
-        doodles.add(new Doodle("second content"));
+        doodles.add(new Doodle("first", "first title", "first content", "first url"));
+        doodles.add(new Doodle("second", "second title", "second content", "second url"));
 
-        subject = new DoodleListAdapter(RuntimeEnvironment.application, doodles, mockDoodleClickListener);
+        subject = new DoodleListAdapter(RuntimeEnvironment.application, doodles);
+        subject.setDoodleClickListener(mockDoodleClickListener);
     }
 
     @Test
@@ -62,9 +66,9 @@ public class DoodleListAdapterTest {
     @Test
     public void refreshDoodles_clearsAllDoodlesAndAddNewDoodles() throws Exception {
         List<Doodle> newDoodles = new ArrayList<>();
-        newDoodles.add(new Doodle("doodle 1"));
-        newDoodles.add(new Doodle("doodle 2"));
-        newDoodles.add(new Doodle("doodle 3"));
+        newDoodles.add(new Doodle("first id", "first title", "first content", "first url"));
+        newDoodles.add(new Doodle("second id", "second title", "second content", "second url"));
+        newDoodles.add(new Doodle("third id", "third title", "third content", "third url"));
 
         subject.refreshDoodles(newDoodles);
 
@@ -75,7 +79,10 @@ public class DoodleListAdapterTest {
     public void onItemClick_runsOnDoodleClickListener() throws Exception {
         DoodleListAdapter.SimpleViewHolder firstViewHolder =
                 (DoodleListAdapter.SimpleViewHolder) subject.onCreateViewHolder(null, ANY_VIEW_TYPE);
+        subject.onBindViewHolder(firstViewHolder, 0);
 
         firstViewHolder.content.performClick();
+
+        verify(mockDoodleClickListener).onDoodleClick(new Doodle("first", "first title", "first content", "first url"));
     }
 }

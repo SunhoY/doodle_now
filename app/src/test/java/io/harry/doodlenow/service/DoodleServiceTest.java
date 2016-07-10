@@ -70,8 +70,8 @@ public class DoodleServiceTest {
         verify(mockCloudantCall).enqueue(cloudantCallbackCaptor.capture());
 
         CloudantResponse<Doodle> body = new CloudantResponse<>();
-        CloudantDocument<Doodle> first = createDoodleDocument("first id", "first title", "first content");
-        CloudantDocument<Doodle> second = createDoodleDocument("second id", "second title", "second content");
+        CloudantDocument<Doodle> first = createDoodleDocument("first id", "first title", "first content", "first url");
+        CloudantDocument<Doodle> second = createDoodleDocument("second id", "second title", "second content", "second url");
 
         body.rows = Arrays.asList(first, second);
 
@@ -79,23 +79,23 @@ public class DoodleServiceTest {
         cloudantCallbackCaptor.getValue().onResponse(mockCloudantCall, response);
 
         verify(mockServiceCallback).onSuccess(Arrays.asList(
-                createDoodleDocument("first id", "first title", "first content").doc,
-                createDoodleDocument("second id", "second title", "second content").doc
+                createDoodleDocument("first id", "first title", "first content", "first url").doc,
+                createDoodleDocument("second id", "second title", "second content", "second url").doc
         ));
     }
 
     @Test
     public void saveDoodle_getsCallObjectWithContent() throws Exception {
         when(mockDoodleApi.postDoodle(any(Doodle.class))).thenReturn(mockVoidCall);
-        subject.saveDoodle("this should be posted", mock(ServiceCallback.class));
+        subject.saveDoodle(new Doodle("id", "title", "content", "url"), mock(ServiceCallback.class));
 
-        verify(mockDoodleApi).postDoodle(new Doodle("this should be posted"));
+        verify(mockDoodleApi).postDoodle(new Doodle("id", "title", "content", "url"));
     }
 
     @Test
     public void saveDoodle_enqueuesCallbackOnCallObject() throws Exception {
         when(mockDoodleApi.postDoodle(any(Doodle.class))).thenReturn(mockVoidCall);
-        subject.saveDoodle("any string", mock(ServiceCallback.class));
+        subject.saveDoodle(new Doodle("id", "title", "content", "url"), mock(ServiceCallback.class));
 
         verify(mockVoidCall).enqueue(Matchers.<Callback<Void>>any());
     }
@@ -103,21 +103,20 @@ public class DoodleServiceTest {
     @Test
     public void whenPostDoodleSuccessfully_runsSuccessServiceCallback() throws Exception {
         when(mockDoodleApi.postDoodle(any(Doodle.class))).thenReturn(mockVoidCall);
-        ServiceCallback mockServiceCallback = mock(ServiceCallback.class);
-        subject.saveDoodle("any string", mockServiceCallback);
+        ServiceCallback<Void> mockServiceCallback = mock(ServiceCallback.class);
+        subject.saveDoodle(new Doodle("id", "title", "content", "url"), mockServiceCallback);
 
         verify(mockVoidCall).enqueue(voidCallbackCaptor.capture());
 
-        Void body = null;
-        Response<Void> response = Response.success(body);
+        Response<Void> response = Response.success(null);
         voidCallbackCaptor.getValue().onResponse(mockVoidCall, response);
 
         verify(mockServiceCallback).onSuccess(null);
     }
 
-    private CloudantDocument<Doodle> createDoodleDocument(String id, String title, String content) {
+    private CloudantDocument<Doodle> createDoodleDocument(String id, String title, String content, String url) {
         CloudantDocument<Doodle> document = new CloudantDocument<>();
-        document.doc = new Doodle(content);
+        document.doc = new Doodle(id, title, content, url);
 
         return document;
     }

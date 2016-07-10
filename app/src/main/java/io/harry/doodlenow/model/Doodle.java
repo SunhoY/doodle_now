@@ -4,11 +4,13 @@ public class Doodle {
     public final String _id;
     public final String title;
     public final String content;
+    public final String url;
 
-    public Doodle(String content) {
-        this._id = null;
-        this.title = null;
+    public Doodle(String id, String title, String content, String url) {
+        this._id = id;
+        this.title = title;
         this.content = content;
+        this.url = url;
     }
 
     @Override
@@ -20,7 +22,9 @@ public class Doodle {
 
         if (_id != null ? !_id.equals(doodle._id) : doodle._id != null) return false;
         if (title != null ? !title.equals(doodle.title) : doodle.title != null) return false;
-        return content != null ? content.equals(doodle.content) : doodle.content == null;
+        if (content != null ? !content.equals(doodle.content) : doodle.content != null)
+            return false;
+        return url != null ? url.equals(doodle.url) : doodle.url == null;
 
     }
 
@@ -29,6 +33,7 @@ public class Doodle {
         int result = _id != null ? _id.hashCode() : 0;
         result = 31 * result + (title != null ? title.hashCode() : 0);
         result = 31 * result + (content != null ? content.hashCode() : 0);
+        result = 31 * result + (url != null ? url.hashCode() : 0);
         return result;
     }
 }

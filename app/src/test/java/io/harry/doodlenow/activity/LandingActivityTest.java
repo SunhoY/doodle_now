@@ -1,7 +1,5 @@
 package io.harry.doodlenow.activity;
 
-import android.support.v7.widget.RecyclerView;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,15 +15,16 @@ import org.robolectric.annotation.Config;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import io.harry.doodlenow.BuildConfig;
-import io.harry.doodlenow.R;
 import io.harry.doodlenow.TestDoodleApplication;
-import io.harry.doodlenow.component.DoodleComponent;
+import io.harry.doodlenow.adapter.DoodleListAdapter;
+import io.harry.doodlenow.component.TestDoodleComponent;
 import io.harry.doodlenow.model.Doodle;
 import io.harry.doodlenow.service.DoodleService;
 import io.harry.doodlenow.service.ServiceCallback;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 
 @RunWith(RobolectricGradleTestRunner.class)
@@ -33,7 +32,10 @@ import static org.mockito.Mockito.verify;
 public class LandingActivityTest {
     private LandingActivity subject;
 
+    @Inject
     DoodleService doodleService;
+    @Inject
+    DoodleListAdapter doodleListAdapter;
 
     @Captor
     ArgumentCaptor<ServiceCallback<List<Doodle>>> contentListServiceCallbackCaptor;
@@ -42,10 +44,15 @@ public class LandingActivityTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
 
-        DoodleComponent doodleComponent = ((TestDoodleApplication) RuntimeEnvironment.application).getDoodleComponent();
-        doodleService = doodleComponent.contentService();
+        TestDoodleComponent doodleComponent = (TestDoodleComponent) ((TestDoodleApplication) RuntimeEnvironment.application).getDoodleComponent();
+        doodleComponent.inject(this);
 
         subject = Robolectric.setupActivity(LandingActivity.class);
+    }
+
+    @Test
+    public void onCreate_setsSubjectOnListAdapterAsAnClickListener() throws Exception {
+        verify(doodleListAdapter).setDoodleClickListener(subject);
     }
 
     @Test
@@ -58,15 +65,15 @@ public class LandingActivityTest {
         verify(doodleService).getDoodles(contentListServiceCallbackCaptor.capture());
 
         ArrayList<Doodle> items = new ArrayList<>();
-        Doodle firstDoodle = new Doodle("beat it");
-        Doodle secondDoodle = new Doodle("air walk");
-
-        items.add(firstDoodle);
-        items.add(secondDoodle);
+        items.add(new Doodle("11", "beat it", "beat it!", "beatit.com"));
+        items.add(new Doodle("22", "air walk", "air walk!", "airwork.com"));
 
         contentListServiceCallbackCaptor.getValue().onSuccess(items);
 
-        RecyclerView contentListView = (RecyclerView) subject.findViewById(R.id.contentList);
-        assertThat( contentListView.getAdapter().getItemCount()).isEqualTo(2);
+        ArrayList<Doodle> expected = new ArrayList<>();
+        expected.add(new Doodle("11", "beat it", "beat it!", "beatit.com"));
+        expected.add(new Doodle("22", "air walk", "air walk!", "airwork.com"));
+
+        verify(doodleListAdapter).refreshDoodles(expected);
     }
 }

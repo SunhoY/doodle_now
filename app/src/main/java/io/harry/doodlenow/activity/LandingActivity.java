@@ -5,8 +5,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -20,10 +21,13 @@ import io.harry.doodlenow.service.ServiceCallback;
 
 public class LandingActivity extends AppCompatActivity implements DoodleListAdapter.OnDoodleClickListener {
 
+    @Inject
     DoodleService doodleService;
+    @Inject
+    DoodleListAdapter doodleListAdapter;
 
-    @BindView(R.id.contentList)
-    RecyclerView contentListView;
+    @BindView(R.id.doodleList)
+    RecyclerView doodleListView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -33,11 +37,13 @@ public class LandingActivity extends AppCompatActivity implements DoodleListAdap
         ButterKnife.bind(this);
 
         DoodleComponent doodleComponent = ((DoodleApplication) getApplicationContext()).getDoodleComponent();
-        doodleService = doodleComponent.contentService();
+        doodleComponent.inject(this);
+
+        doodleListAdapter.setDoodleClickListener(this);
 
         final LinearLayoutManager contentListLayoutManager = new LinearLayoutManager(LandingActivity.this);
-        contentListView.setLayoutManager(contentListLayoutManager);
-        contentListView.setAdapter(new DoodleListAdapter(this, new ArrayList<Doodle>(), this));
+        doodleListView.setLayoutManager(contentListLayoutManager);
+        doodleListView.setAdapter(doodleListAdapter);
     }
 
     @Override
@@ -45,13 +51,8 @@ public class LandingActivity extends AppCompatActivity implements DoodleListAdap
         doodleService.getDoodles(new ServiceCallback<List<Doodle>>() {
             @Override
             public void onSuccess(List<Doodle> items) {
-                List<Doodle> doodles = new ArrayList<>();
-                for(Doodle doodle : items) {
-                    doodles.add(new Doodle(doodle.content));
-                }
-
-                DoodleListAdapter doodleListAdapter = (DoodleListAdapter) contentListView.getAdapter();
-                doodleListAdapter.refreshDoodles(doodles);
+                DoodleListAdapter doodleListAdapter = (DoodleListAdapter) doodleListView.getAdapter();
+                doodleListAdapter.refreshDoodles(items);
             }
 
             @Override

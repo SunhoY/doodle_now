@@ -5,4 +5,5 @@
     <string name="backend_url">https://zillaci.cloudant.com</string>
     <string name="doodle_anything">doodle anything</string>
     <string name="doodle">DOODLE</string>
+    <string name="write_title_here">Write title here</string>
 </resources>

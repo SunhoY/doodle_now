@@ -2,15 +2,17 @@ package io.harry.doodlenow.model;
 
 public class Doodle {
     public final String _id;
+    public final String _rev;
     public final String title;
     public final String content;
     public final String url;
 
     public Doodle(String id, String title, String content, String url) {
-        this._id = id;
+        this._rev = "";
         this.title = title;
         this.content = content;
         this.url = url;
+        this._id = id;
     }
 
     @Override

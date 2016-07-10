@@ -65,4 +65,12 @@ public class DoodleService {
         }
         return result;
     }
+
+    public void getDoodle(String doodleId, ServiceCallback<Doodle> serviceCallback) {
+
+    }
+
+    public void updateDoodle(Doodle doodle, ServiceCallback<Void> serviceCallback) {
+
+    }
 }

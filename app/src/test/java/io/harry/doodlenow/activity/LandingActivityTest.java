@@ -69,24 +69,26 @@ public class LandingActivityTest {
         verify(doodleService).getDoodles(contentListServiceCallbackCaptor.capture());
 
         ArrayList<Doodle> items = new ArrayList<>();
-        items.add(new Doodle("11", "beat it", "beat it!", "beatit.com"));
-        items.add(new Doodle("22", "air walk", "air walk!", "airwork.com"));
+        items.add(new Doodle("1", "beat it", "beat it!", "beatit.com"));
+        items.add(new Doodle("2", "air walk", "air walk!", "airwork.com"));
 
         contentListServiceCallbackCaptor.getValue().onSuccess(items);
 
         ArrayList<Doodle> expected = new ArrayList<>();
-        expected.add(new Doodle("11", "beat it", "beat it!", "beatit.com"));
-        expected.add(new Doodle("22", "air walk", "air walk!", "airwork.com"));
+        expected.add(new Doodle("1", "beat it", "beat it!", "beatit.com"));
+        expected.add(new Doodle("2", "air walk", "air walk!", "airwork.com"));
 
         verify(doodleListAdapter).refreshDoodles(expected);
     }
 
     @Test
     public void onDoodleClick_startsDoodleActivityWithDoodleId() throws Exception {
-        Intent expectedIntent = new Intent(subject, DoodleActivity.class);
-        expectedIntent.putExtra("DOODLE_ID", "doodle id");
+        Doodle doodle = new Doodle("1", "title", "content", "url");
 
-        subject.onDoodleClick(new Doodle("doodle id", "title", "content", "url"));
+        Intent expectedIntent = new Intent(subject, DoodleActivity.class);
+        expectedIntent.putExtra("DOODLE_ID", "1");
+
+        subject.onDoodleClick(doodle);
 
         assertThat(shadowOf(subject).getNextStartedActivity()).isEqualTo(expectedIntent);
     }

@@ -54,6 +54,25 @@ public class DoodleService {
         });
     }
 
+    public void getDoodle(String doodleId, final ServiceCallback<Doodle> serviceCallback) {
+        Call<Doodle> call = doodleApi.getDoodle(doodleId);
+        call.enqueue(new Callback<Doodle>() {
+            @Override
+            public void onResponse(Call<Doodle> call, Response<Doodle> response) {
+                serviceCallback.onSuccess(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<Doodle> call, Throwable t) {
+
+            }
+        });
+    }
+
+    public void updateDoodle(Doodle doodle, ServiceCallback<Void> serviceCallback) {
+
+    }
+
     @NonNull
     private <T> List<T> parseCloudantResponse(Response<CloudantResponse<T>> response) {
         CloudantResponse<T> body = response.body();
@@ -64,13 +83,5 @@ public class DoodleService {
             result.add(document.doc);
         }
         return result;
-    }
-
-    public void getDoodle(String doodleId, ServiceCallback<Doodle> serviceCallback) {
-
-    }
-
-    public void updateDoodle(Doodle doodle, ServiceCallback<Void> serviceCallback) {
-
     }
 }

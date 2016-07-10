@@ -24,6 +24,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -38,13 +39,18 @@ public class DoodleServiceTest {
     @Mock
     Call<CloudantResponse<Doodle>> mockCloudantCall;
     @Mock
-    ServiceCallback<List<Doodle>> mockServiceCallback;
+    ServiceCallback<List<Doodle>> mockDoodleListServiceCallback;
     @Mock
     Call<Void> mockVoidCall;
+    @Mock
+    Call<Doodle> mockDoodleCall;
     @Captor
     ArgumentCaptor<Callback<CloudantResponse<Doodle>>> cloudantCallbackCaptor;
     @Captor
     ArgumentCaptor<Callback<Void>> voidCallbackCaptor;
+    @Captor
+    ArgumentCaptor<Callback<Doodle>> doodleCallbackCaptor;
+
 
     @Before
     public void setUp() throws Exception {
@@ -58,14 +64,14 @@ public class DoodleServiceTest {
 
     @Test
     public void getContents_callsContentApiToGetAllDoodles() throws Exception {
-        subject.getDoodles(mockServiceCallback);
+        subject.getDoodles(mockDoodleListServiceCallback);
 
         verify(mockCloudantCall).enqueue(Matchers.<Callback<CloudantResponse<Doodle>>>any());
     }
 
     @Test
     public void afterGettingContents_runsSuccessServiceCallback() throws Exception {
-        subject.getDoodles(mockServiceCallback);
+        subject.getDoodles(mockDoodleListServiceCallback);
 
         verify(mockCloudantCall).enqueue(cloudantCallbackCaptor.capture());
 
@@ -78,7 +84,7 @@ public class DoodleServiceTest {
         Response<CloudantResponse<Doodle>> response = Response.success(body);
         cloudantCallbackCaptor.getValue().onResponse(mockCloudantCall, response);
 
-        verify(mockServiceCallback).onSuccess(Arrays.asList(
+        verify(mockDoodleListServiceCallback).onSuccess(Arrays.asList(
                 createDoodleDocument("first id", "first title", "first content", "first url").doc,
                 createDoodleDocument("second id", "second title", "second content", "second url").doc
         ));
@@ -112,6 +118,36 @@ public class DoodleServiceTest {
         voidCallbackCaptor.getValue().onResponse(mockVoidCall, response);
 
         verify(mockServiceCallback).onSuccess(null);
+    }
+
+    @Test
+    public void getDoodle_getsCallObjectFromDoodleApiWithDoodleId() throws Exception {
+        when(mockDoodleApi.getDoodle(anyString())).thenReturn(mockDoodleCall);
+        subject.getDoodle("some id", mock(ServiceCallback.class));
+
+        verify(mockDoodleApi).getDoodle("some id");
+    }
+
+    @Test
+    public void getDoodle_enqueuesCallbackOnObtainedCallObject() throws Exception {
+        when(mockDoodleApi.getDoodle("some id")).thenReturn(mockDoodleCall);
+        subject.getDoodle("some id", mock(ServiceCallback.class));
+
+        verify(mockDoodleCall).enqueue(Matchers.<Callback<Doodle>>any());
+    }
+
+    @Test
+    public void getDoodle_runsServiceCallbackWithResponse_whenCallIsSuccessful() throws Exception {
+        when(mockDoodleApi.getDoodle("some id")).thenReturn(mockDoodleCall);
+        ServiceCallback<Doodle> mockServiceCallback = mock(ServiceCallback.class);
+        subject.getDoodle("some id", mockServiceCallback);
+
+        verify(mockDoodleCall).enqueue(doodleCallbackCaptor.capture());
+
+        Response<Doodle> response = Response.success(new Doodle("some id", "title", "content", "url"));
+        doodleCallbackCaptor.getValue().onResponse(mockDoodleCall, response);
+
+        verify(mockServiceCallback).onSuccess(new Doodle("some id", "title", "content", "url"));
     }
 
     private CloudantDocument<Doodle> createDoodleDocument(String id, String title, String content, String url) {

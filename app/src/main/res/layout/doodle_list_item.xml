@@ -2,13 +2,26 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    >
+    xmlns:tools="http://schemas.android.com/tools">
+    <TextView
+        android:id="@+id/doodle_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="Hello People!"
+        android:textSize="20sp"
+        android:lines="1"/>
+
     <TextView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/doodle_content"
-        android:layout_height="65dp"
+        android:layout_height="wrap_content"
         android:layout_width="match_parent"
+        android:layout_marginTop="5dp"
         android:gravity="center_vertical"
+        android:layout_below="@id/doodle_title"
+        android:textSize="12sp"
         android:lines="3"
+        tools:text="jsoup is a Java library for working with real-world HTML. It provides a very convenient API for extracting and manipulating data, using the best of DOM, CSS, and jquery-like methods. \n jsoup implements the WHATWG HTML5 specification, and parses HTML to the same DOM as modern browsers do."
+        android:paddingBottom="5dp"
         />
 
     <View

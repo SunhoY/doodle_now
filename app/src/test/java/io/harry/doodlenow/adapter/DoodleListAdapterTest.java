@@ -41,21 +41,22 @@ public class DoodleListAdapterTest {
     }
 
     @Test
-    public void eachViewShouldShowsStringContent() throws Exception {
-        DoodleListAdapter.SimpleViewHolder firstViewHolder =
-                (DoodleListAdapter.SimpleViewHolder) subject.onCreateViewHolder(null, ANY_VIEW_TYPE);
-
-        int firstIndex = 0;
-        subject.onBindViewHolder(firstViewHolder, firstIndex);
-
-        DoodleListAdapter.SimpleViewHolder secondViewHolder =
-                (DoodleListAdapter.SimpleViewHolder) subject.onCreateViewHolder(null, ANY_VIEW_TYPE);
-
-        int secondIndex = 1;
-        subject.onBindViewHolder(secondViewHolder, secondIndex);
+    public void eachViewShouldShowsDoodleContent() throws Exception {
+        DoodleListAdapter.SimpleViewHolder firstViewHolder = createAndBindViewHolder(0);
+        DoodleListAdapter.SimpleViewHolder secondViewHolder = createAndBindViewHolder(1);
 
         assertThat(firstViewHolder.content.getText()).isEqualTo("first content");
         assertThat(secondViewHolder.content.getText()).isEqualTo("second content");
+    }
+
+    @Test
+    public void eachViewShouldShowsDoodleTitle() throws Exception {
+        DoodleListAdapter.SimpleViewHolder firstViewHolder = createAndBindViewHolder(0);
+        DoodleListAdapter.SimpleViewHolder secondViewHolder = createAndBindViewHolder(1);
+
+        assertThat(firstViewHolder.title.getText()).isEqualTo("first title");
+        assertThat(secondViewHolder.title.getText()).isEqualTo("second title");
+
     }
 
     @Test
@@ -81,8 +82,16 @@ public class DoodleListAdapterTest {
                 (DoodleListAdapter.SimpleViewHolder) subject.onCreateViewHolder(null, ANY_VIEW_TYPE);
         subject.onBindViewHolder(firstViewHolder, 0);
 
-        firstViewHolder.content.performClick();
+        firstViewHolder.container.performClick();
 
         verify(mockDoodleClickListener).onDoodleClick(new Doodle("first", "first title", "first content", "first url"));
+    }
+
+    private DoodleListAdapter.SimpleViewHolder createAndBindViewHolder(int position) {
+        DoodleListAdapter.SimpleViewHolder firstViewHolder =
+                (DoodleListAdapter.SimpleViewHolder) subject.onCreateViewHolder(null, ANY_VIEW_TYPE);
+
+        subject.onBindViewHolder(firstViewHolder, position);
+        return firstViewHolder;
     }
 }

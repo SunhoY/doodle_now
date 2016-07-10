@@ -35,14 +35,15 @@ public class DoodleListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
-        String content = doodles.get(position).content;
+        final Doodle doodle = doodles.get(position);
 
-        TextView doodleView = ((SimpleViewHolder) holder).content;
-        doodleView.setText(content);
-        doodleView.setOnClickListener(new View.OnClickListener() {
+        ((SimpleViewHolder) holder).title.setText(doodle.title);
+        ((SimpleViewHolder) holder).content.setText(doodle.content);
+
+        ((SimpleViewHolder) holder).container.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                doodleClickListener.onDoodleClick(doodles.get(position));
+                doodleClickListener.onDoodleClick(doodle);
             }
         });
 
@@ -61,11 +62,14 @@ public class DoodleListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
     public class SimpleViewHolder extends RecyclerView.ViewHolder {
+        public View container;
+        public TextView title;
         public TextView content;
 
         public SimpleViewHolder(View itemView) {
             super(itemView);
-
+            container = itemView;
+            title = (TextView) itemView.findViewById(R.id.doodle_title);
             content = (TextView) itemView.findViewById(R.id.doodle_content);
         }
     }

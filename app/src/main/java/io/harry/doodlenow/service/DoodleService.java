@@ -44,6 +44,9 @@ public class DoodleService {
         postDoodleCall.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
+                if(!response.isSuccessful()) {
+                    return;
+                }
                 serviceCallback.onSuccess(response.body());
             }
 
@@ -59,6 +62,10 @@ public class DoodleService {
         call.enqueue(new Callback<Doodle>() {
             @Override
             public void onResponse(Call<Doodle> call, Response<Doodle> response) {
+                if(!response.isSuccessful()) {
+                    return;
+                }
+
                 serviceCallback.onSuccess(response.body());
             }
 
@@ -69,8 +76,23 @@ public class DoodleService {
         });
     }
 
-    public void updateDoodle(Doodle doodle, ServiceCallback<Void> serviceCallback) {
+    public void updateDoodle(Doodle doodle, final ServiceCallback<Void> serviceCallback) {
+        Call<Void> call = doodleApi.putDoodle(doodle._id, doodle);
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if(!response.isSuccessful()) {
+                    return;
+                }
 
+                serviceCallback.onSuccess(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+
+            }
+        });
     }
 
     @NonNull

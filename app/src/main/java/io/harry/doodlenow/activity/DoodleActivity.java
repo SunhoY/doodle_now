@@ -26,6 +26,7 @@ public class DoodleActivity extends AppCompatActivity {
     public static final String DOODLE_ID = "DOODLE_ID";
     private String doodleUrl;
     private String doodleId;
+    private String doodleRevision;
 
     @BindView(R.id.doodle_content)
     EditText doodleContent;
@@ -55,6 +56,7 @@ public class DoodleActivity extends AppCompatActivity {
     void onSubmitClick() {
         Doodle doodle = new Doodle(
                 doodleId,
+                doodleRevision,
                 doodleTitle.getText().toString(),
                 doodleContent.getText().toString(),
                 doodleUrl);
@@ -90,6 +92,7 @@ public class DoodleActivity extends AppCompatActivity {
     private void setTitleAndContentByContext(Intent intent) {
         if(Intent.ACTION_SEND.equals(intent.getAction())) {
             doodleId = "";
+            doodleRevision = "";
             doodleUrl = intent.getStringExtra(Intent.EXTRA_TEXT);
             jsoupWrapper.getDocument(doodleUrl, new JsoupCallback() {
                 @Override
@@ -109,8 +112,9 @@ public class DoodleActivity extends AppCompatActivity {
             doodleService.getDoodle(doodleId, new ServiceCallback<Doodle>() {
                 @Override
                 public void onSuccess(Doodle item) {
-                    doodleTitle.setText(item.title);
                     doodleContent.setText(item.content);
+                    doodleRevision = item._rev;
+                    doodleTitle.setText(item.title);
                     doodleUrl = item.url;
                 }
 

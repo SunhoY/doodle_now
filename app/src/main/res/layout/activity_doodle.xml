@@ -9,7 +9,8 @@
         android:id="@+id/doodle_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:lines="1"
+        android:textSize="20sp"
+        android:singleLine="true"
         android:hint="@string/write_title_here"
         />
     <EditText
@@ -17,13 +18,15 @@
         android:layout_width="match_parent"
         android:layout_height="300dp"
         android:gravity="top"
+        android:textSize="16sp"
         android:hint="@string/doodle_anything"
         />
     <Button
         android:id="@+id/submit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="150dp"
+        android:layout_height="70dp"
         android:layout_gravity="center_horizontal"
         android:text="@string/doodle"
+        android:textSize="20sp"
         />
 </LinearLayout>

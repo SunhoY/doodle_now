@@ -124,7 +124,7 @@ public class DoodleActivityTest {
     public void afterGettingDoodle_setsTitle_whenDoodleIntent() throws Exception {
         setupActivityWithDoodleIdIntent(ANY_DOODLE_ID);
 
-        getDoodleViaDoodleServiceAndSuccessWith(new Doodle("", "doodled", "", ""));
+        getDoodleViaDoodleServiceAndSuccessWith(new Doodle("", "", "doodled", "", ""));
 
         assertThat(doodleTitle.getText().toString()).isEqualTo("doodled");
     }
@@ -133,7 +133,7 @@ public class DoodleActivityTest {
     public void afterGettingDoodle_setsContent_whenDoodleIntent() throws Exception {
         setupActivityWithDoodleIdIntent(ANY_DOODLE_ID);
 
-        getDoodleViaDoodleServiceAndSuccessWith(new Doodle("", "", "doodle doodle doodle pop", ""));
+        getDoodleViaDoodleServiceAndSuccessWith(new Doodle("", "", "", "doodle doodle doodle pop", ""));
 
         assertThat(doodleContent.getText().toString()).isEqualTo("doodle doodle doodle pop");
 
@@ -147,7 +147,7 @@ public class DoodleActivityTest {
 
         submit.performClick();
 
-        Doodle doodle = new Doodle("", "Jordan", "dunk jordan dunk!", "http://someurl");
+        Doodle doodle = new Doodle("", "", "Jordan", "dunk jordan dunk!", "http://someurl");
         verify(mockDoodleService).saveDoodle(eq(doodle),
                 Matchers.<ServiceCallback<Void>>any());
     }
@@ -155,12 +155,12 @@ public class DoodleActivityTest {
     @Test
     public void onSubmitClick_callsDoodleServiceToUpdate_withExistingId() throws Exception {
         setupActivityWithDoodleIdIntent("some id");
-        Doodle doodle = new Doodle("some id", "Curry", "three pointer!", "http://otherurl");
+        Doodle doodle = new Doodle("some id", "", "Curry", "three pointer!", "http://otherurl");
         getDoodleViaDoodleServiceAndSuccessWith(doodle);
 
         submit.performClick();
 
-        Doodle expected = new Doodle("some id", "Curry", "three pointer!", "http://otherurl");
+        Doodle expected = new Doodle("some id", "", "Curry", "three pointer!", "http://otherurl");
 
         verify(mockDoodleService).updateDoodle(eq(expected), Matchers.<ServiceCallback<Void>>any());
     }

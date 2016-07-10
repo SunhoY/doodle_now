@@ -1,5 +1,6 @@
 package io.harry.doodlenow.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -21,6 +22,7 @@ import io.harry.doodlenow.wrapper.JsoupWrapper;
 
 public class DoodleActivity extends AppCompatActivity {
 
+    public static final String DOODLE_ID = "DOODLE_ID";
     private String doodleUrl;
 
     @BindView(R.id.doodle_content)
@@ -78,5 +80,12 @@ public class DoodleActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    public static Intent getIntent(Context context, String doodleId) {
+        Intent intent = new Intent(context, DoodleActivity.class);
+        intent.putExtra(DOODLE_ID, doodleId);
+
+        return intent;
     }
 }

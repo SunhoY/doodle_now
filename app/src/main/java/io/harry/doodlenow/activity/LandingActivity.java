@@ -66,6 +66,6 @@ public class LandingActivity extends AppCompatActivity implements DoodleListAdap
 
     @Override
     public void onDoodleClick(Doodle doodle) {
-
+        startActivity(DoodleActivity.getIntent(this, doodle._id));
     }
 }

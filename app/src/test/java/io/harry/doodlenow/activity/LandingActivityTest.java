@@ -1,5 +1,7 @@
 package io.harry.doodlenow.activity;
 
+import android.content.Intent;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,7 +27,9 @@ import io.harry.doodlenow.model.Doodle;
 import io.harry.doodlenow.service.DoodleService;
 import io.harry.doodlenow.service.ServiceCallback;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.robolectric.Shadows.shadowOf;
 
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class)
@@ -75,5 +79,15 @@ public class LandingActivityTest {
         expected.add(new Doodle("22", "air walk", "air walk!", "airwork.com"));
 
         verify(doodleListAdapter).refreshDoodles(expected);
+    }
+
+    @Test
+    public void onDoodleClick_startsDoodleActivityWithDoodleId() throws Exception {
+        Intent expectedIntent = new Intent(subject, DoodleActivity.class);
+        expectedIntent.putExtra("DOODLE_ID", "doodle id");
+
+        subject.onDoodleClick(new Doodle("doodle id", "title", "content", "url"));
+
+        assertThat(shadowOf(subject).getNextStartedActivity()).isEqualTo(expectedIntent);
     }
 }

@@ -91,8 +91,8 @@ public class DoodleActivity extends AppCompatActivity {
 
     private void setTitleAndContentByContext(Intent intent) {
         if(Intent.ACTION_SEND.equals(intent.getAction())) {
-            doodleId = "";
-            doodleRevision = "";
+            doodleId = null;
+            doodleRevision = null;
             doodleUrl = intent.getStringExtra(Intent.EXTRA_TEXT);
             jsoupWrapper.getDocument(doodleUrl, new JsoupCallback() {
                 @Override

@@ -11,7 +11,7 @@ import dagger.Provides;
 import io.harry.doodlenow.adapter.DoodleListAdapter;
 import io.harry.doodlenow.api.DoodleApi;
 import io.harry.doodlenow.model.Doodle;
-import io.harry.doodlenow.service.DoodleService;
+import io.harry.doodlenow.service.DoodleServiceCloudantAPI;
 import retrofit2.Retrofit;
 
 @Module
@@ -23,8 +23,8 @@ public class DoodleModule {
     }
 
     @Provides @Singleton
-    public DoodleService provideContentService(DoodleApi doodleApi) {
-        return new DoodleService(doodleApi);
+    public DoodleServiceCloudantAPI provideContentService(DoodleApi doodleApi) {
+        return new DoodleServiceCloudantAPI(doodleApi);
     }
 
     @Provides @Singleton

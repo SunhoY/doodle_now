@@ -14,7 +14,7 @@ public interface DoodleApi {
     Call<CloudantResponse<Doodle>> getAllDoodles();
 
     @POST("/doodles")
-    Call<Void> postDoodle(@Body Doodle doodle);
+    Call<Doodle> postDoodle(@Body Doodle doodle);
 
     @GET("/doodles/{doodleId}")
     Call<Doodle> getDoodle(@Path("doodleId") String doodleId);

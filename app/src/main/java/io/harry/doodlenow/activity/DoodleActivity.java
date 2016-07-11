@@ -8,6 +8,8 @@ import android.text.TextUtils;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import org.joda.time.DateTime;
+
 import javax.inject.Inject;
 
 import butterknife.BindView;
@@ -17,7 +19,7 @@ import io.harry.doodlenow.DoodleApplication;
 import io.harry.doodlenow.R;
 import io.harry.doodlenow.callback.JsoupCallback;
 import io.harry.doodlenow.model.Doodle;
-import io.harry.doodlenow.service.DoodleService;
+import io.harry.doodlenow.service.DoodleServiceCloudantAPI;
 import io.harry.doodlenow.service.ServiceCallback;
 import io.harry.doodlenow.wrapper.JsoupWrapper;
 
@@ -27,6 +29,7 @@ public class DoodleActivity extends AppCompatActivity {
     private String doodleUrl;
     private String doodleId;
     private String doodleRevision;
+    private long doodleCreatedAt;
 
     @BindView(R.id.doodle_content)
     EditText doodleContent;
@@ -34,7 +37,7 @@ public class DoodleActivity extends AppCompatActivity {
     EditText doodleTitle;
 
     @Inject
-    DoodleService doodleService;
+    DoodleServiceCloudantAPI doodleServiceCloudantAPI;
     @Inject
     JsoupWrapper jsoupWrapper;
 
@@ -54,31 +57,49 @@ public class DoodleActivity extends AppCompatActivity {
 
     @OnClick(R.id.submit)
     void onSubmitClick() {
-        Doodle doodle = new Doodle(
-                doodleId,
-                doodleRevision,
-                doodleTitle.getText().toString(),
-                doodleContent.getText().toString(),
-                doodleUrl);
+        if(TextUtils.isEmpty(doodleId)) {
+            Doodle doodle = new Doodle(
+                    doodleId,
+                    doodleRevision,
+                    doodleTitle.getText().toString(),
+                    doodleContent.getText().toString(),
+                    doodleUrl,
+                    new DateTime().getMillis()
+            );
+            doodleServiceCloudantAPI.createDoodle(doodle, new ServiceCallback<String>() {
+                @Override
+                public void onSuccess(String doodleId) {
+                    Toast.makeText(DoodleActivity.this, "참 잘했어요! 엄지 척!", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
 
-        ServiceCallback<Void> serviceCallback = new ServiceCallback<Void>() {
-            @Override
-            public void onSuccess(Void item) {
-                Toast.makeText(DoodleActivity.this, "참 잘했어요! 엄지 척!", Toast.LENGTH_SHORT).show();
-                finish();
-            }
+                @Override
+                public void onFailure(String message) {
 
-            @Override
-            public void onFailure(String message) {
-
-            }
-        };
-
-        if(TextUtils.isEmpty(doodle._id)) {
-            doodleService.saveDoodle(doodle, serviceCallback);
+                }
+            });
         }
         else {
-            doodleService.updateDoodle(doodle, serviceCallback);
+            Doodle doodle = new Doodle(
+                    doodleId,
+                    doodleRevision,
+                    doodleTitle.getText().toString(),
+                    doodleContent.getText().toString(),
+                    doodleUrl,
+                    doodleCreatedAt
+            );
+            doodleServiceCloudantAPI.updateDoodle(doodle, new ServiceCallback<Void>() {
+                @Override
+                public void onSuccess(Void item) {
+                    Toast.makeText(DoodleActivity.this, "참 잘했어요! 엄지 척!", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+
+                @Override
+                public void onFailure(String message) {
+
+                }
+            });
         }
     }
 
@@ -109,7 +130,7 @@ public class DoodleActivity extends AppCompatActivity {
             });
         } else {
             doodleId = intent.getStringExtra(DOODLE_ID);
-            doodleService.getDoodle(doodleId, new ServiceCallback<Doodle>() {
+            doodleServiceCloudantAPI.retrieveDoodle(doodleId, new ServiceCallback<Doodle>() {
                 @Override
                 public void onSuccess(Doodle item) {
                     doodleContent.setText(item.content);

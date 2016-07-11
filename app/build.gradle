@@ -9,8 +9,8 @@ android {
         applicationId "io.harry.doodlenow"
         minSdkVersion 19
         targetSdkVersion 21
-        versionCode 1
-        versionName "1.0"
+        versionCode 101
+        versionName "1.01"
     }
     buildTypes {
         release {
@@ -32,6 +32,8 @@ dependencies {
     compile 'com.google.dagger:dagger:2.4'
     compile 'com.jakewharton:butterknife:8.0.1'
     compile 'org.jsoup:jsoup:1.9.2'
+    compile 'com.cloudant:cloudant-sync-datastore-android-encryption:1.0.0'
+    compile 'joda-time:joda-time:2.9.4'
     apt 'com.google.dagger:dagger-compiler:2.4'
     apt 'com.jakewharton:butterknife-compiler:8.0.1'
     provided 'javax.annotation:jsr250-api:1.0'

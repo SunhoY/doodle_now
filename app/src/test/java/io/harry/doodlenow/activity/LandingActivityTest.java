@@ -24,7 +24,7 @@ import io.harry.doodlenow.TestDoodleApplication;
 import io.harry.doodlenow.adapter.DoodleListAdapter;
 import io.harry.doodlenow.component.TestDoodleComponent;
 import io.harry.doodlenow.model.Doodle;
-import io.harry.doodlenow.service.DoodleService;
+import io.harry.doodlenow.service.DoodleServiceCloudantAPI;
 import io.harry.doodlenow.service.ServiceCallback;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -34,10 +34,11 @@ import static org.robolectric.Shadows.shadowOf;
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class)
 public class LandingActivityTest {
+    public static final long ANY_TIME_MILLIS = 1234L;
     private LandingActivity subject;
 
     @Inject
-    DoodleService doodleService;
+    DoodleServiceCloudantAPI doodleServiceCloudantAPI;
     @Inject
     DoodleListAdapter doodleListAdapter;
 
@@ -61,29 +62,29 @@ public class LandingActivityTest {
 
     @Test
     public void onResume_callsContentServiceToGetContents() throws Exception {
-        verify(doodleService).getDoodles(Matchers.<ServiceCallback<List<Doodle>>>any());
+        verify(doodleServiceCloudantAPI).retrieveDoodles(Matchers.<ServiceCallback<List<Doodle>>>any());
     }
 
     @Test
     public void afterGettingContentList_refreshesContentListView() throws Exception {
-        verify(doodleService).getDoodles(contentListServiceCallbackCaptor.capture());
+        verify(doodleServiceCloudantAPI).retrieveDoodles(contentListServiceCallbackCaptor.capture());
 
         ArrayList<Doodle> items = new ArrayList<>();
-        items.add(new Doodle("1", "", "beat it", "beat it!", "beatit.com"));
-        items.add(new Doodle("2", "", "air walk", "air walk!", "airwork.com"));
+        items.add(new Doodle("1", "", "beat it", "beat it!", "beatit.com", ANY_TIME_MILLIS));
+        items.add(new Doodle("2", "", "air walk", "air walk!", "airwork.com", ANY_TIME_MILLIS));
 
         contentListServiceCallbackCaptor.getValue().onSuccess(items);
 
         ArrayList<Doodle> expected = new ArrayList<>();
-        expected.add(new Doodle("1", "", "beat it", "beat it!", "beatit.com"));
-        expected.add(new Doodle("2", "", "air walk", "air walk!", "airwork.com"));
+        expected.add(new Doodle("1", "", "beat it", "beat it!", "beatit.com", ANY_TIME_MILLIS));
+        expected.add(new Doodle("2", "", "air walk", "air walk!", "airwork.com", ANY_TIME_MILLIS));
 
         verify(doodleListAdapter).refreshDoodles(expected);
     }
 
     @Test
     public void onDoodleClick_startsDoodleActivityWithDoodleId() throws Exception {
-        Doodle doodle = new Doodle("1", "", "title", "content", "url");
+        Doodle doodle = new Doodle("1", "", "title", "content", "url", ANY_TIME_MILLIS);
 
         Intent expectedIntent = new Intent(subject, DoodleActivity.class);
         expectedIntent.putExtra("DOODLE_ID", "1");

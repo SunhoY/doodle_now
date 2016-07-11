@@ -6,4 +6,9 @@
     <string name="doodle_anything">doodle anything</string>
     <string name="doodle">DOODLE</string>
     <string name="write_title_here">Write title here</string>
+
+    <string name="cloudant_user">zillaci</string>
+    <string name="cloudant_database_name">doodles</string>
+    <string name="cloudant_api_key">herstatchaperaccoughtsin</string>
+    <string name="cloudant_api_password">da310851e8e2028faf905d0877c42aa37b578a40</string>
 </resources>

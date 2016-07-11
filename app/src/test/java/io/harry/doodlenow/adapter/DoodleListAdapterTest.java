@@ -22,6 +22,7 @@ import static org.mockito.Mockito.verify;
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class)
 public class DoodleListAdapterTest {
+    public static final long ANY_TIME_MILLIS = 1234L;
     private DoodleListAdapter subject;
     private final int ANY_VIEW_TYPE = 99;
 
@@ -33,8 +34,8 @@ public class DoodleListAdapterTest {
         MockitoAnnotations.initMocks(this);
         ArrayList<Doodle> doodles = new ArrayList<>();
 
-        doodles.add(new Doodle("first", "", "first title", "first content", "first url"));
-        doodles.add(new Doodle("second", "", "second title", "second content", "second url"));
+        doodles.add(new Doodle("first", "", "first title", "first content", "first url", ANY_TIME_MILLIS));
+        doodles.add(new Doodle("second", "", "second title", "second content", "second url", ANY_TIME_MILLIS));
 
         subject = new DoodleListAdapter(RuntimeEnvironment.application, doodles);
         subject.setDoodleClickListener(mockDoodleClickListener);
@@ -67,9 +68,9 @@ public class DoodleListAdapterTest {
     @Test
     public void refreshDoodles_clearsAllDoodlesAndAddNewDoodles() throws Exception {
         List<Doodle> newDoodles = new ArrayList<>();
-        newDoodles.add(new Doodle("first id", "", "first title", "first content", "first url"));
-        newDoodles.add(new Doodle("second id", "", "second title", "second content", "second url"));
-        newDoodles.add(new Doodle("third id", "", "third title", "third content", "third url"));
+        newDoodles.add(new Doodle("first id", "", "first title", "first content", "first url", ANY_TIME_MILLIS));
+        newDoodles.add(new Doodle("second id", "", "second title", "second content", "second url", ANY_TIME_MILLIS));
+        newDoodles.add(new Doodle("third id", "", "third title", "third content", "third url", ANY_TIME_MILLIS));
 
         subject.refreshDoodles(newDoodles);
 
@@ -84,7 +85,7 @@ public class DoodleListAdapterTest {
 
         firstViewHolder.container.performClick();
 
-        verify(mockDoodleClickListener).onDoodleClick(new Doodle("first", "", "first title", "first content", "first url"));
+        verify(mockDoodleClickListener).onDoodleClick(new Doodle("first", "", "first title", "first content", "first url", ANY_TIME_MILLIS));
     }
 
     private DoodleListAdapter.SimpleViewHolder createAndBindViewHolder(int position) {

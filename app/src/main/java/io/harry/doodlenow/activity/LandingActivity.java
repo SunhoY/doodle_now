@@ -16,13 +16,13 @@ import io.harry.doodlenow.R;
 import io.harry.doodlenow.adapter.DoodleListAdapter;
 import io.harry.doodlenow.component.DoodleComponent;
 import io.harry.doodlenow.model.Doodle;
-import io.harry.doodlenow.service.DoodleService;
+import io.harry.doodlenow.service.DoodleServiceCloudantAPI;
 import io.harry.doodlenow.service.ServiceCallback;
 
 public class LandingActivity extends AppCompatActivity implements DoodleListAdapter.OnDoodleClickListener {
 
     @Inject
-    DoodleService doodleService;
+    DoodleServiceCloudantAPI doodleServiceCloudantAPI;
     @Inject
     DoodleListAdapter doodleListAdapter;
 
@@ -48,7 +48,7 @@ public class LandingActivity extends AppCompatActivity implements DoodleListAdap
 
     @Override
     protected void onResume() {
-        doodleService.getDoodles(new ServiceCallback<List<Doodle>>() {
+        doodleServiceCloudantAPI.retrieveDoodles(new ServiceCallback<List<Doodle>>() {
             @Override
             public void onSuccess(List<Doodle> items) {
                 DoodleListAdapter doodleListAdapter = (DoodleListAdapter) doodleListView.getAdapter();

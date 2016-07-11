@@ -6,15 +6,15 @@ import dagger.Module;
 import dagger.Provides;
 import io.harry.doodlenow.adapter.DoodleListAdapter;
 import io.harry.doodlenow.api.DoodleApi;
-import io.harry.doodlenow.service.DoodleService;
+import io.harry.doodlenow.service.DoodleServiceCloudantAPI;
 
 import static org.mockito.Mockito.mock;
 
 @Module
 public class TestDoodleModule {
     @Provides @Singleton
-    public DoodleService provideContentService() {
-        return mock(DoodleService.class);
+    public DoodleServiceCloudantAPI provideContentService() {
+        return mock(DoodleServiceCloudantAPI.class);
     }
 
     @Provides @Singleton

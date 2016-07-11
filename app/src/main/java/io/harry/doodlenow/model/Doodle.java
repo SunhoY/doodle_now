@@ -6,13 +6,16 @@ public class Doodle {
     public final String title;
     public final String content;
     public final String url;
+    public long createdAt;
 
-    public Doodle(String id, String revision, String title, String content, String url) {
+
+    public Doodle(String id, String revision, String title, String content, String url, long createdAt) {
         this._id = id;
         this._rev = revision;
         this.title = title;
         this.content = content;
         this.url = url;
+        this.createdAt = createdAt;
     }
 
     @Override

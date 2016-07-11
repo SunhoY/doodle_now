@@ -27,7 +27,7 @@ import io.harry.doodlenow.TestDoodleApplication;
 import io.harry.doodlenow.callback.JsoupCallback;
 import io.harry.doodlenow.component.TestDoodleComponent;
 import io.harry.doodlenow.model.Doodle;
-import io.harry.doodlenow.service.DoodleService;
+import io.harry.doodlenow.service.DoodleServiceCloudantAPI;
 import io.harry.doodlenow.service.ServiceCallback;
 import io.harry.doodlenow.wrapper.JsoupWrapper;
 
@@ -42,10 +42,11 @@ import static org.mockito.Mockito.verify;
 public class DoodleActivityTest {
     private static final String ANY_STRING = "any string";
     private static final String ANY_DOODLE_ID = "any doodle id";
+    public static final long ANY_TIME_MILLIS = 1234L;
     private DoodleActivity subject;
 
     @Inject
-    DoodleService mockDoodleService;
+    DoodleServiceCloudantAPI mockDoodleServiceCloudantAPI;
     @Inject
     JsoupWrapper jsoupWrapper;
 
@@ -57,7 +58,7 @@ public class DoodleActivityTest {
     EditText doodleTitle;
 
     @Captor
-    ArgumentCaptor<ServiceCallback<Void>> voidServiceCallbackCaptor;
+    ArgumentCaptor<ServiceCallback<String>> stringServiceCallbackCaptor;
     @Captor
     ArgumentCaptor<JsoupCallback> jsoupCallbackCaptor;
     @Captor
@@ -117,14 +118,14 @@ public class DoodleActivityTest {
     public void onCreate_getsDoodleViaDoodleService_whenDoodleIdIntent() throws Exception {
         setupActivityWithDoodleIdIntent("some doodle id");
 
-        verify(mockDoodleService).getDoodle(eq("some doodle id"), Matchers.<ServiceCallback<Doodle>>any());
+        verify(mockDoodleServiceCloudantAPI).retrieveDoodle(eq("some doodle id"), Matchers.<ServiceCallback<Doodle>>any());
     }
 
     @Test
     public void afterGettingDoodle_setsTitle_whenDoodleIntent() throws Exception {
         setupActivityWithDoodleIdIntent(ANY_DOODLE_ID);
 
-        getDoodleViaDoodleServiceAndSuccessWith(new Doodle("", "", "doodled", "", ""));
+        getDoodleViaDoodleServiceAndSuccessWith(new Doodle("", "", "doodled", "", "", ANY_TIME_MILLIS));
 
         assertThat(doodleTitle.getText().toString()).isEqualTo("doodled");
     }
@@ -133,7 +134,7 @@ public class DoodleActivityTest {
     public void afterGettingDoodle_setsContent_whenDoodleIntent() throws Exception {
         setupActivityWithDoodleIdIntent(ANY_DOODLE_ID);
 
-        getDoodleViaDoodleServiceAndSuccessWith(new Doodle("", "", "", "doodle doodle doodle pop", ""));
+        getDoodleViaDoodleServiceAndSuccessWith(new Doodle("", "", "", "doodle doodle doodle pop", "", ANY_TIME_MILLIS));
 
         assertThat(doodleContent.getText().toString()).isEqualTo("doodle doodle doodle pop");
 
@@ -147,22 +148,22 @@ public class DoodleActivityTest {
 
         submit.performClick();
 
-        Doodle doodle = new Doodle("", "", "Jordan", "dunk jordan dunk!", "http://someurl");
-        verify(mockDoodleService).saveDoodle(eq(doodle),
-                Matchers.<ServiceCallback<Void>>any());
+        Doodle doodle = new Doodle(null, null, "Jordan", "dunk jordan dunk!", "http://someurl", ANY_TIME_MILLIS);
+        verify(mockDoodleServiceCloudantAPI).createDoodle(eq(doodle),
+                Matchers.<ServiceCallback<String>>any());
     }
 
     @Test
     public void onSubmitClick_callsDoodleServiceToUpdate_withExistingId() throws Exception {
         setupActivityWithDoodleIdIntent("some id");
-        Doodle doodle = new Doodle("some id", "", "Curry", "three pointer!", "http://otherurl");
+        Doodle doodle = new Doodle("some id", "", "Curry", "three pointer!", "http://otherurl", ANY_TIME_MILLIS);
         getDoodleViaDoodleServiceAndSuccessWith(doodle);
 
         submit.performClick();
 
-        Doodle expected = new Doodle("some id", "", "Curry", "three pointer!", "http://otherurl");
+        Doodle expected = new Doodle("some id", "", "Curry", "three pointer!", "http://otherurl", ANY_TIME_MILLIS);
 
-        verify(mockDoodleService).updateDoodle(eq(expected), Matchers.<ServiceCallback<Void>>any());
+        verify(mockDoodleServiceCloudantAPI).updateDoodle(eq(expected), Matchers.<ServiceCallback<Void>>any());
     }
 
     @Test
@@ -171,7 +172,7 @@ public class DoodleActivityTest {
 
         clickSubmitToSaveDoodle();
 
-        voidServiceCallbackCaptor.getValue().onSuccess(null);
+        stringServiceCallbackCaptor.getValue().onSuccess(null);
 
         assertThat(subject.isFinishing()).isTrue();
     }
@@ -182,7 +183,7 @@ public class DoodleActivityTest {
 
         clickSubmitToSaveDoodle();
 
-        voidServiceCallbackCaptor.getValue().onSuccess(null);
+        stringServiceCallbackCaptor.getValue().onSuccess(null);
 
         assertThat(ShadowToast.getTextOfLatestToast()).isEqualTo("참 잘했어요! 엄지 척!");
     }
@@ -210,11 +211,11 @@ public class DoodleActivityTest {
     private void clickSubmitToSaveDoodle() {
         submit.performClick();
 
-        verify(mockDoodleService).saveDoodle(any(Doodle.class), voidServiceCallbackCaptor.capture());
+        verify(mockDoodleServiceCloudantAPI).createDoodle(any(Doodle.class), stringServiceCallbackCaptor.capture());
     }
 
     private void getDoodleViaDoodleServiceAndSuccessWith(Doodle doodle) {
-        verify(mockDoodleService).getDoodle(anyString(), doodleServiceCallbackCaptor.capture());
+        verify(mockDoodleServiceCloudantAPI).retrieveDoodle(anyString(), doodleServiceCallbackCaptor.capture());
 
         doodleServiceCallbackCaptor.getValue().onSuccess(doodle);
     }

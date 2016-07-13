@@ -13,12 +13,12 @@ import static org.mockito.Mockito.mock;
 @Module
 public class TestDoodleModule {
     @Provides @Singleton
-    public DoodleService provideContentService() {
+    public DoodleService provideDoodleService() {
         return mock(DoodleService.class);
     }
 
     @Provides @Singleton
-    public DoodleApi provideContentApi() {
+    public DoodleApi provideDoodleApi() {
         return mock(DoodleApi.class);
     }
 

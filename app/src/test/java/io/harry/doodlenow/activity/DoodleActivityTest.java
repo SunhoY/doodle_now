@@ -1,9 +1,9 @@
 package io.harry.doodlenow.activity;
 
-import android.content.Intent;
 import android.widget.Button;
 import android.widget.EditText;
 
+import org.joda.time.DateTimeUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,7 +15,6 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
-import org.robolectric.shadows.ShadowToast;
 
 import javax.inject.Inject;
 
@@ -27,21 +26,20 @@ import io.harry.doodlenow.TestDoodleApplication;
 import io.harry.doodlenow.callback.JsoupCallback;
 import io.harry.doodlenow.component.TestDoodleComponent;
 import io.harry.doodlenow.model.Doodle;
+import io.harry.doodlenow.model.DoodleJson;
 import io.harry.doodlenow.service.DoodleService;
 import io.harry.doodlenow.service.ServiceCallback;
 import io.harry.doodlenow.wrapper.JsoupWrapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class)
 public class DoodleActivityTest {
-    private static final String ANY_STRING = "any string";
-    private static final String ANY_DOODLE_ID = "any doodle id";
+    private final long MILLIS_2016_6_19_7_0 = 1466287200000L;
     private DoodleActivity subject;
 
     @Inject
@@ -61,161 +59,40 @@ public class DoodleActivityTest {
     @Captor
     ArgumentCaptor<JsoupCallback> jsoupCallbackCaptor;
     @Captor
-    ArgumentCaptor<ServiceCallback<Doodle>> doodleServiceCallbackCaptor;
+    ArgumentCaptor<ServiceCallback<DoodleJson>> doodleServiceCallbackCaptor;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         ((TestDoodleComponent)((TestDoodleApplication) RuntimeEnvironment.application).getDoodleComponent()).inject(this);
+
+        DateTimeUtils.setCurrentMillisFixed(MILLIS_2016_6_19_7_0);
+
+        subject = Robolectric.setupActivity(DoodleActivity.class);
+
+        ButterKnife.bind(this, subject);
     }
 
     @Test
-    public void onCreate_getDocumentWithIntentStringExtra_whenSendIntent() throws Exception {
-        setupActivityWithSendIntent("http://someurl");
-
-        verify(jsoupWrapper).getDocument(eq("http://someurl"), Matchers.<JsoupCallback>any());
-    }
-
-    @Test
-    public void afterGettingDocument_setsTitle_whenSendIntent() throws Exception {
-        setupActivityWithSendIntent("http://someurl");
-
-        verify(jsoupWrapper).getDocument(eq("http://someurl"), jsoupCallbackCaptor.capture());
-
-        jsoupCallbackCaptor.getValue().onSuccess("Awesome article", ANY_STRING);
-
-        assertThat(doodleTitle.getText().toString()).isEqualTo("Awesome article");
-    }
-
-    @Test
-    public void afterGettingDocument_setsContent_whenSendIntent() throws Exception {
-        setupActivityWithSendIntent("http://someurl");
-
-        verify(jsoupWrapper).getDocument(eq("http://someurl"), jsoupCallbackCaptor.capture());
-
-        jsoupCallbackCaptor.getValue().onSuccess(ANY_STRING, "Brilliant contents");
-
-        assertThat(doodleContent.getText().toString()).isEqualTo("Brilliant contents");
-    }
-
-    @Test
-    public void failedGettingDocument_setsEmptyStringsForTitleAndContent_whenSendIntent() throws Exception {
-        setupActivityWithSendIntent("http://someurl");
-
-        verify(jsoupWrapper).getDocument(eq("http://someurl"), jsoupCallbackCaptor.capture());
-
-        doodleTitle.setText(ANY_STRING);
-        doodleContent.setText(ANY_STRING);
-
-        jsoupCallbackCaptor.getValue().onFailure();
-
-        assertThat(doodleTitle.getText().toString()).isEqualTo("");
-        assertThat(doodleContent.getText().toString()).isEqualTo("");
-    }
-
-    @Test
-    public void onCreate_getsDoodleViaDoodleService_whenDoodleIdIntent() throws Exception {
-        setupActivityWithDoodleIdIntent("some doodle id");
-
-        verify(mockDoodleService).getDoodle(eq("some doodle id"), Matchers.<ServiceCallback<Doodle>>any());
-    }
-
-    @Test
-    public void afterGettingDoodle_setsTitle_whenDoodleIntent() throws Exception {
-        setupActivityWithDoodleIdIntent(ANY_DOODLE_ID);
-
-        getDoodleViaDoodleServiceAndSuccessWith(new Doodle("", "", "doodled", "", ""));
-
-        assertThat(doodleTitle.getText().toString()).isEqualTo("doodled");
-    }
-
-    @Test
-    public void afterGettingDoodle_setsContent_whenDoodleIntent() throws Exception {
-        setupActivityWithDoodleIdIntent(ANY_DOODLE_ID);
-
-        getDoodleViaDoodleServiceAndSuccessWith(new Doodle("", "", "", "doodle doodle doodle pop", ""));
-
-        assertThat(doodleContent.getText().toString()).isEqualTo("doodle doodle doodle pop");
-
-    }
-
-    @Test
-    public void onSubmitClick_callsDoodleServiceToSaveContentInEditText_withEmptyId() throws Exception {
-        setupActivityWithSendIntent("http://someurl");
-        doodleTitle.setText("Jordan");
-        doodleContent.setText("dunk jordan dunk!");
+    public void onSubmitClick_callsDoodleServiceToSave() throws Exception {
+        doodleTitle.setText("this title");
+        doodleContent.setText("that content");
 
         submit.performClick();
 
-        Doodle doodle = new Doodle("", "", "Jordan", "dunk jordan dunk!", "http://someurl");
-        verify(mockDoodleService).saveDoodle(eq(doodle),
-                Matchers.<ServiceCallback<Void>>any());
+        Doodle expected = new Doodle("this title", "that content");
+
+        verify(mockDoodleService).saveDoodle(eq(expected), Matchers.<ServiceCallback<Void>>any());
     }
 
     @Test
-    public void onSubmitClick_callsDoodleServiceToUpdate_withExistingId() throws Exception {
-        setupActivityWithDoodleIdIntent("some id");
-        Doodle doodle = new Doodle("some id", "", "Curry", "three pointer!", "http://otherurl");
-        getDoodleViaDoodleServiceAndSuccessWith(doodle);
-
+    public void onSubmitClick_finishesActivity_whenSuccessfullySaved() throws Exception {
         submit.performClick();
 
-        Doodle expected = new Doodle("some id", "", "Curry", "three pointer!", "http://otherurl");
-
-        verify(mockDoodleService).updateDoodle(eq(expected), Matchers.<ServiceCallback<Void>>any());
-    }
-
-    @Test
-    public void afterSavingDoodleSuccessfully_finishesActivity() throws Exception {
-        setupActivityWithSendIntent("http://someurl");
-
-        clickSubmitToSaveDoodle();
+        verify(mockDoodleService).saveDoodle(any(Doodle.class), voidServiceCallbackCaptor.capture());
 
         voidServiceCallbackCaptor.getValue().onSuccess(null);
 
         assertThat(subject.isFinishing()).isTrue();
-    }
-
-    @Test
-    public void afterSavingDoodleSuccessfully_toastsMessage() throws Exception {
-        setupActivityWithSendIntent("http://someurl");
-
-        clickSubmitToSaveDoodle();
-
-        voidServiceCallbackCaptor.getValue().onSuccess(null);
-
-        assertThat(ShadowToast.getTextOfLatestToast()).isEqualTo("참 잘했어요! 엄지 척!");
-    }
-
-    private void setupActivityWithSendIntent(String url) {
-        Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.putExtra(Intent.EXTRA_TEXT, url);
-        subject = Robolectric.buildActivity(DoodleActivity.class)
-                .withIntent(intent)
-                .create().get();
-
-        ButterKnife.bind(this, subject);
-    }
-
-    private void setupActivityWithDoodleIdIntent(String doodleId) {
-        Intent intent = new Intent();
-        intent.putExtra("DOODLE_ID", doodleId);
-        subject = Robolectric.buildActivity(DoodleActivity.class)
-                .withIntent(intent)
-                .create().get();
-
-        ButterKnife.bind(this, subject);
-    }
-
-    private void clickSubmitToSaveDoodle() {
-        submit.performClick();
-
-        verify(mockDoodleService).saveDoodle(any(Doodle.class), voidServiceCallbackCaptor.capture());
-    }
-
-    private void getDoodleViaDoodleServiceAndSuccessWith(Doodle doodle) {
-        verify(mockDoodleService).getDoodle(anyString(), doodleServiceCallbackCaptor.capture());
-
-        doodleServiceCallbackCaptor.getValue().onSuccess(doodle);
     }
 }

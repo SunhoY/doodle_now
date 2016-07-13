@@ -1,14 +1,17 @@
 package io.harry.doodlenow.service;
 
-import android.support.annotation.NonNull;
+import org.joda.time.DateTime;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import io.harry.doodlenow.api.DoodleApi;
-import io.harry.doodlenow.model.cloudant.CloudantDocument;
-import io.harry.doodlenow.model.cloudant.CloudantResponse;
 import io.harry.doodlenow.model.Doodle;
+import io.harry.doodlenow.model.DoodleJson;
+import io.harry.doodlenow.model.cloudant.CloudantDocument;
+import io.harry.doodlenow.model.cloudant.CloudantQueryResponse;
+import io.harry.doodlenow.model.cloudant.CloudantResponse;
+import io.harry.doodlenow.model.cloudant.CreatedAtQuery;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -20,27 +23,9 @@ public class DoodleService {
         this.doodleApi = doodleApi;
     }
 
-    public void getDoodles(final ServiceCallback<List<Doodle>> serviceCallback) {
-        Call<CloudantResponse<Doodle>> call = doodleApi.getAllDoodles();
-        call.enqueue(new Callback<CloudantResponse<Doodle>>() {
-            @Override
-            public void onResponse(Call<CloudantResponse<Doodle>> call, Response<CloudantResponse<Doodle>> response) {
-                if(!response.isSuccessful()) {
-                    return;
-                }
-
-                List<Doodle> doodles = parseCloudantResponse(response);
-
-                serviceCallback.onSuccess(doodles);
-            }
-
-            @Override
-            public void onFailure(Call<CloudantResponse<Doodle>> call, Throwable t) {}
-        });
-    }
-
     public void saveDoodle(Doodle doodle, final ServiceCallback<Void> serviceCallback) {
-        Call<Void> postDoodleCall = doodleApi.postDoodle(doodle);
+        long currentMillis = new DateTime().getMillis();
+        Call<Void> postDoodleCall = doodleApi.postDoodle(new DoodleJson(doodle, currentMillis));
         postDoodleCall.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
@@ -57,53 +42,30 @@ public class DoodleService {
         });
     }
 
-    public void getDoodle(String doodleId, final ServiceCallback<Doodle> serviceCallback) {
-        Call<Doodle> call = doodleApi.getDoodle(doodleId);
-        call.enqueue(new Callback<Doodle>() {
+    public void getDoodles(long from, long to, final ServiceCallback<List<Doodle>> serviceCallback) {
+        Call<CloudantQueryResponse> call = doodleApi.getDoodles(new CreatedAtQuery(from, to));
+        call.enqueue(new Callback<CloudantQueryResponse>() {
             @Override
-            public void onResponse(Call<Doodle> call, Response<Doodle> response) {
+            public void onResponse(Call<CloudantQueryResponse> call, Response<CloudantQueryResponse> response) {
                 if(!response.isSuccessful()) {
                     return;
                 }
 
-                serviceCallback.onSuccess(response.body());
-            }
+                CloudantQueryResponse body = response.body();
+                List<DoodleJson> documents = body.docs;
 
-            @Override
-            public void onFailure(Call<Doodle> call, Throwable t) {
+                List<Doodle> doodles = new ArrayList<>();
 
-            }
-        });
-    }
-
-    public void updateDoodle(Doodle doodle, final ServiceCallback<Void> serviceCallback) {
-        Call<Void> call = doodleApi.putDoodle(doodle._id, doodle);
-        call.enqueue(new Callback<Void>() {
-            @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-                if(!response.isSuccessful()) {
-                    return;
+                for(DoodleJson document : documents) {
+                    doodles.add(new Doodle(document));
                 }
-
-                serviceCallback.onSuccess(response.body());
+                serviceCallback.onSuccess(doodles);
             }
 
             @Override
-            public void onFailure(Call<Void> call, Throwable t) {
+            public void onFailure(Call<CloudantQueryResponse> call, Throwable t) {
 
             }
         });
-    }
-
-    @NonNull
-    private <T> List<T> parseCloudantResponse(Response<CloudantResponse<T>> response) {
-        CloudantResponse<T> body = response.body();
-        List<CloudantDocument<T>> documents = body.rows;
-        List<T> result = new ArrayList<>();
-
-        for(CloudantDocument<T> document : documents) {
-            result.add(document.doc);
-        }
-        return result;
     }
 }

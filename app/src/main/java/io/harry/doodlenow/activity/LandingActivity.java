@@ -5,6 +5,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import org.joda.time.DateTime;
+
 import java.util.List;
 
 import javax.inject.Inject;
@@ -19,7 +21,7 @@ import io.harry.doodlenow.model.Doodle;
 import io.harry.doodlenow.service.DoodleService;
 import io.harry.doodlenow.service.ServiceCallback;
 
-public class LandingActivity extends AppCompatActivity implements DoodleListAdapter.OnDoodleClickListener {
+public class LandingActivity extends AppCompatActivity {
 
     @Inject
     DoodleService doodleService;
@@ -39,8 +41,6 @@ public class LandingActivity extends AppCompatActivity implements DoodleListAdap
         DoodleComponent doodleComponent = ((DoodleApplication) getApplicationContext()).getDoodleComponent();
         doodleComponent.inject(this);
 
-        doodleListAdapter.setDoodleClickListener(this);
-
         final LinearLayoutManager contentListLayoutManager = new LinearLayoutManager(LandingActivity.this);
         doodleListView.setLayoutManager(contentListLayoutManager);
         doodleListView.setAdapter(doodleListAdapter);
@@ -48,7 +48,10 @@ public class LandingActivity extends AppCompatActivity implements DoodleListAdap
 
     @Override
     protected void onResume() {
-        doodleService.getDoodles(new ServiceCallback<List<Doodle>>() {
+        long startOfYesterday = new DateTime().minusDays(1).withTimeAtStartOfDay().getMillis();
+        long endOfYesterday = new DateTime().withTimeAtStartOfDay().minusSeconds(1).getMillis();
+
+        doodleService.getDoodles(0L, 1468325618001L, new ServiceCallback<List<Doodle>>() {
             @Override
             public void onSuccess(List<Doodle> items) {
                 DoodleListAdapter doodleListAdapter = (DoodleListAdapter) doodleListView.getAdapter();
@@ -62,10 +65,5 @@ public class LandingActivity extends AppCompatActivity implements DoodleListAdap
         });
 
         super.onResume();
-    }
-
-    @Override
-    public void onDoodleClick(Doodle doodle) {
-        startActivity(DoodleActivity.getIntent(this, doodle._id));
     }
 }

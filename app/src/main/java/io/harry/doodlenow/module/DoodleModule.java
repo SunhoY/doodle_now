@@ -23,12 +23,12 @@ public class DoodleModule {
     }
 
     @Provides @Singleton
-    public DoodleService provideContentService(DoodleApi doodleApi) {
+    public DoodleService provideDoodleService(DoodleApi doodleApi) {
         return new DoodleService(doodleApi);
     }
 
     @Provides @Singleton
-    public DoodleApi provideContentApi(Retrofit retrofit) {
+    public DoodleApi provideDoodleApi(Retrofit retrofit) {
         return retrofit.create(DoodleApi.class);
     }
 

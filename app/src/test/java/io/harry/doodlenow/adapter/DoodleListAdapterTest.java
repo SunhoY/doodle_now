@@ -3,7 +3,6 @@ package io.harry.doodlenow.adapter;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
@@ -14,30 +13,28 @@ import java.util.List;
 
 import io.harry.doodlenow.BuildConfig;
 import io.harry.doodlenow.model.Doodle;
+import io.harry.doodlenow.model.DoodleJson;
 
-import static io.harry.doodlenow.adapter.DoodleListAdapter.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.verify;
 
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class)
 public class DoodleListAdapterTest {
     private DoodleListAdapter subject;
     private final int ANY_VIEW_TYPE = 99;
-
-    @Mock
-    OnDoodleClickListener mockDoodleClickListener;
+    private long MILLIS_2016_6_19_8_0 = 1466290800000L;
+    private long MILLIS_2016_6_19_7_0 = 1466287200000L;
+    private long ANY_MILLIS = 0L;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        ArrayList<Doodle> doodles = new ArrayList<>();
+        ArrayList<Doodle> doodle = new ArrayList<>();
 
-        doodles.add(new Doodle("first", "", "first title", "first content", "first url"));
-        doodles.add(new Doodle("second", "", "second title", "second content", "second url"));
+        doodle.add(new Doodle(new DoodleJson("first title", "first content", MILLIS_2016_6_19_8_0)));
+        doodle.add(new Doodle(new DoodleJson("second title", "second content", MILLIS_2016_6_19_7_0)));
 
-        subject = new DoodleListAdapter(RuntimeEnvironment.application, doodles);
-        subject.setDoodleClickListener(mockDoodleClickListener);
+        subject = new DoodleListAdapter(RuntimeEnvironment.application, doodle);
     }
 
     @Test
@@ -56,7 +53,6 @@ public class DoodleListAdapterTest {
 
         assertThat(firstViewHolder.title.getText()).isEqualTo("first title");
         assertThat(secondViewHolder.title.getText()).isEqualTo("second title");
-
     }
 
     @Test
@@ -67,24 +63,13 @@ public class DoodleListAdapterTest {
     @Test
     public void refreshDoodles_clearsAllDoodlesAndAddNewDoodles() throws Exception {
         List<Doodle> newDoodles = new ArrayList<>();
-        newDoodles.add(new Doodle("first id", "", "first title", "first content", "first url"));
-        newDoodles.add(new Doodle("second id", "", "second title", "second content", "second url"));
-        newDoodles.add(new Doodle("third id", "", "third title", "third content", "third url"));
+        newDoodles.add(new Doodle(new DoodleJson("first title", "first content", ANY_MILLIS)));
+        newDoodles.add(new Doodle(new DoodleJson("second title", "second content", ANY_MILLIS)));
+        newDoodles.add(new Doodle(new DoodleJson("third title", "third content", ANY_MILLIS)));
 
         subject.refreshDoodles(newDoodles);
 
         assertThat(subject.getItemCount()).isEqualTo(3);
-    }
-
-    @Test
-    public void onItemClick_runsOnDoodleClickListener() throws Exception {
-        DoodleListAdapter.SimpleViewHolder firstViewHolder =
-                (DoodleListAdapter.SimpleViewHolder) subject.onCreateViewHolder(null, ANY_VIEW_TYPE);
-        subject.onBindViewHolder(firstViewHolder, 0);
-
-        firstViewHolder.container.performClick();
-
-        verify(mockDoodleClickListener).onDoodleClick(new Doodle("first", "", "first title", "first content", "first url"));
     }
 
     private DoodleListAdapter.SimpleViewHolder createAndBindViewHolder(int position) {

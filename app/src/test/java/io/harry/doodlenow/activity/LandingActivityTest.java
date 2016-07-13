@@ -1,8 +1,10 @@
 package io.harry.doodlenow.activity;
 
-import android.content.Intent;
-
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeUtils;
+import org.joda.time.DateTimeZone;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -24,17 +26,21 @@ import io.harry.doodlenow.TestDoodleApplication;
 import io.harry.doodlenow.adapter.DoodleListAdapter;
 import io.harry.doodlenow.component.TestDoodleComponent;
 import io.harry.doodlenow.model.Doodle;
+import io.harry.doodlenow.model.DoodleJson;
 import io.harry.doodlenow.service.DoodleService;
 import io.harry.doodlenow.service.ServiceCallback;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
-import static org.robolectric.Shadows.shadowOf;
 
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class)
 public class LandingActivityTest {
     private LandingActivity subject;
+    private long MILLIS_2016_6_19_9_0 = 1466294400000L;
+    private long MILLIS_2016_6_19_8_0 = 1466290800000L;
+    private long MILLIS_2016_6_19_7_0 = 1466287200000L;
 
     @Inject
     DoodleService doodleService;
@@ -42,7 +48,7 @@ public class LandingActivityTest {
     DoodleListAdapter doodleListAdapter;
 
     @Captor
-    ArgumentCaptor<ServiceCallback<List<Doodle>>> contentListServiceCallbackCaptor;
+    ArgumentCaptor<ServiceCallback<List<Doodle>>> doodleListServiceCallbackCaptor;
 
     @Before
     public void setUp() throws Exception {
@@ -51,45 +57,35 @@ public class LandingActivityTest {
         TestDoodleComponent doodleComponent = (TestDoodleComponent) ((TestDoodleApplication) RuntimeEnvironment.application).getDoodleComponent();
         doodleComponent.inject(this);
 
+        DateTimeUtils.setCurrentMillisFixed(MILLIS_2016_6_19_9_0);
+
         subject = Robolectric.setupActivity(LandingActivity.class);
     }
 
     @Test
-    public void onCreate_setsSubjectOnListAdapterAsAnClickListener() throws Exception {
-        verify(doodleListAdapter).setDoodleClickListener(subject);
+    @Ignore
+    public void onResume_callsDoodleServiceToGetDoodlesCreatedYesterday() throws Exception {
+        long from = new DateTime(2016, 6, 18, 0, 0, DateTimeZone.forOffsetHours(9)).getMillis();
+        long to = new DateTime(2016, 6, 18, 23, 59, 59, DateTimeZone.forOffsetHours(9)).getMillis();
+
+
+        verify(doodleService).getDoodles(eq(from), eq(to), Matchers.<ServiceCallback<List<Doodle>>>any());
     }
 
     @Test
-    public void onResume_callsContentServiceToGetContents() throws Exception {
-        verify(doodleService).getDoodles(Matchers.<ServiceCallback<List<Doodle>>>any());
-    }
-
-    @Test
-    public void afterGettingContentList_refreshesContentListView() throws Exception {
-        verify(doodleService).getDoodles(contentListServiceCallbackCaptor.capture());
+    public void afterGettingDoodleList_refreshesContentListView() throws Exception {
+        verify(doodleService).getDoodles(anyLong(), anyLong(), doodleListServiceCallbackCaptor.capture());
 
         ArrayList<Doodle> items = new ArrayList<>();
-        items.add(new Doodle("1", "", "beat it", "beat it!", "beatit.com"));
-        items.add(new Doodle("2", "", "air walk", "air walk!", "airwork.com"));
+        items.add(new Doodle(new DoodleJson("beat it", "beat it!", MILLIS_2016_6_19_8_0)));
+        items.add(new Doodle(new DoodleJson("air walk", "air walk!", MILLIS_2016_6_19_7_0)));
 
-        contentListServiceCallbackCaptor.getValue().onSuccess(items);
+        doodleListServiceCallbackCaptor.getValue().onSuccess(items);
 
         ArrayList<Doodle> expected = new ArrayList<>();
-        expected.add(new Doodle("1", "", "beat it", "beat it!", "beatit.com"));
-        expected.add(new Doodle("2", "", "air walk", "air walk!", "airwork.com"));
+        expected.add(new Doodle(new DoodleJson("beat it", "beat it!", MILLIS_2016_6_19_8_0)));
+        expected.add(new Doodle(new DoodleJson("air walk", "air walk!", MILLIS_2016_6_19_7_0)));
 
         verify(doodleListAdapter).refreshDoodles(expected);
-    }
-
-    @Test
-    public void onDoodleClick_startsDoodleActivityWithDoodleId() throws Exception {
-        Doodle doodle = new Doodle("1", "", "title", "content", "url");
-
-        Intent expectedIntent = new Intent(subject, DoodleActivity.class);
-        expectedIntent.putExtra("DOODLE_ID", "1");
-
-        subject.onDoodleClick(doodle);
-
-        assertThat(shadowOf(subject).getNextStartedActivity()).isEqualTo(expectedIntent);
     }
 }

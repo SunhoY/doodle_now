@@ -1,18 +1,32 @@
 package io.harry.doodlenow.model;
 
-public class Doodle {
-    public final String _id;
-    public final String _rev;
-    public final String title;
-    public final String content;
-    public final String url;
+import org.joda.time.DateTime;
 
-    public Doodle(String id, String revision, String title, String content, String url) {
-        this._id = id;
-        this._rev = revision;
+public class Doodle {
+    private String title;
+    private String content;
+
+    private String elapsedHours;
+
+    public Doodle(DoodleJson doodleJson) {
+        this.title = doodleJson.title;
+        this.content = doodleJson.content;
+
+        int elapsedHours = new DateTime().getHourOfDay() - new DateTime(doodleJson.createdAt).getHourOfDay();
+        this.elapsedHours = elapsedHours + "hours ago";
+    }
+
+    public Doodle(String title, String content) {
         this.title = title;
         this.content = content;
-        this.url = url;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getContent() {
+        return content;
     }
 
     @Override
@@ -22,22 +36,18 @@ public class Doodle {
 
         Doodle doodle = (Doodle) o;
 
-        if (_id != null ? !_id.equals(doodle._id) : doodle._id != null) return false;
-        if (_rev != null ? !_rev.equals(doodle._rev) : doodle._rev != null) return false;
         if (title != null ? !title.equals(doodle.title) : doodle.title != null) return false;
         if (content != null ? !content.equals(doodle.content) : doodle.content != null)
             return false;
-        return url != null ? url.equals(doodle.url) : doodle.url == null;
+        return elapsedHours != null ? elapsedHours.equals(doodle.elapsedHours) : doodle.elapsedHours == null;
 
     }
 
     @Override
     public int hashCode() {
-        int result = _id != null ? _id.hashCode() : 0;
-        result = 31 * result + (_rev != null ? _rev.hashCode() : 0);
-        result = 31 * result + (title != null ? title.hashCode() : 0);
+        int result = title != null ? title.hashCode() : 0;
         result = 31 * result + (content != null ? content.hashCode() : 0);
-        result = 31 * result + (url != null ? url.hashCode() : 0);
+        result = 31 * result + (elapsedHours != null ? elapsedHours.hashCode() : 0);
         return result;
     }
 }

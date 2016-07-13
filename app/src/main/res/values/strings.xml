@@ -3,7 +3,7 @@
 
     <string name="authentication_string">zillaci:1q2w3e4r</string>
     <string name="backend_url">https://zillaci.cloudant.com</string>
-    <string name="doodle_anything">doodle anything</string>
-    <string name="doodle">DOODLE</string>
+    <string name="doodle_anything">doodleJson anything</string>
+    <string name="doodleJson">DOODLE</string>
     <string name="write_title_here">Write title here</string>
 </resources>

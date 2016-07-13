@@ -1,6 +1,8 @@
 package io.harry.doodlenow.model.cloudant;
 
-public class CloudantDocument<T> {
+import io.harry.doodlenow.model.DoodleJson;
+
+public class CloudantDocument {
     public String id;
-    public T doc;
+    public DoodleJson doc;
 }

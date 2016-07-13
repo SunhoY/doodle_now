@@ -37,8 +37,8 @@ public class DoodleListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         final Doodle doodle = doodles.get(position);
 
-        ((SimpleViewHolder) holder).title.setText(doodle.title);
-        ((SimpleViewHolder) holder).content.setText(doodle.content);
+        ((SimpleViewHolder) holder).title.setText(doodle.getTitle());
+        ((SimpleViewHolder) holder).content.setText(doodle.getContent());
 
         ((SimpleViewHolder) holder).container.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,9 +72,5 @@ public class DoodleListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             title = (TextView) itemView.findViewById(R.id.doodle_title);
             content = (TextView) itemView.findViewById(R.id.doodle_content);
         }
-    }
-
-    public void setDoodleClickListener(OnDoodleClickListener doodleClickListener) {
-        this.doodleClickListener = doodleClickListener;
     }
 }

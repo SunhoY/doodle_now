@@ -7,6 +7,7 @@ import dagger.Provides;
 import io.harry.doodlenow.adapter.DoodleListAdapter;
 import io.harry.doodlenow.api.DoodleApi;
 import io.harry.doodlenow.service.DoodleService;
+import io.harry.doodlenow.view.DoodleIcon;
 
 import static org.mockito.Mockito.mock;
 
@@ -20,6 +21,11 @@ public class TestDoodleModule {
     @Provides @Singleton
     public DoodleApi provideDoodleApi() {
         return mock(DoodleApi.class);
+    }
+
+    @Provides @Singleton
+    public DoodleIcon provideDoodleIcon() {
+        return mock(DoodleIcon.class);
     }
 
     @Provides @Singleton

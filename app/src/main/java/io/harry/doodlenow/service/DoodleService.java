@@ -8,9 +8,7 @@ import java.util.List;
 import io.harry.doodlenow.api.DoodleApi;
 import io.harry.doodlenow.model.Doodle;
 import io.harry.doodlenow.model.DoodleJson;
-import io.harry.doodlenow.model.cloudant.CloudantDocument;
 import io.harry.doodlenow.model.cloudant.CloudantQueryResponse;
-import io.harry.doodlenow.model.cloudant.CloudantResponse;
 import io.harry.doodlenow.model.cloudant.CreatedAtQuery;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -25,7 +23,7 @@ public class DoodleService {
 
     public void saveDoodle(Doodle doodle, final ServiceCallback<Void> serviceCallback) {
         long currentMillis = new DateTime().getMillis();
-        Call<Void> postDoodleCall = doodleApi.postDoodle(new DoodleJson(doodle, currentMillis));
+        Call<Void> postDoodleCall = doodleApi.postDoodle(new DoodleJson(doodle));
         postDoodleCall.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {

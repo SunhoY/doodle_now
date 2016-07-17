@@ -7,21 +7,26 @@
         android:icon="@mipmap/app_logo"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        android:name=".DoodleApplication">
-        <activity android:name=".activity.LandingActivity">
+        android:name=".DoodleApplication"
+        android:theme="@style/Theme.AppCompat.Light">
+        <activity android:name=".activity.SplashActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+            </intent-filter>
         </activity>
-        <activity android:name=".activity.DoodleActivity">
+        <activity android:name=".activity.LandingActivity"/>
+        <activity android:name=".activity.CatchDoodleActivity">
             <intent-filter>
                 <action android:name="android.intent.action.SEND"/>
-                <category android:name="android.intent.category.DEFAULT"/>
                 <data android:mimeType="*/*"/>
             </intent-filter>
         </activity>
+        <service android:name=".background.DoodlePostService"/>
     </application>
-
 </manifest>

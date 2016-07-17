@@ -12,6 +12,7 @@ import io.harry.doodlenow.adapter.DoodleListAdapter;
 import io.harry.doodlenow.api.DoodleApi;
 import io.harry.doodlenow.model.Doodle;
 import io.harry.doodlenow.service.DoodleService;
+import io.harry.doodlenow.view.DoodleIcon;
 import retrofit2.Retrofit;
 
 @Module
@@ -30,6 +31,11 @@ public class DoodleModule {
     @Provides @Singleton
     public DoodleApi provideDoodleApi(Retrofit retrofit) {
         return retrofit.create(DoodleApi.class);
+    }
+
+    @Provides
+    public DoodleIcon provideDoodleIcon() {
+        return new DoodleIcon(context);
     }
 
     @Provides

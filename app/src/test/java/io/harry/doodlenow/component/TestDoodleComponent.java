@@ -3,20 +3,24 @@ package io.harry.doodlenow.component;
 import javax.inject.Singleton;
 
 import dagger.Component;
-import io.harry.doodlenow.activity.DoodleActivityTest;
 import io.harry.doodlenow.activity.LandingActivityTest;
+import io.harry.doodlenow.adapter.DoodleListAdapterTest;
+import io.harry.doodlenow.background.DoodlePostServiceTest;
 import io.harry.doodlenow.module.TestDoodleModule;
 import io.harry.doodlenow.module.TestHTMLModule;
 import io.harry.doodlenow.module.TestNetworkModule;
+import io.harry.doodlenow.module.TestPicassoModule;
 
 @Singleton
 @Component(modules = {
         TestDoodleModule.class,
         TestNetworkModule.class,
         TestHTMLModule.class,
+        TestPicassoModule.class,
     }
 )
 public interface TestDoodleComponent extends DoodleComponent {
     void inject(LandingActivityTest landingActivityTest);
-    void inject(DoodleActivityTest doodleActivityTest);
+    void inject(DoodlePostServiceTest doodlePostServiceTest);
+    void inject(DoodleListAdapterTest doodleListAdapterTest);
 }

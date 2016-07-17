@@ -3,18 +3,14 @@ package io.harry.doodlenow.model;
 public class DoodleJson {
     public final String title;
     public final String content;
+    public final String imageUrl;
     public final long createdAt;
 
-    public DoodleJson(String title, String content, long createdAt) {
-        this.title = title;
-        this.content = content;
-        this.createdAt = createdAt;
-    }
-
-    public DoodleJson(Doodle doodle, long createdAt) {
+    public DoodleJson(Doodle doodle) {
         this.title = doodle.getTitle();
         this.content = doodle.getContent();
-        this.createdAt = createdAt;
+        this.imageUrl = doodle.getImageUrl();
+        this.createdAt = doodle.getCreatedAt();
     }
 
     @Override

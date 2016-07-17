@@ -33,6 +33,7 @@ dependencies {
     compile 'com.jakewharton:butterknife:8.0.1'
     compile 'org.jsoup:jsoup:1.9.2'
     compile 'joda-time:joda-time:2.9.4'
+    compile 'com.squareup.picasso:picasso:2.5.2'
     apt 'com.google.dagger:dagger-compiler:2.4'
     apt 'com.jakewharton:butterknife-compiler:8.0.1'
     provided 'javax.annotation:jsr250-api:1.0'

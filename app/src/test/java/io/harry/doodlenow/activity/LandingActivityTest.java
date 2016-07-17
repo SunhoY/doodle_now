@@ -21,12 +21,12 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import butterknife.ButterKnife;
 import io.harry.doodlenow.BuildConfig;
 import io.harry.doodlenow.TestDoodleApplication;
 import io.harry.doodlenow.adapter.DoodleListAdapter;
 import io.harry.doodlenow.component.TestDoodleComponent;
 import io.harry.doodlenow.model.Doodle;
-import io.harry.doodlenow.model.DoodleJson;
 import io.harry.doodlenow.service.DoodleService;
 import io.harry.doodlenow.service.ServiceCallback;
 
@@ -60,6 +60,8 @@ public class LandingActivityTest {
         DateTimeUtils.setCurrentMillisFixed(MILLIS_2016_6_19_9_0);
 
         subject = Robolectric.setupActivity(LandingActivity.class);
+
+        ButterKnife.bind(this, subject);
     }
 
     @Test
@@ -67,7 +69,6 @@ public class LandingActivityTest {
     public void onResume_callsDoodleServiceToGetDoodlesCreatedYesterday() throws Exception {
         long from = new DateTime(2016, 6, 18, 0, 0, DateTimeZone.forOffsetHours(9)).getMillis();
         long to = new DateTime(2016, 6, 18, 23, 59, 59, DateTimeZone.forOffsetHours(9)).getMillis();
-
 
         verify(doodleService).getDoodles(eq(from), eq(to), Matchers.<ServiceCallback<List<Doodle>>>any());
     }
@@ -77,14 +78,14 @@ public class LandingActivityTest {
         verify(doodleService).getDoodles(anyLong(), anyLong(), doodleListServiceCallbackCaptor.capture());
 
         ArrayList<Doodle> items = new ArrayList<>();
-        items.add(new Doodle(new DoodleJson("beat it", "beat it!", MILLIS_2016_6_19_8_0)));
-        items.add(new Doodle(new DoodleJson("air walk", "air walk!", MILLIS_2016_6_19_7_0)));
+        items.add(new Doodle("beat it", "beat it!", "http://beatit.com", MILLIS_2016_6_19_8_0));
+        items.add(new Doodle("air walk", "air walk!", "http://airwalk.com", MILLIS_2016_6_19_7_0));
 
         doodleListServiceCallbackCaptor.getValue().onSuccess(items);
 
         ArrayList<Doodle> expected = new ArrayList<>();
-        expected.add(new Doodle(new DoodleJson("beat it", "beat it!", MILLIS_2016_6_19_8_0)));
-        expected.add(new Doodle(new DoodleJson("air walk", "air walk!", MILLIS_2016_6_19_7_0)));
+        expected.add(new Doodle("beat it", "beat it!", "http://beatit.com", MILLIS_2016_6_19_8_0));
+        expected.add(new Doodle("air walk", "air walk!", "http://airwalk.com", MILLIS_2016_6_19_7_0));
 
         verify(doodleListAdapter).refreshDoodles(expected);
     }

@@ -1,34 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:layout_height="192dp"
+    android:background="@color/white"
+    >
+
+    <TextView
+        android:id="@+id/hours_elapsed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="17dp"
+        android:layout_marginStart="17dp"
+        android:layout_marginTop="14dp"
+        android:textColor="#999999"
+        android:textSize="14sp"
+        tools:text="7 hours ago" />
+
     <TextView
         android:id="@+id/doodle_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:text="Hello People!"
-        android:textColor="@color/colorPrimary"
+        android:layout_marginEnd="17dp"
+        android:layout_marginStart="17dp"
+        android:layout_marginTop="45dp"
+        android:lines="1"
+        android:textColor="#555555"
         android:textSize="20sp"
-        android:lines="1"/>
+        tools:text="Hello People!" />
 
-    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    <TextView
         android:id="@+id/doodle_content"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:layout_marginTop="5dp"
-        android:gravity="center_vertical"
-        android:layout_below="@id/doodle_title"
-        android:textSize="12sp"
-        android:textColor="@color/secondary_text_default_material_light"
-        android:lines="3"
-        tools:text="jsoup is a Java library for working with real-world HTML. It provides a very convenient API for extracting and manipulating data, using the best of DOM, CSS, and jquery-like methods. \n jsoup implements the WHATWG HTML5 specification, and parses HTML to the same DOM as modern browsers do."
+        android:layout_width="200dp"
+        android:layout_height="100dp"
+        android:layout_marginEnd="128dp"
+        android:layout_marginStart="17dp"
+        android:layout_marginTop="71dp"
         android:paddingBottom="5dp"
-        />
+        android:textColor="@color/secondary_text_default_material_light"
+        android:textSize="12sp"
+        tools:text="jsoup is a Java library for working with real-world HTML. It provides a very convenient API for extracting and manipulating data, using the best of DOM, CSS, and jquery-like methods. \n jsoup implements the WHATWG HTML5 specification, and parses HTML to the same DOM as modern browsers do." />
 
-    <View
-        android:layout_width="wrap_content"
-        android:layout_height="1dp"
+    <ImageView
+        android:id="@+id/doodle_preview"
+        android:layout_width="104dp"
+        android:layout_height="104dp"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:background="@drawable/list_divider"/>
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:scaleType="fitCenter"
+        android:src="@mipmap/app_logo" />
 </RelativeLayout>

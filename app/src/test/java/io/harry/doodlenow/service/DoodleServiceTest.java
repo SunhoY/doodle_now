@@ -21,9 +21,7 @@ import io.harry.doodlenow.BuildConfig;
 import io.harry.doodlenow.api.DoodleApi;
 import io.harry.doodlenow.model.Doodle;
 import io.harry.doodlenow.model.DoodleJson;
-import io.harry.doodlenow.model.cloudant.CloudantDocument;
 import io.harry.doodlenow.model.cloudant.CloudantQueryResponse;
-import io.harry.doodlenow.model.cloudant.CloudantResponse;
 import io.harry.doodlenow.model.cloudant.CreatedAtQuery;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -51,13 +49,14 @@ public class DoodleServiceTest {
     Call<Void> mockVoidCall;
     @Mock
     Call<DoodleJson> mockDoodleCall;
+    @Mock
+    ServiceCallback<Void> mockVoidServiceCallback;
     @Captor
     ArgumentCaptor<Callback<CloudantQueryResponse>> cloudantQueryCallbackCaptor;
     @Captor
     ArgumentCaptor<Callback<Void>> voidCallbackCaptor;
     @Captor
     ArgumentCaptor<Callback<DoodleJson>> doodleCallbackCaptor;
-
 
     @Before
     public void setUp() throws Exception {
@@ -97,8 +96,8 @@ public class DoodleServiceTest {
         verify(mockCloudantQueryCall).enqueue(cloudantQueryCallbackCaptor.capture());
 
         CloudantQueryResponse body = new CloudantQueryResponse();
-        DoodleJson first = new DoodleJson("first title", "first content", 0L);
-        DoodleJson second = new DoodleJson("second title", "second content", 1L);
+        DoodleJson first = new DoodleJson(createMockDoodle("title 1", "content 1" , "image url 1", 1L));
+        DoodleJson second = new DoodleJson(createMockDoodle("title 2", "content 2" , "image url 2", 2L));
 
         body.docs = Arrays.asList(first, second);
 
@@ -115,11 +114,11 @@ public class DoodleServiceTest {
     public void saveDoodle_getsCallObjectWithContent() throws Exception {
         when(mockDoodleApi.postDoodle(any(DoodleJson.class))).thenReturn(mockVoidCall);
 
-        Doodle mockDoodle = createMockDoodle("this title", "that content");
+        Doodle mockDoodle = createMockDoodle("this title", "that content", "imageUrl", 2L);
 
-        subject.saveDoodle(mockDoodle, mock(ServiceCallback.class));
+        subject.saveDoodle(mockDoodle, mockVoidServiceCallback);
 
-        DoodleJson doodleJson = new DoodleJson("this title", "that content", SOME_MILLIS);
+        DoodleJson doodleJson = new DoodleJson(createMockDoodle("this title", "that content", "imageUrl", 2L));
         verify(mockDoodleApi).postDoodle(doodleJson);
     }
 
@@ -127,7 +126,7 @@ public class DoodleServiceTest {
     public void saveDoodle_enqueuesCallbackOnCallObject() throws Exception {
         when(mockDoodleApi.postDoodle(any(DoodleJson.class))).thenReturn(mockVoidCall);
 
-        subject.saveDoodle(mock(Doodle.class), mock(ServiceCallback.class));
+        subject.saveDoodle(mock(Doodle.class), mockVoidServiceCallback);
 
         verify(mockVoidCall).enqueue(Matchers.<Callback<Void>>any());
     }
@@ -135,24 +134,25 @@ public class DoodleServiceTest {
     @Test
     public void whenSaveDoodleSuccessfully_runsSuccessServiceCallback() throws Exception {
         when(mockDoodleApi.postDoodle(any(DoodleJson.class))).thenReturn(mockVoidCall);
-        ServiceCallback<Void> mockServiceCallback = mock(ServiceCallback.class);
-        Doodle mockDoodle = createMockDoodle("this title", "that content");
+        Doodle mockDoodle = createMockDoodle("this title", "that content", "imageUrl", 2L);
 
-        subject.saveDoodle(mockDoodle, mockServiceCallback);
+        subject.saveDoodle(mockDoodle, mockVoidServiceCallback);
 
         verify(mockVoidCall).enqueue(voidCallbackCaptor.capture());
 
         Response<Void> response = Response.success(null);
         voidCallbackCaptor.getValue().onResponse(mockVoidCall, response);
 
-        verify(mockServiceCallback).onSuccess(null);
+        verify(mockVoidServiceCallback).onSuccess(null);
     }
 
     @NonNull
-    private Doodle createMockDoodle(String title, String content) {
+    private Doodle createMockDoodle(String title, String content, String imageUrl, Long createdAt) {
         Doodle mockDoodle = mock(Doodle.class);
         when(mockDoodle.getTitle()).thenReturn(title);
         when(mockDoodle.getContent()).thenReturn(content);
+        when(mockDoodle.getImageUrl()).thenReturn(imageUrl);
+        when(mockDoodle.getCreatedAt()).thenReturn(createdAt);
         return mockDoodle;
     }
 }

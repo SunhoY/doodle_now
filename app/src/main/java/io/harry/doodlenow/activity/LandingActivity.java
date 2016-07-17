@@ -17,6 +17,7 @@ import io.harry.doodlenow.DoodleApplication;
 import io.harry.doodlenow.R;
 import io.harry.doodlenow.adapter.DoodleListAdapter;
 import io.harry.doodlenow.component.DoodleComponent;
+import io.harry.doodlenow.itemdecoration.VerticalSpaceItemDecoration;
 import io.harry.doodlenow.model.Doodle;
 import io.harry.doodlenow.service.DoodleService;
 import io.harry.doodlenow.service.ServiceCallback;
@@ -28,7 +29,7 @@ public class LandingActivity extends AppCompatActivity {
     @Inject
     DoodleListAdapter doodleListAdapter;
 
-    @BindView(R.id.doodleList)
+    @BindView(R.id.doodle_list)
     RecyclerView doodleListView;
 
     @Override
@@ -44,6 +45,7 @@ public class LandingActivity extends AppCompatActivity {
         final LinearLayoutManager contentListLayoutManager = new LinearLayoutManager(LandingActivity.this);
         doodleListView.setLayoutManager(contentListLayoutManager);
         doodleListView.setAdapter(doodleListAdapter);
+        doodleListView.addItemDecoration(new VerticalSpaceItemDecoration(this, R.dimen.list_view_vertical_space));
     }
 
     @Override
@@ -51,7 +53,7 @@ public class LandingActivity extends AppCompatActivity {
         long startOfYesterday = new DateTime().minusDays(1).withTimeAtStartOfDay().getMillis();
         long endOfYesterday = new DateTime().withTimeAtStartOfDay().minusSeconds(1).getMillis();
 
-        doodleService.getDoodles(0L, 1468325618001L, new ServiceCallback<List<Doodle>>() {
+        doodleService.getDoodles(0L, 1468896686000L, new ServiceCallback<List<Doodle>>() {
             @Override
             public void onSuccess(List<Doodle> items) {
                 DoodleListAdapter doodleListAdapter = (DoodleListAdapter) doodleListView.getAdapter();

@@ -9,6 +9,8 @@ import org.jsoup.nodes.Document;
 import java.io.IOException;
 
 public class JsoupAsyncTask extends AsyncTask<Void, Void, Document> {
+    public static final String CHROME_USER_AGENT = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36";
+
     final String url;
     final JsoupCallback jsoupCallback;
 
@@ -19,21 +21,23 @@ public class JsoupAsyncTask extends AsyncTask<Void, Void, Document> {
 
     @Override
     protected void onPostExecute(Document document) {
-        String title = document.title();
+        String title = document.select("meta[property=og:title]").attr("content");
+        String description = document.select("meta[property=og:description]").attr("content");
+        String imageUrl = document.select("meta[property=og:image]").attr("content");
         if(TextUtils.isEmpty(title)) {
-            title = document.select("meta[property=og:title]").attr("content");
+            title = document.title();
         }
-        String description = document.select("meta[name=description]").attr("content");
         if(TextUtils.isEmpty(description)) {
-            description = document.select("meta[property=og:description]").attr("content");
+            description = document.select("meta[name=description]").attr("content");
         }
-        jsoupCallback.onSuccess(title, description);
+
+        jsoupCallback.onSuccess(title, description, imageUrl);
     }
 
     @Override
     protected Document doInBackground(Void... params) {
         try {
-            return Jsoup.connect(url).userAgent("Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36").get();
+            return Jsoup.connect(url).userAgent(CHROME_USER_AGENT).get();
         } catch (IOException e) {
             e.printStackTrace();
             return Document.createShell(url);

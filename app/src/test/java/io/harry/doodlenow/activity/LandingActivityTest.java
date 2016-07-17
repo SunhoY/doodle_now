@@ -23,10 +23,12 @@ import io.harry.doodlenow.R;
 import io.harry.doodlenow.TestDoodleApplication;
 import io.harry.doodlenow.adapter.DoodlePagerAdapter;
 import io.harry.doodlenow.component.TestDoodleComponent;
+import io.harry.doodlenow.fragment.DoodleListFragment;
 import io.harry.doodlenow.wrapper.DoodlePagerAdapterWrapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(RobolectricGradleTestRunner.class)
@@ -45,6 +47,10 @@ public class LandingActivityTest {
 
     @Mock
     DoodlePagerAdapter mockDoodlePagerAdapter;
+    @Mock
+    DoodleListFragment firstMockFragment;
+    @Mock
+    DoodleListFragment secondMockFragment;
 
     @Before
     public void setUp() throws Exception {
@@ -54,6 +60,8 @@ public class LandingActivityTest {
 
         when(mockDoodlePagerAdapterWrapper.getDoodlePagerAdapter(any(AppCompatActivity.class))).thenReturn(mockDoodlePagerAdapter);
         when(mockDoodlePagerAdapter.getCount()).thenReturn(TAB_COUNT);
+        when(mockDoodlePagerAdapter.getItem(0)).thenReturn(firstMockFragment);
+        when(mockDoodlePagerAdapter.getItem(1)).thenReturn(secondMockFragment);
 
         subject = Robolectric.setupActivity(LandingActivity.class);
 
@@ -82,13 +90,20 @@ public class LandingActivityTest {
     }
 
     @Test
-    public void onDoodleTabSelected_changesCurrentItemOnDoodleViewPager() throws Exception {
-        doodleTabs.getTabAt(0).select();
-
-        assertThat(doodleViewPager.getCurrentItem()).isEqualTo(0);
-
+    public void onDoodleTabSelected_runsOnResumeForSelectedItem() throws Exception {
         doodleTabs.getTabAt(1).select();
+        verify(secondMockFragment).onResume();
 
+        doodleTabs.getTabAt(0).select();
+        verify(firstMockFragment).onResume();
+    }
+
+    @Test
+    public void onDoodleTabSelected_changesCurrentItemOnDoodleViewPager() throws Exception {
+        doodleTabs.getTabAt(1).select();
         assertThat(doodleViewPager.getCurrentItem()).isEqualTo(1);
+
+        doodleTabs.getTabAt(0).select();
+        assertThat(doodleViewPager.getCurrentItem()).isEqualTo(0);
     }
 }

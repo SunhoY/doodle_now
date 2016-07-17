@@ -49,6 +49,7 @@ public class LandingActivity extends AppCompatActivity {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 doodleViewPager.setCurrentItem(tab.getPosition());
+                ((DoodlePagerAdapter) doodleViewPager.getAdapter()).getItem(tab.getPosition()).onResume();
             }
 
             @Override

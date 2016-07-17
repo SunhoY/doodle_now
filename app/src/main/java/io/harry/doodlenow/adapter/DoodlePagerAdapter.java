@@ -33,7 +33,7 @@ public class DoodlePagerAdapter extends FragmentStatePagerAdapter {
                 return doodleListFragmentWrapper.getDoodleListFragment(start, end);
             case 1:
             default:
-                end = new DateTime().getMillis();
+                end = Long.MAX_VALUE;
                 start = new DateTime().minusDays(7).withTimeAtStartOfDay().getMillis();
 
                 return doodleListFragmentWrapper.getDoodleListFragment(start, end);

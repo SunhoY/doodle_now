@@ -9,6 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.joda.time.DateTime;
+
 import java.util.List;
 
 import javax.inject.Inject;
@@ -60,7 +62,14 @@ public class DoodleListFragment extends Fragment {
 
     @Override
     public void onResume() {
-        doodleService.getDoodles(start, end, new ServiceCallback<List<Doodle>>() {
+        long endMillis;
+        if(end == Long.MAX_VALUE) {
+            endMillis = new DateTime().getMillis();
+        } else {
+            endMillis = end;
+        }
+
+        doodleService.getDoodles(start, endMillis, new ServiceCallback<List<Doodle>>() {
             @Override
             public void onSuccess(List<Doodle> items) {
                 DoodleListAdapter doodleListAdapter = (DoodleListAdapter) doodleList.getAdapter();

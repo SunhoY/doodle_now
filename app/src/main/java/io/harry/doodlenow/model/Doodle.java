@@ -26,7 +26,13 @@ public class Doodle {
     }
 
     private int calculateElapsedHours(long createdAt) {
-        return new DateTime().getHourOfDay() - new DateTime(createdAt).getHourOfDay();
+        DateTime current = new DateTime();
+        DateTime target = new DateTime(createdAt);
+
+        int days = current.getDayOfYear() - target.getDayOfYear();
+        int hours = current.getHourOfDay() - target.getHourOfDay();
+
+        return days * 24 + hours;
     }
 
     public String getTitle() {

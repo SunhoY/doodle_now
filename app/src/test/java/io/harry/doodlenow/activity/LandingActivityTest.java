@@ -90,15 +90,6 @@ public class LandingActivityTest {
     }
 
     @Test
-    public void onDoodleTabSelected_runsOnResumeForSelectedItem() throws Exception {
-        doodleTabs.getTabAt(1).select();
-        verify(secondMockFragment).onResume();
-
-        doodleTabs.getTabAt(0).select();
-        verify(firstMockFragment).onResume();
-    }
-
-    @Test
     public void onDoodleTabSelected_changesCurrentItemOnDoodleViewPager() throws Exception {
         doodleTabs.getTabAt(1).select();
         assertThat(doodleViewPager.getCurrentItem()).isEqualTo(1);

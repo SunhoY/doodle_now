@@ -49,10 +49,10 @@ public class DoodlePagerAdapterTest {
     }
 
     @Test
-    public void getSecondItem_returnsFragmentWith0AMWeekAgoToCurrentTime() throws Exception {
+    public void getSecondItem_returnsFragmentWith0AMWeekAgoToLongMaxValue() throws Exception {
         subject.getItem(1);
 
-        verify(mockDoodleListFragmentWrapper).getDoodleListFragment(MILLIS_2016_7_10_0_0, MILLIS_2016_7_17_10_0);
+        verify(mockDoodleListFragmentWrapper).getDoodleListFragment(MILLIS_2016_7_10_0_0, Long.MAX_VALUE);
     }
 
     @Test

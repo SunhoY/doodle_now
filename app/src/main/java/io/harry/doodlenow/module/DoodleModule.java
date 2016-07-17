@@ -13,6 +13,8 @@ import io.harry.doodlenow.api.DoodleApi;
 import io.harry.doodlenow.model.Doodle;
 import io.harry.doodlenow.service.DoodleService;
 import io.harry.doodlenow.view.DoodleIcon;
+import io.harry.doodlenow.wrapper.DoodleListFragmentWrapper;
+import io.harry.doodlenow.wrapper.DoodlePagerAdapterWrapper;
 import retrofit2.Retrofit;
 
 @Module
@@ -31,6 +33,16 @@ public class DoodleModule {
     @Provides @Singleton
     public DoodleApi provideDoodleApi(Retrofit retrofit) {
         return retrofit.create(DoodleApi.class);
+    }
+
+    @Provides @Singleton
+    public DoodlePagerAdapterWrapper provideDoodlePagerAdapterWrapper() {
+        return new DoodlePagerAdapterWrapper();
+    }
+
+    @Provides @Singleton
+    public DoodleListFragmentWrapper provideDoodleListFragmentWrapper() {
+        return new DoodleListFragmentWrapper();
     }
 
     @Provides

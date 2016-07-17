@@ -4,15 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="192dp"
     android:background="@color/white"
+    android:padding="14dp"
     >
 
     <TextView
         android:id="@+id/hours_elapsed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="17dp"
-        android:layout_marginStart="17dp"
-        android:layout_marginTop="14dp"
         android:textColor="#999999"
         android:textSize="14sp"
         tools:text="7 hours ago" />
@@ -21,24 +19,19 @@
         android:id="@+id/doodle_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="17dp"
-        android:layout_marginStart="17dp"
-        android:layout_marginTop="45dp"
+        android:layout_marginTop="31dp"
         android:lines="1"
         android:textColor="#555555"
-        android:textSize="20sp"
+        android:textSize="16sp"
         tools:text="Hello People!" />
 
     <TextView
         android:id="@+id/doodle_content"
-        android:layout_width="200dp"
+        android:layout_width="198dp"
         android:layout_height="100dp"
-        android:layout_marginEnd="128dp"
-        android:layout_marginStart="17dp"
-        android:layout_marginTop="71dp"
-        android:paddingBottom="5dp"
+        android:layout_marginTop="57dp"
         android:textColor="@color/secondary_text_default_material_light"
-        android:textSize="12sp"
+        android:textSize="14sp"
         tools:text="jsoup is a Java library for working with real-world HTML. It provides a very convenient API for extracting and manipulating data, using the best of DOM, CSS, and jquery-like methods. \n jsoup implements the WHATWG HTML5 specification, and parses HTML to the same DOM as modern browsers do." />
 
     <ImageView
@@ -47,8 +40,6 @@
         android:layout_height="104dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
         android:scaleType="fitCenter"
         android:src="@mipmap/app_logo" />
 </RelativeLayout>

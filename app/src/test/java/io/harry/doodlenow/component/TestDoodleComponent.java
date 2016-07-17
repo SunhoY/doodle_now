@@ -5,7 +5,9 @@ import javax.inject.Singleton;
 import dagger.Component;
 import io.harry.doodlenow.activity.LandingActivityTest;
 import io.harry.doodlenow.adapter.DoodleListAdapterTest;
+import io.harry.doodlenow.adapter.DoodlePagerAdapterTest;
 import io.harry.doodlenow.background.DoodlePostServiceTest;
+import io.harry.doodlenow.fragment.DoodleListFragmentTest;
 import io.harry.doodlenow.module.TestDoodleModule;
 import io.harry.doodlenow.module.TestHTMLModule;
 import io.harry.doodlenow.module.TestNetworkModule;
@@ -23,4 +25,6 @@ public interface TestDoodleComponent extends DoodleComponent {
     void inject(LandingActivityTest landingActivityTest);
     void inject(DoodlePostServiceTest doodlePostServiceTest);
     void inject(DoodleListAdapterTest doodleListAdapterTest);
+    void inject(DoodleListFragmentTest doodleListFragmentTest);
+    void inject(DoodlePagerAdapterTest doodlePagerAdapterTest);
 }

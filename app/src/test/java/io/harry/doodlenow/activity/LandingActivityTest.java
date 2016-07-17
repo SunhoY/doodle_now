@@ -1,63 +1,59 @@
 package io.harry.doodlenow.activity;
 
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeUtils;
-import org.joda.time.DateTimeZone;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
+
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.Matchers;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.inject.Inject;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.harry.doodlenow.BuildConfig;
+import io.harry.doodlenow.R;
 import io.harry.doodlenow.TestDoodleApplication;
-import io.harry.doodlenow.adapter.DoodleListAdapter;
+import io.harry.doodlenow.adapter.DoodlePagerAdapter;
 import io.harry.doodlenow.component.TestDoodleComponent;
-import io.harry.doodlenow.model.Doodle;
-import io.harry.doodlenow.service.DoodleService;
-import io.harry.doodlenow.service.ServiceCallback;
+import io.harry.doodlenow.wrapper.DoodlePagerAdapterWrapper;
 
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.verify;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
 
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class)
 public class LandingActivityTest {
+    public static final int TAB_COUNT = 2;
     private LandingActivity subject;
-    private long MILLIS_2016_6_19_9_0 = 1466294400000L;
-    private long MILLIS_2016_6_19_8_0 = 1466290800000L;
-    private long MILLIS_2016_6_19_7_0 = 1466287200000L;
+
+    @BindView(R.id.doodle_pager)
+    ViewPager doodleViewPager;
+    @BindView(R.id.doodle_tabs)
+    TabLayout doodleTabs;
 
     @Inject
-    DoodleService doodleService;
-    @Inject
-    DoodleListAdapter doodleListAdapter;
+    DoodlePagerAdapterWrapper mockDoodlePagerAdapterWrapper;
 
-    @Captor
-    ArgumentCaptor<ServiceCallback<List<Doodle>>> doodleListServiceCallbackCaptor;
+    @Mock
+    DoodlePagerAdapter mockDoodlePagerAdapter;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-
         TestDoodleComponent doodleComponent = (TestDoodleComponent) ((TestDoodleApplication) RuntimeEnvironment.application).getDoodleComponent();
         doodleComponent.inject(this);
 
-        DateTimeUtils.setCurrentMillisFixed(MILLIS_2016_6_19_9_0);
+        when(mockDoodlePagerAdapterWrapper.getDoodlePagerAdapter(any(AppCompatActivity.class))).thenReturn(mockDoodlePagerAdapter);
+        when(mockDoodlePagerAdapter.getCount()).thenReturn(TAB_COUNT);
 
         subject = Robolectric.setupActivity(LandingActivity.class);
 
@@ -65,28 +61,34 @@ public class LandingActivityTest {
     }
 
     @Test
-    @Ignore
-    public void onResume_callsDoodleServiceToGetDoodlesCreatedYesterday() throws Exception {
-        long from = new DateTime(2016, 6, 18, 0, 0, DateTimeZone.forOffsetHours(9)).getMillis();
-        long to = new DateTime(2016, 6, 18, 23, 59, 59, DateTimeZone.forOffsetHours(9)).getMillis();
-
-        verify(doodleService).getDoodles(eq(from), eq(to), Matchers.<ServiceCallback<List<Doodle>>>any());
+    public void onCreate_setsElevationOfActionBarWith0() throws Exception {
+        assertThat(subject.getSupportActionBar().getElevation()).isEqualTo(0);
     }
 
     @Test
-    public void afterGettingDoodleList_refreshesContentListView() throws Exception {
-        verify(doodleService).getDoodles(anyLong(), anyLong(), doodleListServiceCallbackCaptor.capture());
+    public void doodleTabs_shouldHave2Tabs() throws Exception {
+        assertThat(doodleTabs.getTabCount()).isEqualTo(2);
+    }
 
-        ArrayList<Doodle> items = new ArrayList<>();
-        items.add(new Doodle("beat it", "beat it!", "http://beatit.com", MILLIS_2016_6_19_8_0));
-        items.add(new Doodle("air walk", "air walk!", "http://airwalk.com", MILLIS_2016_6_19_7_0));
+    @Test
+    public void doodleTabs_hasTabNameAsTodayAndArchive() throws Exception {
+        assertThat(doodleTabs.getTabAt(0).getText()).isEqualTo("Today");
+        assertThat(doodleTabs.getTabAt(1).getText()).isEqualTo("Archive");
+    }
 
-        doodleListServiceCallbackCaptor.getValue().onSuccess(items);
+    @Test
+    public void doodleViewPager_hasViewPagerAdapter() throws Exception {
+        assertThat(doodleViewPager.getAdapter()).isEqualTo(mockDoodlePagerAdapter);
+    }
 
-        ArrayList<Doodle> expected = new ArrayList<>();
-        expected.add(new Doodle("beat it", "beat it!", "http://beatit.com", MILLIS_2016_6_19_8_0));
-        expected.add(new Doodle("air walk", "air walk!", "http://airwalk.com", MILLIS_2016_6_19_7_0));
+    @Test
+    public void onDoodleTabSelected_changesCurrentItemOnDoodleViewPager() throws Exception {
+        doodleTabs.getTabAt(0).select();
 
-        verify(doodleListAdapter).refreshDoodles(expected);
+        assertThat(doodleViewPager.getCurrentItem()).isEqualTo(0);
+
+        doodleTabs.getTabAt(1).select();
+
+        assertThat(doodleViewPager.getCurrentItem()).isEqualTo(1);
     }
 }

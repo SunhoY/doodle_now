@@ -1,13 +1,9 @@
 package io.harry.doodlenow.activity;
 
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-
-import org.joda.time.DateTime;
-
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -15,22 +11,21 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.harry.doodlenow.DoodleApplication;
 import io.harry.doodlenow.R;
-import io.harry.doodlenow.adapter.DoodleListAdapter;
+import io.harry.doodlenow.adapter.DoodlePagerAdapter;
 import io.harry.doodlenow.component.DoodleComponent;
-import io.harry.doodlenow.itemdecoration.VerticalSpaceItemDecoration;
-import io.harry.doodlenow.model.Doodle;
-import io.harry.doodlenow.service.DoodleService;
-import io.harry.doodlenow.service.ServiceCallback;
+import io.harry.doodlenow.wrapper.DoodlePagerAdapterWrapper;
 
 public class LandingActivity extends AppCompatActivity {
 
-    @Inject
-    DoodleService doodleService;
-    @Inject
-    DoodleListAdapter doodleListAdapter;
+    @BindView(R.id.doodle_pager)
+    ViewPager doodleViewPager;
+    @BindView(R.id.doodle_tabs)
+    TabLayout doodleTabs;
 
-    @BindView(R.id.doodle_list)
-    RecyclerView doodleListView;
+    @Inject
+    DoodlePagerAdapterWrapper doodlePagerAdapterWrapper;
+
+    private DoodlePagerAdapter doodlePagerAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -42,30 +37,29 @@ public class LandingActivity extends AppCompatActivity {
         DoodleComponent doodleComponent = ((DoodleApplication) getApplicationContext()).getDoodleComponent();
         doodleComponent.inject(this);
 
-        final LinearLayoutManager contentListLayoutManager = new LinearLayoutManager(LandingActivity.this);
-        doodleListView.setLayoutManager(contentListLayoutManager);
-        doodleListView.setAdapter(doodleListAdapter);
-        doodleListView.addItemDecoration(new VerticalSpaceItemDecoration(this, R.dimen.list_view_vertical_space));
-    }
+        getSupportActionBar().setElevation(0);
 
-    @Override
-    protected void onResume() {
-        long startOfYesterday = new DateTime().minusDays(1).withTimeAtStartOfDay().getMillis();
-        long endOfYesterday = new DateTime().withTimeAtStartOfDay().minusSeconds(1).getMillis();
+        doodlePagerAdapter = doodlePagerAdapterWrapper.getDoodlePagerAdapter(this);
+        doodleViewPager.setAdapter(doodlePagerAdapter);
+        doodleViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(doodleTabs));
 
-        doodleService.getDoodles(0L, 1468896686000L, new ServiceCallback<List<Doodle>>() {
+        doodleTabs.addTab(doodleTabs.newTab().setText("Today"));
+        doodleTabs.addTab(doodleTabs.newTab().setText("Archive"));
+        doodleTabs.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
-            public void onSuccess(List<Doodle> items) {
-                DoodleListAdapter doodleListAdapter = (DoodleListAdapter) doodleListView.getAdapter();
-                doodleListAdapter.refreshDoodles(items);
+            public void onTabSelected(TabLayout.Tab tab) {
+                doodleViewPager.setCurrentItem(tab.getPosition());
             }
 
             @Override
-            public void onFailure(String message) {
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
 
             }
         });
-
-        super.onResume();
     }
 }

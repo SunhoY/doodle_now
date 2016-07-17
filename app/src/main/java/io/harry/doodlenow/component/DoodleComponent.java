@@ -5,7 +5,9 @@ import javax.inject.Singleton;
 import dagger.Component;
 import io.harry.doodlenow.activity.LandingActivity;
 import io.harry.doodlenow.adapter.DoodleListAdapter;
+import io.harry.doodlenow.adapter.DoodlePagerAdapter;
 import io.harry.doodlenow.background.DoodlePostService;
+import io.harry.doodlenow.fragment.DoodleListFragment;
 import io.harry.doodlenow.module.DoodleModule;
 import io.harry.doodlenow.module.HTMLModule;
 import io.harry.doodlenow.module.NetworkModule;
@@ -23,4 +25,6 @@ public interface DoodleComponent {
     void inject(LandingActivity landingActivity);
     void inject(DoodlePostService doodlePostService);
     void inject(DoodleListAdapter doodleListAdapter);
+    void inject(DoodleListFragment doodleListFragment);
+    void inject(DoodlePagerAdapter doodlePagerAdapter);
 }

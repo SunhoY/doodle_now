@@ -34,6 +34,8 @@ dependencies {
     compile 'org.jsoup:jsoup:1.9.2'
     compile 'joda-time:joda-time:2.9.4'
     compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.android.support:design:22.2.0'
+
     apt 'com.google.dagger:dagger-compiler:2.4'
     apt 'com.jakewharton:butterknife-compiler:8.0.1'
     provided 'javax.annotation:jsr250-api:1.0'
@@ -43,6 +45,7 @@ dependencies {
     testCompile('com.squareup.assertj:assertj-android:1.1.1') {
         exclude module: 'support-annotations'
     }
+    testCompile "org.robolectric:shadows-support-v4:3.0"
     testApt 'com.google.dagger:dagger-compiler:2.4'
     testApt 'com.jakewharton:butterknife-compiler:8.0.1'
 }

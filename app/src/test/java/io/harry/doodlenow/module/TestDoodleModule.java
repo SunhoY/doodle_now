@@ -8,6 +8,8 @@ import io.harry.doodlenow.adapter.DoodleListAdapter;
 import io.harry.doodlenow.api.DoodleApi;
 import io.harry.doodlenow.service.DoodleService;
 import io.harry.doodlenow.view.DoodleIcon;
+import io.harry.doodlenow.wrapper.DoodleListFragmentWrapper;
+import io.harry.doodlenow.wrapper.DoodlePagerAdapterWrapper;
 
 import static org.mockito.Mockito.mock;
 
@@ -29,5 +31,15 @@ public class TestDoodleModule {
     }
 
     @Provides @Singleton
+    public DoodlePagerAdapterWrapper provideDoodlePagerAdapterWrapper() {
+        return mock(DoodlePagerAdapterWrapper.class);
+    }
+
+    @Provides @Singleton
     public DoodleListAdapter provideDoodleListAdapter() { return mock(DoodleListAdapter.class); }
+
+    @Provides @Singleton
+    public DoodleListFragmentWrapper provideDoodleListFragmentWrapper() {
+        return mock(DoodleListFragmentWrapper.class);
+    }
 }

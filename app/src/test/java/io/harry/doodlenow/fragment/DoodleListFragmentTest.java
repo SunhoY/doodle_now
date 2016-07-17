@@ -41,9 +41,11 @@ import static org.mockito.Mockito.verify;
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class)
 public class DoodleListFragmentTest {
+    public static final DoodleListFragment.DoodleListType ANY_TYPE = DoodleListFragment.DoodleListType.ThisWeek;
+    private long MILLIS_2016_6_19_10_0 = 1466298000000L;
     private long MILLIS_2016_6_19_9_0 = 1466294400000L;
-    private long MILLIS_2016_6_19_8_0 = 1466290800000L;
-    private long MILLIS_2016_6_19_7_0 = 1466287200000L;
+    private long MILLIS_2016_6_18_9_0 = 1466208000000L;
+    private long MILLIS_2016_6_12_0_0 = 1465657200000L;
 
     @BindView(R.id.doodle_list)
     RecyclerView doodleList;
@@ -63,14 +65,13 @@ public class DoodleListFragmentTest {
         ((TestDoodleComponent)((DoodleApplication) RuntimeEnvironment.application).getDoodleComponent()).inject(this);
         MockitoAnnotations.initMocks(this);
 
-        DateTimeUtils.setCurrentMillisFixed(MILLIS_2016_6_19_9_0);
+        DateTimeUtils.setCurrentMillisFixed(MILLIS_2016_6_19_10_0);
     }
 
-    private void setupWithStartAndEnd(long start, long end) {
+    private void setupWithType(DoodleListFragment.DoodleListType type) {
         subject = new DoodleListFragment();
         Bundle arguments = new Bundle();
-        arguments.putLong("start", start);
-        arguments.putLong("end", end);
+        arguments.putSerializable("doodleListType", type);
 
         subject.setArguments(arguments);
 
@@ -80,48 +81,48 @@ public class DoodleListFragmentTest {
     }
 
     @Test
-    public void onResume_callsDoodleServiceWithStartAndEnd() throws Exception {
-        setupWithStartAndEnd(MILLIS_2016_6_19_7_0, MILLIS_2016_6_19_8_0);
+    public void onResume_callsDoodleServiceWith9AMYesterdayTo9AMToday_whenTypeIsToday() throws Exception {
+        setupWithType(DoodleListFragment.DoodleListType.Today);
 
-        verify(mockDoodleService).getDoodles(eq(MILLIS_2016_6_19_7_0), eq(MILLIS_2016_6_19_8_0), Matchers.<ServiceCallback<List<Doodle>>>any());
+        verify(mockDoodleService).getDoodles(eq(MILLIS_2016_6_18_9_0), eq(MILLIS_2016_6_19_9_0), Matchers.<ServiceCallback<List<Doodle>>>any());
     }
 
     @Test
-    public void onResume_callsDoodleServiceWithStartAndNow_whenEndIsMaxValue() throws Exception {
-        setupWithStartAndEnd(MILLIS_2016_6_19_7_0, Long.MAX_VALUE);
+    public void onResume_callsDoodleServiceWith7DaysAgoToNow_whenTypeIsThisWeek() throws Exception {
+        setupWithType(DoodleListFragment.DoodleListType.ThisWeek);
 
-        verify(mockDoodleService).getDoodles(eq(MILLIS_2016_6_19_7_0), eq(MILLIS_2016_6_19_9_0), Matchers.<ServiceCallback<List<Doodle>>>any());
+        verify(mockDoodleService).getDoodles(eq(MILLIS_2016_6_12_0_0), eq(MILLIS_2016_6_19_10_0), Matchers.<ServiceCallback<List<Doodle>>>any());
     }
 
     @Test
     public void afterGettingDoodleList_refreshesContentListView() throws Exception {
-        setupWithStartAndEnd(MILLIS_2016_6_19_7_0, MILLIS_2016_6_19_9_0);
+        setupWithType(ANY_TYPE);
 
         verify(mockDoodleService).getDoodles(anyLong(), anyLong(), doodleListServiceCallbackCaptor.capture());
 
         ArrayList<Doodle> items = new ArrayList<>();
-        items.add(new Doodle("beat it", "beat it!", "http://beatit.com", MILLIS_2016_6_19_8_0));
-        items.add(new Doodle("air walk", "air walk!", "http://airwalk.com", MILLIS_2016_6_19_7_0));
+        items.add(new Doodle("beat it", "beat it!", "http://beatit.com", MILLIS_2016_6_19_9_0));
+        items.add(new Doodle("air walk", "air walk!", "http://airwalk.com", MILLIS_2016_6_18_9_0));
 
         doodleListServiceCallbackCaptor.getValue().onSuccess(items);
 
         ArrayList<Doodle> expected = new ArrayList<>();
-        expected.add(new Doodle("beat it", "beat it!", "http://beatit.com", MILLIS_2016_6_19_8_0));
-        expected.add(new Doodle("air walk", "air walk!", "http://airwalk.com", MILLIS_2016_6_19_7_0));
+        expected.add(new Doodle("beat it", "beat it!", "http://beatit.com", MILLIS_2016_6_19_9_0));
+        expected.add(new Doodle("air walk", "air walk!", "http://airwalk.com", MILLIS_2016_6_18_9_0));
 
         verify(mockDoodleListAdapter).refreshDoodles(expected);
     }
 
     @Test
     public void doodleList_shouldHaveInjectedAdapter() throws Exception {
-        setupWithStartAndEnd(MILLIS_2016_6_19_7_0, MILLIS_2016_6_19_9_0);
+        setupWithType(ANY_TYPE);
 
         assertThat(doodleList.getAdapter()).isEqualTo(mockDoodleListAdapter);
     }
 
     @Test
     public void doodleList_shouldHaveLinearLayoutManager() throws Exception {
-        setupWithStartAndEnd(MILLIS_2016_6_19_7_0, MILLIS_2016_6_19_9_0);
+        setupWithType(ANY_TYPE);
         
         assertThat(doodleList.getLayoutManager() instanceof LinearLayoutManager).isTrue();
     }

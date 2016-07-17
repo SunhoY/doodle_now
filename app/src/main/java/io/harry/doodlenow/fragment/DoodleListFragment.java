@@ -34,16 +34,18 @@ public class DoodleListFragment extends Fragment {
     @Inject
     DoodleService doodleService;
 
-    private long start;
-    private long end;
+    public enum DoodleListType {
+        Today, ThisWeek
+    }
+
+    private DoodleListType doodleListType;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ((DoodleApplication) getActivity().getApplication()).getDoodleComponent().inject(this);
 
-        start = getArguments().getLong("start");
-        end = getArguments().getLong("end");
+        doodleListType = (DoodleListType) getArguments().getSerializable("doodleListType");
     }
 
     @Override
@@ -62,14 +64,17 @@ public class DoodleListFragment extends Fragment {
 
     @Override
     public void onResume() {
-        long endMillis;
-        if(end == Long.MAX_VALUE) {
-            endMillis = new DateTime().getMillis();
+        long start;
+        long end;
+        if(doodleListType == DoodleListType.ThisWeek) {
+            end = new DateTime().getMillis();
+            start = new DateTime().withTimeAtStartOfDay().minusDays(7).getMillis();
         } else {
-            endMillis = end;
+            end = new DateTime().withTimeAtStartOfDay().plusHours(9).getMillis();
+            start = new DateTime().minusDays(1).withTimeAtStartOfDay().plusHours(9).getMillis();
         }
 
-        doodleService.getDoodles(start, endMillis, new ServiceCallback<List<Doodle>>() {
+        doodleService.getDoodles(start, end, new ServiceCallback<List<Doodle>>() {
             @Override
             public void onSuccess(List<Doodle> items) {
                 DoodleListAdapter doodleListAdapter = (DoodleListAdapter) doodleList.getAdapter();

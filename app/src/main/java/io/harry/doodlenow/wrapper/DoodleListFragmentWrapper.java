@@ -5,11 +5,11 @@ import android.os.Bundle;
 import io.harry.doodlenow.fragment.DoodleListFragment;
 
 public class DoodleListFragmentWrapper {
-    public DoodleListFragment getDoodleListFragment(long start, long end) {
+    public DoodleListFragment getDoodleListFragment(DoodleListFragment.DoodleListType doodleListType) {
         DoodleListFragment doodleListFragment = new DoodleListFragment();
+
         Bundle arguments = new Bundle();
-        arguments.putLong("start", start);
-        arguments.putLong("end", end);
+        arguments.putSerializable("doodleListType", doodleListType);
 
         doodleListFragment.setArguments(arguments);
 

@@ -3,10 +3,30 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/app_name"
+        android:textSize="30sp"
+        android:layout_marginTop="142dp"
+        android:layout_centerHorizontal="true"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/for_stand_up"
+        android:textSize="20sp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="182dp"
+        />
+
     <ImageView
         android:layout_width="178dp"
         android:layout_height="178dp"
-        android:layout_centerInParent="true"
+        android:layout_marginTop="268dp"
+        android:layout_centerHorizontal="true"
         android:src="@drawable/main_logo"
         />
 

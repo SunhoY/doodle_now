@@ -1,32 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
     android:orientation="vertical">
 
-    <EditText
+    <TextView
         android:id="@+id/doodle_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="20sp"
-        android:singleLine="true"
-        android:hint="@string/write_title_here"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="17dp"
+        android:layout_marginEnd="17dp"
+        tools:text="Title is this"
         />
-    <EditText
+    <TextView
+        android:id="@+id/hours_elapsed"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="17dp"
+        android:layout_marginEnd="17dp"
+        tools:text="7 hours ago"
+        />
+    <ImageView
+        android:id="@+id/doodle_image"
+        android:layout_width="match_parent"
+        android:layout_height="140dp"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/main_logo"
+        />
+    <TextView
         android:id="@+id/doodle_content"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:gravity="top"
-        android:textSize="16sp"
-        android:hint="@string/doodle_anything"
-        />
-    <Button
-        android:id="@+id/submit"
-        android:layout_width="150dp"
-        android:layout_height="70dp"
+        android:layout_height="match_parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="17dp"
+        android:layout_marginEnd="17dp"
         android:layout_gravity="center_horizontal"
-        android:text="@string/doodleJson"
-        android:textSize="20sp"
+        tools:text="In ancient times the Rings of Power were crafted by the Elven-smiths, and Sauron, the Dark Lord, forged the One Ring, filling it with his own power so that he could rule all others. But the One Ring was taken from him, and though he sought it throughout Middle-earth, it remained lost to him. After many ages it fell into the hands of Bilbo Baggins, as told in The Hobbit. In a sleepy village in the Shire, young Frodo Baggins finds himself faced with an immense task, as his elderly cousin Bilbo entrusts the Ring to his care. Frodo must leave his home and make a perilous journey across Middle-earth to the Cracks of Doom, there to destroy the Ring and foil the Dark Lord in his evil purpose."
+        android:textSize="15sp"
         />
 </LinearLayout>

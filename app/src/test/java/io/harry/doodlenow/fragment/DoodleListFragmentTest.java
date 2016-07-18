@@ -1,5 +1,6 @@
 package io.harry.doodlenow.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -27,6 +28,7 @@ import butterknife.ButterKnife;
 import io.harry.doodlenow.BuildConfig;
 import io.harry.doodlenow.DoodleApplication;
 import io.harry.doodlenow.R;
+import io.harry.doodlenow.activity.DoodleActivity;
 import io.harry.doodlenow.adapter.DoodleListAdapter;
 import io.harry.doodlenow.component.TestDoodleComponent;
 import io.harry.doodlenow.model.Doodle;
@@ -37,6 +39,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.robolectric.Shadows.shadowOf;
 
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class)
@@ -78,6 +81,13 @@ public class DoodleListFragmentTest {
         SupportFragmentTestUtil.startFragment(subject);
 
         ButterKnife.bind(this, subject.getView());
+    }
+
+    @Test
+    public void onCreate_setsItemClickListenerOnDoodleListAdapter() throws Exception {
+        setupWithType(ANY_TYPE);
+
+        verify(mockDoodleListAdapter).setOnDoodleClickListener(subject);
     }
 
     @Test
@@ -125,5 +135,18 @@ public class DoodleListFragmentTest {
         setupWithType(ANY_TYPE);
         
         assertThat(doodleList.getLayoutManager() instanceof LinearLayoutManager).isTrue();
+    }
+
+    @Test
+    public void onDoodleItemClick_startsDoodleActivityWithDoodleId() throws Exception {
+        setupWithType(ANY_TYPE);
+
+        Doodle doodle = new Doodle("title", "content", "image url", MILLIS_2016_6_12_0_0);
+        subject.onDoodleItemClick(doodle);
+
+        Intent expected = new Intent(subject.getActivity(), DoodleActivity.class);
+        expected.putExtra("doodle", new Doodle("title", "content", "image url", MILLIS_2016_6_12_0_0));
+
+        assertThat(shadowOf(RuntimeEnvironment.application).getNextStartedActivity()).isEqualTo(expected);
     }
 }

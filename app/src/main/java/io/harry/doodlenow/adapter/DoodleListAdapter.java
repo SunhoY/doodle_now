@@ -2,6 +2,7 @@ package io.harry.doodlenow.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,16 @@ public class DoodleListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private Picasso picasso;
 
+    OnDoodleItemClickListener onDoodleItemClickListener;
+
+    public void setOnDoodleClickListener(OnDoodleItemClickListener onDoodleItemClickListener) {
+        this.onDoodleItemClickListener = onDoodleItemClickListener;
+    }
+
+    public interface OnDoodleItemClickListener {
+        void onDoodleItemClick(Doodle doodle);
+    }
+
     public DoodleListAdapter(Context context, List<Doodle> doodles) {
         ((DoodleApplication) context).getDoodleComponent().inject(this);
         picasso = picassoWrapper.getPicasso(context);
@@ -50,7 +61,20 @@ public class DoodleListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         ((SimpleViewHolder) holder).title.setText(doodle.getTitle());
         ((SimpleViewHolder) holder).content.setText(doodle.getContent());
         ((SimpleViewHolder) holder).hoursElapsed.setText(doodle.getElapsedHours());
-        picasso.load(doodle.getImageUrl()).into(((SimpleViewHolder) holder).preview);
+        if(TextUtils.isEmpty(doodle.getImageUrl())) {
+            picasso.load(R.drawable.main_logo).into(((SimpleViewHolder) holder).preview);
+        } else {
+            picasso.load(doodle.getImageUrl()).into(((SimpleViewHolder) holder).preview);
+        }
+
+        ((SimpleViewHolder) holder).container.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(onDoodleItemClickListener != null) {
+                    onDoodleItemClickListener.onDoodleItemClick(doodle);
+                }
+            }
+        });
     }
 
     @Override

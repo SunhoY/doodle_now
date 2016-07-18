@@ -2,7 +2,9 @@ package io.harry.doodlenow.model;
 
 import org.joda.time.DateTime;
 
-public class Doodle {
+import java.io.Serializable;
+
+public class Doodle implements Serializable {
     private String title;
     private String content;
     private String imageUrl;

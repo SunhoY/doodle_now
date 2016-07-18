@@ -1,5 +1,6 @@
 package io.harry.doodlenow.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -19,13 +20,14 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.harry.doodlenow.DoodleApplication;
 import io.harry.doodlenow.R;
+import io.harry.doodlenow.activity.DoodleActivity;
 import io.harry.doodlenow.adapter.DoodleListAdapter;
 import io.harry.doodlenow.itemdecoration.VerticalSpaceItemDecoration;
 import io.harry.doodlenow.model.Doodle;
 import io.harry.doodlenow.service.DoodleService;
 import io.harry.doodlenow.service.ServiceCallback;
 
-public class DoodleListFragment extends Fragment {
+public class DoodleListFragment extends Fragment implements DoodleListAdapter.OnDoodleItemClickListener {
     @BindView(R.id.doodle_list)
     RecyclerView doodleList;
 
@@ -33,6 +35,13 @@ public class DoodleListFragment extends Fragment {
     DoodleListAdapter doodleListAdapter;
     @Inject
     DoodleService doodleService;
+
+    @Override
+    public void onDoodleItemClick(Doodle doodle) {
+        Intent intent = new Intent(getActivity(), DoodleActivity.class);
+        intent.putExtra("doodle", doodle);
+        getActivity().startActivity(intent);
+    }
 
     public enum DoodleListType {
         Today, ThisWeek
@@ -58,6 +67,8 @@ public class DoodleListFragment extends Fragment {
         doodleList.setLayoutManager(contentListLayoutManager);
         doodleList.setAdapter(doodleListAdapter);
         doodleList.addItemDecoration(new VerticalSpaceItemDecoration(getActivity(), R.dimen.list_view_vertical_space));
+
+        doodleListAdapter.setOnDoodleClickListener(this);
 
         return view;
     }

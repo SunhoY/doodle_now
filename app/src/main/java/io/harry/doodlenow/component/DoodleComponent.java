@@ -3,6 +3,7 @@ package io.harry.doodlenow.component;
 import javax.inject.Singleton;
 
 import dagger.Component;
+import io.harry.doodlenow.activity.DoodleActivity;
 import io.harry.doodlenow.activity.LandingActivity;
 import io.harry.doodlenow.adapter.DoodleListAdapter;
 import io.harry.doodlenow.adapter.DoodlePagerAdapter;
@@ -27,4 +28,5 @@ public interface DoodleComponent {
     void inject(DoodleListAdapter doodleListAdapter);
     void inject(DoodleListFragment doodleListFragment);
     void inject(DoodlePagerAdapter doodlePagerAdapter);
+    void inject(DoodleActivity doodleActivity);
 }

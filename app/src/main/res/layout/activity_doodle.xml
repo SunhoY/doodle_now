@@ -3,8 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
+    android:background="@color/white"
     android:orientation="vertical">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@drawable/list_divider"
+        />
 
     <TextView
         android:id="@+id/doodle_title"
@@ -32,6 +38,7 @@
         android:layout_height="140dp"
         android:layout_marginTop="20dp"
         android:src="@drawable/main_logo"
+        android:scaleType="fitCenter"
         />
     <TextView
         android:id="@+id/doodle_content"

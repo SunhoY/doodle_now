@@ -1,24 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     >
     <android.support.design.widget.TabLayout
         android:id="@+id/doodle_tabs"
         android:layout_width="match_parent"
         android:background="@color/white"
-        android:layout_height="wrap_content">
-    </android.support.design.widget.TabLayout>
-
+        android:layout_height="wrap_content"
+        />
     <android.support.v4.view.ViewPager
         android:id="@+id/doodle_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@id/doodle_tabs"
         android:paddingTop="16dp"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
-        >
-
-    </android.support.v4.view.ViewPager>
-</LinearLayout>
+        />
+    <ImageButton
+        android:id="@+id/create_doodle"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="35dp"
+        android:layout_marginBottom="35dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/create_doodle"
+        android:background="#00000000"
+        />
+</RelativeLayout>

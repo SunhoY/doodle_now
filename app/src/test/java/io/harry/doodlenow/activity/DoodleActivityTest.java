@@ -18,6 +18,7 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
+import org.robolectric.fakes.RoboMenuItem;
 
 import javax.inject.Inject;
 
@@ -43,6 +44,8 @@ import static org.mockito.Mockito.when;
 public class DoodleActivityTest {
     private long MILLIS_2016_6_19_10_0 = 1466298000000L;
     private long MILLIS_2016_6_19_9_0 = 1466294400000L;
+    private long ANY_MILLIS = 0L;
+    private final String ANY_STRING = "";
 
     private DoodleActivity subject;
 
@@ -74,57 +77,61 @@ public class DoodleActivityTest {
         DateTimeUtils.setCurrentMillisFixed(MILLIS_2016_6_19_10_0);
     }
 
-    private void setupActivity(Intent intent) {
-        subject = Robolectric.buildActivity(DoodleActivity.class).withIntent(intent).setup().get();
-
-        ButterKnife.bind(this, subject);
-    }
-
     @Test
     public void onCreate_showsDoodleTitle() throws Exception {
-        Intent intent = new Intent();
-        intent.putExtra("doodle", new Doodle("title", "content", "image url", MILLIS_2016_6_19_9_0));
-
-        setupActivity(intent);
+        setupActivityWithDoodle(new Doodle("title", ANY_STRING, ANY_STRING, ANY_MILLIS));
         assertThat(doodleTitle.getText()).isEqualTo("title");
     }
 
     @Test
     public void onCreate_showsDoodleElapsedHours() throws Exception {
-        Intent intent = new Intent();
-        intent.putExtra("doodle", new Doodle("title", "content", "image url", MILLIS_2016_6_19_9_0));
-
-        setupActivity(intent);
+        setupActivityWithDoodle(new Doodle(ANY_STRING, ANY_STRING, ANY_STRING, MILLIS_2016_6_19_9_0));
         assertThat(hoursElapsed.getText()).isEqualTo("1 hours ago");
     }
 
     @Test
     public void onCreate_showsDoodleContent() throws Exception {
-        Intent intent = new Intent();
-        intent.putExtra("doodle", new Doodle("title", "content", "image url", MILLIS_2016_6_19_9_0));
-
-        setupActivity(intent);
+        setupActivityWithDoodle(new Doodle(ANY_STRING, "content", ANY_STRING, ANY_MILLIS));
         assertThat(doodleContent.getText()).isEqualTo("content");
     }
 
     @Test
     public void onCreate_setsImageWithUrlViaPicasso() throws Exception {
-        Intent intent = new Intent();
-        intent.putExtra("doodle", new Doodle("title", "content", "image url", MILLIS_2016_6_19_9_0));
-
-        setupActivity(intent);
+        setupActivityWithDoodle(new Doodle(ANY_STRING, ANY_STRING, "image url", ANY_MILLIS));
         verify(mockPicasso).load("image url");
         verify(mockRequestCreator).into(doodleImage);
     }
 
     @Test
     public void onCreate_setsDefaultImage_whenImageUrlIsEmpty() throws Exception {
-        Intent intent = new Intent();
-        intent.putExtra("doodle", new Doodle("title", "content", "", MILLIS_2016_6_19_9_0));
-
-        setupActivity(intent);
+        setupActivityWithDoodle(new Doodle(ANY_STRING, ANY_STRING, "", ANY_MILLIS));
 
         verify(mockPicasso).load(R.drawable.main_logo);
         verify(mockRequestCreator).into(doodleImage);
+    }
+
+    @Test
+    public void actionBar_shouldNotHaveTitle() throws Exception {
+        setupActivityWithDoodle(new Doodle(ANY_STRING, ANY_STRING, ANY_STRING, ANY_MILLIS));
+
+        assertThat(subject.getSupportActionBar().getTitle()).isEqualTo("");
+    }
+
+    @Test
+    public void clickOnBackArrowAtActionBar_finishesActivity() throws Exception {
+        setupActivityWithDoodle(new Doodle(ANY_STRING, ANY_STRING, ANY_STRING, ANY_MILLIS));
+
+        subject.onOptionsItemSelected(new RoboMenuItem(android.R.id.home));
+
+        assertThat(subject.isFinishing()).isTrue();
+    }
+
+    private void setupActivityWithDoodle(Doodle value) {
+        Intent intent = new Intent();
+        intent.putExtra("doodle", value);
+
+        subject = Robolectric.buildActivity(DoodleActivity.class).withIntent(intent).setup().get();
+
+        ButterKnife.bind(this, subject);
     }
 }

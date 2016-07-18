@@ -24,14 +24,21 @@
         <activity android:name=".activity.LandingActivity"
             android:screenOrientation="portrait"
             />
-        <activity android:name=".activity.CatchDoodleActivity">
+        <activity android:name=".activity.CatchDoodleActivity"
+            android:screenOrientation="portrait"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.SEND"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <data android:mimeType="*/*"/>
             </intent-filter>
         </activity>
-        <activity android:name=".activity.DoodleActivity"/>
+        <activity android:name=".activity.DoodleActivity"
+            android:screenOrientation="portrait"
+            />
+        <activity android:name=".activity.CreateDoodleActivity"
+            android:screenOrientation="portrait"
+            />
         <service android:name=".background.DoodlePostService"/>
     </application>
 </manifest>

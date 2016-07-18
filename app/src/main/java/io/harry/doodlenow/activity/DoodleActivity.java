@@ -3,6 +3,7 @@ package io.harry.doodlenow.activity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -39,10 +40,13 @@ public class DoodleActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         getSupportActionBar().setElevation(0);
+        getSupportActionBar().setTitle("");
 
         Doodle doodle = (Doodle) getIntent().getSerializableExtra("doodle");
 
         setDoodle(doodle);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     private void setDoodle(Doodle doodle) {
@@ -54,5 +58,15 @@ public class DoodleActivity extends AppCompatActivity {
         } else {
             picassoWrapper.getPicasso(this).load(doodle.getImageUrl()).into(doodleImage);
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

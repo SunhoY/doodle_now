@@ -1,8 +1,10 @@
 package io.harry.doodlenow.activity;
 
+import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.ImageButton;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -30,6 +32,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.robolectric.Shadows.shadowOf;
 
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class)
@@ -41,6 +44,8 @@ public class LandingActivityTest {
     ViewPager doodleViewPager;
     @BindView(R.id.doodle_tabs)
     TabLayout doodleTabs;
+    @BindView(R.id.create_doodle)
+    ImageButton createDoodle;
 
     @Inject
     DoodlePagerAdapterWrapper mockDoodlePagerAdapterWrapper;
@@ -96,5 +101,15 @@ public class LandingActivityTest {
 
         doodleTabs.getTabAt(0).select();
         assertThat(doodleViewPager.getCurrentItem()).isEqualTo(0);
+    }
+
+    @Test
+    public void onCreateDoodleClick_launchesCreateDoodleActivity() throws Exception {
+        createDoodle.performClick();
+
+        Intent expected = new Intent(RuntimeEnvironment.application, CreateDoodleActivity.class);
+
+        assertThat(shadowOf(RuntimeEnvironment.application).getNextStartedActivity())
+                .isEqualTo(expected);
     }
 }

@@ -1,5 +1,6 @@
 package io.harry.doodlenow.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -9,6 +10,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import io.harry.doodlenow.DoodleApplication;
 import io.harry.doodlenow.R;
 import io.harry.doodlenow.adapter.DoodlePagerAdapter;
@@ -61,5 +63,10 @@ public class LandingActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @OnClick(R.id.create_doodle)
+    public void onCreateDoodleClick() {
+        startActivity(new Intent(this, CreateDoodleActivity.class));
     }
 }

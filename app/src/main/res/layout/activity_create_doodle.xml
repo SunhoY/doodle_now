@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@drawable/list_divider"
+        />
+
+    <EditText
+        android:id="@+id/doodle_title"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:textSize="16sp"
+        android:padding="17dp"
+        android:hint="@string/title"
+        android:background="@color/white"
+        />
+    <EditText
+        android:id="@+id/doodle_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:hint="@string/contents"
+        android:gravity="start|top"
+        android:padding="17dp"
+        android:textSize="16sp"
+        android:background="@color/white"
+        />
+
+</LinearLayout>

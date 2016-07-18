@@ -7,4 +7,7 @@
     <string name="doodleJson">DOODLE</string>
     <string name="write_title_here">Write title here</string>
     <string name="link_has_been_doodled">이 페이지가 Doodle Now에 담겼습니다</string>
+    <string name="save">저장</string>
+    <string name="title">Title</string>
+    <string name="contents">Contents</string>
 </resources>

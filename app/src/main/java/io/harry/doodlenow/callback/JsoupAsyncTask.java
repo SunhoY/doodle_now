@@ -15,7 +15,7 @@ public class JsoupAsyncTask extends AsyncTask<Void, Void, Document> {
     final JsoupCallback jsoupCallback;
 
     public JsoupAsyncTask(String url, JsoupCallback jsoupCallback) {
-        this.url = url;
+        this.url = url.substring(url.indexOf("http"));
         this.jsoupCallback = jsoupCallback;
     }
 

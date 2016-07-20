@@ -14,14 +14,14 @@ import javax.inject.Inject;
 import io.harry.doodlenow.DoodleApplication;
 import io.harry.doodlenow.callback.JsoupCallback;
 import io.harry.doodlenow.model.Doodle;
-import io.harry.doodlenow.service.DoodleService;
+import io.harry.doodlenow.service.DoodleRestfulService;
 import io.harry.doodlenow.service.ServiceCallback;
 import io.harry.doodlenow.view.DoodleIcon;
 import io.harry.doodlenow.wrapper.JsoupWrapper;
 
 public class DoodlePostService extends Service {
     @Inject
-    DoodleService doodleService;
+    DoodleRestfulService doodleRestfulService;
     @Inject
     JsoupWrapper jsoupWrapper;
     @Inject
@@ -64,7 +64,7 @@ public class DoodlePostService extends Service {
     }
 
     private void saveDoodle(String title, String content, String imageUrl) {
-        doodleService.saveDoodle(new Doodle(title, content, imageUrl, new DateTime().getMillis()), new ServiceCallback<Void>() {
+        doodleRestfulService.saveDoodle(new Doodle(title, content, imageUrl, new DateTime().getMillis()), new ServiceCallback<Void>() {
             @Override
             public void onSuccess(Void item) {
                 showDoodled();

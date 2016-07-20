@@ -23,7 +23,7 @@ import io.harry.doodlenow.TestDoodleApplication;
 import io.harry.doodlenow.callback.JsoupCallback;
 import io.harry.doodlenow.component.TestDoodleComponent;
 import io.harry.doodlenow.model.Doodle;
-import io.harry.doodlenow.service.DoodleService;
+import io.harry.doodlenow.service.DoodleRestfulService;
 import io.harry.doodlenow.service.ServiceCallback;
 import io.harry.doodlenow.view.DoodleIcon;
 import io.harry.doodlenow.wrapper.JsoupWrapper;
@@ -41,7 +41,7 @@ public class DoodlePostServiceTest {
     @Inject
     JsoupWrapper mockJsoupWrapper;
     @Inject
-    DoodleService mockDoodleService;
+    DoodleRestfulService mockDoodleRestfulService;
     @Inject
     DoodleIcon mockDoodleIcon;
 
@@ -94,7 +94,7 @@ public class DoodlePostServiceTest {
 
         Doodle expectedDoodle = new Doodle("title", "content", "image url", MILLIS_2016_6_19_9_0);
 
-        verify(mockDoodleService).saveDoodle(eq(expectedDoodle),
+        verify(mockDoodleRestfulService).saveDoodle(eq(expectedDoodle),
                 Matchers.<ServiceCallback<Void>>any());
     }
 
@@ -108,7 +108,7 @@ public class DoodlePostServiceTest {
 
         Doodle expectedDoodle = new Doodle("title", "content", "image url", MILLIS_2016_6_19_9_0);
 
-        verify(mockDoodleService).saveDoodle(eq(expectedDoodle), voidServiceCallbackCaptor.capture());
+        verify(mockDoodleRestfulService).saveDoodle(eq(expectedDoodle), voidServiceCallbackCaptor.capture());
 
         voidServiceCallbackCaptor.getValue().onSuccess(null);
 

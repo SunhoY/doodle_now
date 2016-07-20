@@ -35,6 +35,8 @@ dependencies {
     compile 'joda-time:joda-time:2.9.4'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.android.support:design:22.2.0'
+    compile 'com.google.firebase:firebase-core:9.2.1'
+    compile 'com.google.firebase:firebase-database:9.2.1'
 
     apt 'com.google.dagger:dagger-compiler:2.4'
     apt 'com.jakewharton:butterknife-compiler:8.0.1'
@@ -53,3 +55,5 @@ dependencies {
     testApt 'com.google.dagger:dagger-compiler:2.4'
     testApt 'com.jakewharton:butterknife-compiler:8.0.1'
 }
+
+apply plugin: 'com.google.gms.google-services'

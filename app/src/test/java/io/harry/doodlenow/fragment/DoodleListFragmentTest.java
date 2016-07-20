@@ -32,7 +32,7 @@ import io.harry.doodlenow.activity.DoodleActivity;
 import io.harry.doodlenow.adapter.DoodleListAdapter;
 import io.harry.doodlenow.component.TestDoodleComponent;
 import io.harry.doodlenow.model.Doodle;
-import io.harry.doodlenow.service.DoodleService;
+import io.harry.doodlenow.service.DoodleRestfulService;
 import io.harry.doodlenow.service.ServiceCallback;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -54,7 +54,7 @@ public class DoodleListFragmentTest {
     RecyclerView doodleList;
 
     @Inject
-    DoodleService mockDoodleService;
+    DoodleRestfulService mockDoodleRestfulService;
     @Inject
     DoodleListAdapter mockDoodleListAdapter;
 
@@ -94,21 +94,21 @@ public class DoodleListFragmentTest {
     public void onResume_callsDoodleServiceWith9AMYesterdayTo9AMToday_whenTypeIsToday() throws Exception {
         setupWithType(DoodleListFragment.DoodleListType.Today);
 
-        verify(mockDoodleService).getDoodles(eq(MILLIS_2016_6_18_9_0), eq(MILLIS_2016_6_19_9_0), Matchers.<ServiceCallback<List<Doodle>>>any());
+        verify(mockDoodleRestfulService).getDoodles(eq(MILLIS_2016_6_18_9_0), eq(MILLIS_2016_6_19_9_0), Matchers.<ServiceCallback<List<Doodle>>>any());
     }
 
     @Test
     public void onResume_callsDoodleServiceWith7DaysAgoToNow_whenTypeIsThisWeek() throws Exception {
         setupWithType(DoodleListFragment.DoodleListType.ThisWeek);
 
-        verify(mockDoodleService).getDoodles(eq(MILLIS_2016_6_12_0_0), eq(MILLIS_2016_6_19_10_0), Matchers.<ServiceCallback<List<Doodle>>>any());
+        verify(mockDoodleRestfulService).getDoodles(eq(MILLIS_2016_6_12_0_0), eq(MILLIS_2016_6_19_10_0), Matchers.<ServiceCallback<List<Doodle>>>any());
     }
 
     @Test
     public void afterGettingDoodleList_refreshesContentListView() throws Exception {
         setupWithType(ANY_TYPE);
 
-        verify(mockDoodleService).getDoodles(anyLong(), anyLong(), doodleListServiceCallbackCaptor.capture());
+        verify(mockDoodleRestfulService).getDoodles(anyLong(), anyLong(), doodleListServiceCallbackCaptor.capture());
 
         ArrayList<Doodle> items = new ArrayList<>();
         items.add(new Doodle("beat it", "beat it!", "http://beatit.com", MILLIS_2016_6_19_9_0));

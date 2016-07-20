@@ -24,7 +24,7 @@ import io.harry.doodlenow.activity.DoodleActivity;
 import io.harry.doodlenow.adapter.DoodleListAdapter;
 import io.harry.doodlenow.itemdecoration.VerticalSpaceItemDecoration;
 import io.harry.doodlenow.model.Doodle;
-import io.harry.doodlenow.service.DoodleService;
+import io.harry.doodlenow.service.DoodleRestfulService;
 import io.harry.doodlenow.service.ServiceCallback;
 
 public class DoodleListFragment extends Fragment implements DoodleListAdapter.OnDoodleItemClickListener {
@@ -34,7 +34,7 @@ public class DoodleListFragment extends Fragment implements DoodleListAdapter.On
     @Inject
     DoodleListAdapter doodleListAdapter;
     @Inject
-    DoodleService doodleService;
+    DoodleRestfulService doodleRestfulService;
 
     @Override
     public void onDoodleItemClick(Doodle doodle) {
@@ -85,7 +85,7 @@ public class DoodleListFragment extends Fragment implements DoodleListAdapter.On
             start = new DateTime().minusDays(1).withTimeAtStartOfDay().plusHours(9).getMillis();
         }
 
-        doodleService.getDoodles(start, end, new ServiceCallback<List<Doodle>>() {
+        doodleRestfulService.getDoodles(start, end, new ServiceCallback<List<Doodle>>() {
             @Override
             public void onSuccess(List<Doodle> items) {
                 DoodleListAdapter doodleListAdapter = (DoodleListAdapter) doodleList.getAdapter();

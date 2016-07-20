@@ -1,7 +1,5 @@
 package io.harry.doodlenow.service;
 
-import org.joda.time.DateTime;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,19 +8,19 @@ import io.harry.doodlenow.model.Doodle;
 import io.harry.doodlenow.model.DoodleJson;
 import io.harry.doodlenow.model.cloudant.CloudantQueryResponse;
 import io.harry.doodlenow.model.cloudant.CreatedAtQuery;
+import io.harry.doodlenow.serviceinterface.IDoodleService;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class DoodleService {
+public class DoodleRestfulService implements IDoodleService {
     DoodleApi doodleApi;
 
-    public DoodleService(DoodleApi doodleApi) {
+    public DoodleRestfulService(DoodleApi doodleApi) {
         this.doodleApi = doodleApi;
     }
 
     public void saveDoodle(Doodle doodle, final ServiceCallback<Void> serviceCallback) {
-        long currentMillis = new DateTime().getMillis();
         Call<Void> postDoodleCall = doodleApi.postDoodle(new DoodleJson(doodle));
         postDoodleCall.enqueue(new Callback<Void>() {
             @Override

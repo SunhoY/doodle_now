@@ -18,12 +18,16 @@ import butterknife.ButterKnife;
 import io.harry.doodlenow.DoodleApplication;
 import io.harry.doodlenow.R;
 import io.harry.doodlenow.model.Doodle;
-import io.harry.doodlenow.service.DoodleService;
+import io.harry.doodlenow.service.DoodleFirebaseService;
+import io.harry.doodlenow.service.DoodleRestfulService;
 import io.harry.doodlenow.service.ServiceCallback;
 
 public class CreateDoodleActivity extends AppCompatActivity {
+//    @Inject
+//    DoodleRestfulService doodleRestfulService;
+
     @Inject
-    DoodleService doodleService;
+    DoodleFirebaseService doodleFirebaseService;
 
     @BindView(R.id.doodle_title)
     EditText doodleTitle;
@@ -70,7 +74,8 @@ public class CreateDoodleActivity extends AppCompatActivity {
                 "",
                 DateTime.now().getMillis());
 
-        doodleService.saveDoodle(doodle, new ServiceCallback<Void>() {
+//        doodleRestfulService.saveDoodle(doodle, new ServiceCallback<Void>() {
+        doodleFirebaseService.saveDoodle(doodle, new ServiceCallback<Void>() {
             @Override
             public void onSuccess(Void item) {
                 Toast.makeText(CreateDoodleActivity.this, "저장되었습니다", Toast.LENGTH_SHORT).show();

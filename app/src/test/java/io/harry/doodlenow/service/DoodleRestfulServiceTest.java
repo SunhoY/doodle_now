@@ -34,8 +34,8 @@ import static org.mockito.Mockito.when;
 
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class)
-public class DoodleServiceTest {
-    private DoodleService subject;
+public class DoodleRestfulServiceTest {
+    private DoodleRestfulService subject;
     private final long ANY_MILLIS = 0L;
     private final long SOME_MILLIS = 1L;
 
@@ -65,7 +65,7 @@ public class DoodleServiceTest {
         DateTimeUtils.setCurrentMillisFixed(SOME_MILLIS);
 
         mockDoodleApi = mock(DoodleApi.class);
-        subject = new DoodleService(mockDoodleApi);
+        subject = new DoodleRestfulService(mockDoodleApi);
     }
 
     @Test

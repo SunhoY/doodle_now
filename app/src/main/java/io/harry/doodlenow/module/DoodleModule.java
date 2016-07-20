@@ -10,14 +10,16 @@ import dagger.Module;
 import dagger.Provides;
 import io.harry.doodlenow.adapter.DoodleListAdapter;
 import io.harry.doodlenow.api.DoodleApi;
+import io.harry.doodlenow.database.DatabaseReferenceWrapper;
 import io.harry.doodlenow.model.Doodle;
-import io.harry.doodlenow.service.DoodleService;
+import io.harry.doodlenow.service.DoodleFirebaseService;
+import io.harry.doodlenow.service.DoodleRestfulService;
 import io.harry.doodlenow.view.DoodleIcon;
 import io.harry.doodlenow.wrapper.DoodleListFragmentWrapper;
 import io.harry.doodlenow.wrapper.DoodlePagerAdapterWrapper;
 import retrofit2.Retrofit;
 
-@Module
+@Module(includes = FirebaseModule.class)
 public class DoodleModule {
     private Context context;
 
@@ -26,8 +28,13 @@ public class DoodleModule {
     }
 
     @Provides @Singleton
-    public DoodleService provideDoodleService(DoodleApi doodleApi) {
-        return new DoodleService(doodleApi);
+    public DoodleFirebaseService provideDoodleFirebaseService(DatabaseReferenceWrapper databaseReferenceWrapper) {
+        return new DoodleFirebaseService(databaseReferenceWrapper);
+    }
+
+    @Provides @Singleton
+    public DoodleRestfulService provideDoodleService(DoodleApi doodleApi) {
+        return new DoodleRestfulService(doodleApi);
     }
 
     @Provides @Singleton

@@ -26,7 +26,7 @@ import io.harry.doodlenow.R;
 import io.harry.doodlenow.TestDoodleApplication;
 import io.harry.doodlenow.component.TestDoodleComponent;
 import io.harry.doodlenow.model.Doodle;
-import io.harry.doodlenow.service.DoodleService;
+import io.harry.doodlenow.service.DoodleRestfulService;
 import io.harry.doodlenow.service.ServiceCallback;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -40,7 +40,7 @@ import static org.mockito.Mockito.verify;
 public class CreateDoodleActivityTest {
     private long MILLIS_2016_6_19_10_0 = 1466298000000L;
     @Inject
-    DoodleService mockDoodleService;
+    DoodleRestfulService mockDoodleRestfulService;
 
     @BindView(R.id.doodle_title)
     EditText doodleTitle;
@@ -86,7 +86,7 @@ public class CreateDoodleActivityTest {
 
         Doodle expectedDoodle = new Doodle("This is real doodle", "And this is real content", "", MILLIS_2016_6_19_10_0);
 
-        verify(mockDoodleService).saveDoodle(
+        verify(mockDoodleRestfulService).saveDoodle(
                 eq(expectedDoodle),
                 Matchers.<ServiceCallback<Void>>any());
     }
@@ -95,7 +95,7 @@ public class CreateDoodleActivityTest {
     public void clickOnSaveAtActionBar_doesNotCallDoodleService_whenTitleOrContentIsEmpty() throws Exception {
         tryToSave("", "And this is real content");
 
-        verify(mockDoodleService, never()).saveDoodle(any(Doodle.class), Matchers.<ServiceCallback<Void>>any());
+        verify(mockDoodleRestfulService, never()).saveDoodle(any(Doodle.class), Matchers.<ServiceCallback<Void>>any());
     }
 
     @Test
@@ -129,7 +129,7 @@ public class CreateDoodleActivityTest {
     }
 
     private void doodleSuccessfullySaved() {
-        verify(mockDoodleService).saveDoodle(
+        verify(mockDoodleRestfulService).saveDoodle(
                 any(Doodle.class),
                 voidServiceCallbackCaptor.capture());
 

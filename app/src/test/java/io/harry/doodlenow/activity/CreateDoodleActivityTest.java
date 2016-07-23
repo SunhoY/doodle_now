@@ -80,6 +80,18 @@ public class CreateDoodleActivityTest {
     }
 
     @Test
+    public void onCreate_addChildEventListenerToFirebaseHelper() throws Exception {
+        verify(mockFirebaseHelper).addChildEventListener(subject);
+    }
+
+    @Test
+    public void onDestroy_removeChildEventListenerFromFirebaseHelper() throws Exception {
+        subject.onDestroy();
+
+        verify(mockFirebaseHelper).removeChildEventListener(subject);
+    }
+
+    @Test
     public void clickOnBackArrowAtActionBar_finishesActivity() throws Exception {
         subject.onOptionsItemSelected(new RoboMenuItem(android.R.id.home));
 

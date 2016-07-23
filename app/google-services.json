@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "220022746007",
+    "firebase_url": "https://doodle-now.firebaseio.com",
+    "project_id": "doodle-now",
+    "storage_bucket": "doodle-now.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:220022746007:android:82ced6cffc9e44e9",
+        "android_client_info": {
+          "package_name": "io.harry.doodlenow"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "220022746007-b69vumf9268fu7dhunnmmtpad4f1ast2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDTWKZgWTSQQ68IspjaQTv15pOXr6JOFd8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

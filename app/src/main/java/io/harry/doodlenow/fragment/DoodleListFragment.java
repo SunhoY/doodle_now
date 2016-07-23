@@ -22,6 +22,8 @@ import io.harry.doodlenow.DoodleApplication;
 import io.harry.doodlenow.R;
 import io.harry.doodlenow.activity.DoodleActivity;
 import io.harry.doodlenow.adapter.DoodleListAdapter;
+import io.harry.doodlenow.fragment.doodlerange.DoodleRange;
+import io.harry.doodlenow.fragment.doodlerange.DoodleRangeCalculator;
 import io.harry.doodlenow.itemdecoration.VerticalSpaceItemDecoration;
 import io.harry.doodlenow.model.Doodle;
 import io.harry.doodlenow.service.DoodleService;
@@ -32,20 +34,11 @@ public class DoodleListFragment extends Fragment implements DoodleListAdapter.On
     RecyclerView doodleList;
 
     @Inject
+    DoodleRangeCalculator doodleRangeCalculator;
+    @Inject
     DoodleListAdapter doodleListAdapter;
     @Inject
     DoodleService doodleService;
-
-    @Override
-    public void onDoodleItemClick(Doodle doodle) {
-        Intent intent = new Intent(getActivity(), DoodleActivity.class);
-        intent.putExtra("doodle", doodle);
-        getActivity().startActivity(intent);
-    }
-
-    public enum DoodleListType {
-        Today, ThisWeek
-    }
 
     private DoodleListType doodleListType;
 
@@ -75,17 +68,12 @@ public class DoodleListFragment extends Fragment implements DoodleListAdapter.On
 
     @Override
     public void onResume() {
-        long start;
-        long end;
-        if(doodleListType == DoodleListType.ThisWeek) {
-            end = new DateTime().getMillis();
-            start = new DateTime().withTimeAtStartOfDay().minusDays(7).getMillis();
-        } else {
-            end = new DateTime().withTimeAtStartOfDay().plusHours(9).getMillis();
-            start = new DateTime().minusDays(1).withTimeAtStartOfDay().plusHours(9).getMillis();
-        }
+        int standUpStartsAt = getResources().getInteger(R.integer.stand_up_starts_at);
+        int archiveDuration = getResources().getInteger(R.integer.archive_duration);
 
-        doodleService.getDoodles(start, end, new ServiceCallback<List<Doodle>>() {
+        DoodleRange doodleRange = doodleRangeCalculator.calculateRange(doodleListType, new DateTime(), standUpStartsAt, archiveDuration);
+
+        doodleService.getDoodles(doodleRange.getStartAt(), doodleRange.getEndAt(), new ServiceCallback<List<Doodle>>() {
             @Override
             public void onSuccess(List<Doodle> items) {
                 DoodleListAdapter doodleListAdapter = (DoodleListAdapter) doodleList.getAdapter();
@@ -99,5 +87,12 @@ public class DoodleListFragment extends Fragment implements DoodleListAdapter.On
         });
 
         super.onResume();
+    }
+
+    @Override
+    public void onDoodleItemClick(Doodle doodle) {
+        Intent intent = new Intent(getActivity(), DoodleActivity.class);
+        intent.putExtra("doodle", doodle);
+        getActivity().startActivity(intent);
     }
 }

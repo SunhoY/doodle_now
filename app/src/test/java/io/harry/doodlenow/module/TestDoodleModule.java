@@ -6,6 +6,7 @@ import dagger.Module;
 import dagger.Provides;
 import io.harry.doodlenow.adapter.DoodleListAdapter;
 import io.harry.doodlenow.api.DoodleApi;
+import io.harry.doodlenow.fragment.doodlerange.DoodleRangeCalculator;
 import io.harry.doodlenow.service.DoodleService;
 import io.harry.doodlenow.view.DoodleIcon;
 import io.harry.doodlenow.wrapper.DoodleListFragmentWrapper;
@@ -41,5 +42,10 @@ public class TestDoodleModule {
     @Provides @Singleton
     public DoodleListFragmentWrapper provideDoodleListFragmentWrapper() {
         return mock(DoodleListFragmentWrapper.class);
+    }
+
+    @Provides @Singleton
+    public DoodleRangeCalculator provideDoodleRangeCalculator() {
+        return mock(DoodleRangeCalculator.class);
     }
 }

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="stand_up_starts_at">10</integer>
+    <integer name="archive_duration">7</integer>
+</resources>

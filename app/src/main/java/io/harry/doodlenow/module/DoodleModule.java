@@ -10,6 +10,7 @@ import dagger.Module;
 import dagger.Provides;
 import io.harry.doodlenow.adapter.DoodleListAdapter;
 import io.harry.doodlenow.api.DoodleApi;
+import io.harry.doodlenow.fragment.doodlerange.DoodleRangeCalculator;
 import io.harry.doodlenow.model.Doodle;
 import io.harry.doodlenow.service.DoodleService;
 import io.harry.doodlenow.view.DoodleIcon;
@@ -53,5 +54,10 @@ public class DoodleModule {
     @Provides
     public DoodleListAdapter provideDoodleListAdapter() {
         return new DoodleListAdapter(context, new ArrayList<Doodle>());
+    }
+
+    @Provides @Singleton
+    public DoodleRangeCalculator provideDoodleRangeCalculator() {
+        return new DoodleRangeCalculator();
     }
 }

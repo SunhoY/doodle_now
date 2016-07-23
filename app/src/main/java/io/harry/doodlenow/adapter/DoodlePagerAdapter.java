@@ -13,6 +13,8 @@ import io.harry.doodlenow.DoodleApplication;
 import io.harry.doodlenow.fragment.DoodleListFragment;
 import io.harry.doodlenow.wrapper.DoodleListFragmentWrapper;
 
+import static io.harry.doodlenow.fragment.DoodleListType.*;
+
 public class DoodlePagerAdapter extends FragmentStatePagerAdapter {
     @Inject
     DoodleListFragmentWrapper doodleListFragmentWrapper;
@@ -30,9 +32,9 @@ public class DoodlePagerAdapter extends FragmentStatePagerAdapter {
         doodleListFragments = new ArrayList<>();
 
         doodleListFragments.add(
-                doodleListFragmentWrapper.getDoodleListFragment(DoodleListFragment.DoodleListType.Today));
+                doodleListFragmentWrapper.getDoodleListFragment(Today));
         doodleListFragments.add(
-                doodleListFragmentWrapper.getDoodleListFragment(DoodleListFragment.DoodleListType.ThisWeek));
+                doodleListFragmentWrapper.getDoodleListFragment(Archive));
     }
 
     @Override

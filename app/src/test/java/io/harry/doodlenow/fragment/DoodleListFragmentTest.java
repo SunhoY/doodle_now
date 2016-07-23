@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,20 +32,27 @@ import io.harry.doodlenow.R;
 import io.harry.doodlenow.activity.DoodleActivity;
 import io.harry.doodlenow.adapter.DoodleListAdapter;
 import io.harry.doodlenow.component.TestDoodleComponent;
+import io.harry.doodlenow.fragment.doodlerange.DoodleRange;
+import io.harry.doodlenow.fragment.doodlerange.DoodleRangeCalculator;
 import io.harry.doodlenow.model.Doodle;
 import io.harry.doodlenow.service.DoodleService;
 import io.harry.doodlenow.service.ServiceCallback;
 
+import static io.harry.doodlenow.fragment.DoodleListType.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class)
 public class DoodleListFragmentTest {
-    public static final DoodleListFragment.DoodleListType ANY_TYPE = DoodleListFragment.DoodleListType.ThisWeek;
+    private static final DoodleListType ANY_TYPE = Archive;
+    private static final long ANY_LONG = -1L;
     private long MILLIS_2016_6_19_10_0 = 1466298000000L;
     private long MILLIS_2016_6_19_9_0 = 1466294400000L;
     private long MILLIS_2016_6_18_9_0 = 1466208000000L;
@@ -53,6 +61,8 @@ public class DoodleListFragmentTest {
     @BindView(R.id.doodle_list)
     RecyclerView doodleList;
 
+    @Inject
+    DoodleRangeCalculator mockDoodleRangeCalculator;
     @Inject
     DoodleService mockDoodleService;
     @Inject
@@ -69,9 +79,12 @@ public class DoodleListFragmentTest {
         MockitoAnnotations.initMocks(this);
 
         DateTimeUtils.setCurrentMillisFixed(MILLIS_2016_6_19_10_0);
+
+        when(mockDoodleRangeCalculator.calculateRange(any(DoodleListType.class), any(DateTime.class), anyInt(), anyInt()))
+                .thenReturn(new DoodleRange(MILLIS_2016_6_18_9_0, MILLIS_2016_6_19_9_0));
     }
 
-    private void setupWithType(DoodleListFragment.DoodleListType type) {
+    private void setupWithType(DoodleListType type) {
         subject = new DoodleListFragment();
         Bundle arguments = new Bundle();
         arguments.putSerializable("doodleListType", type);
@@ -91,17 +104,25 @@ public class DoodleListFragmentTest {
     }
 
     @Test
-    public void onResume_callsDoodleServiceWith9AMYesterdayTo9AMToday_whenTypeIsToday() throws Exception {
-        setupWithType(DoodleListFragment.DoodleListType.Today);
+    public void onResume_calculateDateRangeWithCalculator() throws Exception {
+        when(mockDoodleRangeCalculator.calculateRange(Today, new DateTime(1466298000000L), 10, 7))
+                .thenReturn(new DoodleRange(ANY_LONG, ANY_LONG));
 
-        verify(mockDoodleService).getDoodles(eq(MILLIS_2016_6_18_9_0), eq(MILLIS_2016_6_19_9_0), Matchers.<ServiceCallback<List<Doodle>>>any());
+        setupWithType(Today);
+
+        //spying resource in TestDoodleApplication
+        verify(mockDoodleRangeCalculator).calculateRange(
+                Today, new DateTime(1466298000000L), 10, 7);
     }
 
     @Test
-    public void onResume_callsDoodleServiceWith7DaysAgoToNow_whenTypeIsThisWeek() throws Exception {
-        setupWithType(DoodleListFragment.DoodleListType.ThisWeek);
+    public void onResume_callsDoodleServiceToGetDoodlesWithCalculatedDateRange() throws Exception {
+        when(mockDoodleRangeCalculator.calculateRange(any(DoodleListType.class), any(DateTime.class), anyInt(), anyInt()))
+                .thenReturn(new DoodleRange(MILLIS_2016_6_18_9_0, MILLIS_2016_6_19_9_0));
 
-        verify(mockDoodleService).getDoodles(eq(MILLIS_2016_6_12_0_0), eq(MILLIS_2016_6_19_10_0), Matchers.<ServiceCallback<List<Doodle>>>any());
+        setupWithType(ANY_TYPE);
+
+        verify(mockDoodleService).getDoodles(eq(MILLIS_2016_6_18_9_0), eq(MILLIS_2016_6_19_9_0), Matchers.<ServiceCallback<List<Doodle>>>any());
     }
 
     @Test

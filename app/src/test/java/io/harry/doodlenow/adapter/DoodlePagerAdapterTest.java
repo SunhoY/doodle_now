@@ -18,6 +18,7 @@ import io.harry.doodlenow.component.TestDoodleComponent;
 import io.harry.doodlenow.fragment.DoodleListFragment;
 import io.harry.doodlenow.wrapper.DoodleListFragmentWrapper;
 
+import static io.harry.doodlenow.fragment.DoodleListType.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
@@ -38,9 +39,9 @@ public class DoodlePagerAdapterTest {
     public void setUp() throws Exception {
         ((TestDoodleComponent)((DoodleApplication) RuntimeEnvironment.application).getDoodleComponent()).inject(this);
 
-        when(mockDoodleListFragmentWrapper.getDoodleListFragment(DoodleListFragment.DoodleListType.Today))
+        when(mockDoodleListFragmentWrapper.getDoodleListFragment(Today))
                 .thenReturn(mockTodayFragment);
-        when(mockDoodleListFragmentWrapper.getDoodleListFragment(DoodleListFragment.DoodleListType.ThisWeek))
+        when(mockDoodleListFragmentWrapper.getDoodleListFragment(Archive))
                 .thenReturn(mockThisWeekFragment);
 
         subject = new DoodlePagerAdapter(Robolectric.setupActivity(LandingActivity.class));

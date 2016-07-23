@@ -5,12 +5,14 @@ public class DoodleJson {
     public final String content;
     public final String imageUrl;
     public final long createdAt;
+    public final String url;
 
     public DoodleJson(Doodle doodle) {
         this.title = doodle.getTitle();
         this.content = doodle.getContent();
         this.imageUrl = doodle.getImageUrl();
         this.createdAt = doodle.getCreatedAt();
+        this.url = doodle.getUrl();
     }
 
     @Override
@@ -22,7 +24,10 @@ public class DoodleJson {
 
         if (createdAt != that.createdAt) return false;
         if (title != null ? !title.equals(that.title) : that.title != null) return false;
-        return content != null ? content.equals(that.content) : that.content == null;
+        if (content != null ? !content.equals(that.content) : that.content != null) return false;
+        if (imageUrl != null ? !imageUrl.equals(that.imageUrl) : that.imageUrl != null)
+            return false;
+        return url != null ? url.equals(that.url) : that.url == null;
 
     }
 
@@ -30,7 +35,9 @@ public class DoodleJson {
     public int hashCode() {
         int result = title != null ? title.hashCode() : 0;
         result = 31 * result + (content != null ? content.hashCode() : 0);
+        result = 31 * result + (imageUrl != null ? imageUrl.hashCode() : 0);
         result = 31 * result + (int) (createdAt ^ (createdAt >>> 32));
+        result = 31 * result + (url != null ? url.hashCode() : 0);
         return result;
     }
 }

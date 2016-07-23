@@ -86,13 +86,13 @@ public class DoodlePostServiceTest {
 
     @Test
     public void afterGettingDocument_callsDoodleServiceToSaveDoodle() throws Exception {
-        subject.postDoodle(ANY_STRING);
+        subject.postDoodle("this is url");
 
         verify(mockJsoupWrapper).getDocument(anyString(), jsoupCallbackCaptor.capture());
 
         jsoupCallbackCaptor.getValue().onSuccess("title", "content", "image url");
 
-        Doodle expectedDoodle = new Doodle("title", "content", "image url", MILLIS_2016_6_19_9_0);
+        Doodle expectedDoodle = new Doodle("title", "content", "this is url", "image url", MILLIS_2016_6_19_9_0);
 
         verify(mockDoodleService).saveDoodle(eq(expectedDoodle),
                 Matchers.<ServiceCallback<Void>>any());
@@ -106,9 +106,7 @@ public class DoodlePostServiceTest {
 
         jsoupCallbackCaptor.getValue().onSuccess("title", "content", "image url");
 
-        Doodle expectedDoodle = new Doodle("title", "content", "image url", MILLIS_2016_6_19_9_0);
-
-        verify(mockDoodleService).saveDoodle(eq(expectedDoodle), voidServiceCallbackCaptor.capture());
+        verify(mockDoodleService).saveDoodle(any(Doodle.class), voidServiceCallbackCaptor.capture());
 
         voidServiceCallbackCaptor.getValue().onSuccess(null);
 

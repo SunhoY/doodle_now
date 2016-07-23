@@ -132,14 +132,14 @@ public class DoodleListFragmentTest {
         verify(mockDoodleService).getDoodles(anyLong(), anyLong(), doodleListServiceCallbackCaptor.capture());
 
         ArrayList<Doodle> items = new ArrayList<>();
-        items.add(new Doodle("beat it", "beat it!", "http://beatit.com", MILLIS_2016_6_19_9_0));
-        items.add(new Doodle("air walk", "air walk!", "http://airwalk.com", MILLIS_2016_6_18_9_0));
+        items.add(new Doodle("beat it", "beat it!", "http://beatit.com", "http://beatit.com/pic.png", MILLIS_2016_6_19_9_0));
+        items.add(new Doodle("air walk", "air walk!", "http://airwalk.com", "http://airwalk.com/ture.png", MILLIS_2016_6_18_9_0));
 
         doodleListServiceCallbackCaptor.getValue().onSuccess(items);
 
         ArrayList<Doodle> expected = new ArrayList<>();
-        expected.add(new Doodle("beat it", "beat it!", "http://beatit.com", MILLIS_2016_6_19_9_0));
-        expected.add(new Doodle("air walk", "air walk!", "http://airwalk.com", MILLIS_2016_6_18_9_0));
+        expected.add(new Doodle("beat it", "beat it!", "http://beatit.com", "http://beatit.com/pic.png", MILLIS_2016_6_19_9_0));
+        expected.add(new Doodle("air walk", "air walk!", "http://airwalk.com", "http://airwalk.com/ture.png", MILLIS_2016_6_18_9_0));
 
         verify(mockDoodleListAdapter).refreshDoodles(expected);
     }
@@ -162,11 +162,11 @@ public class DoodleListFragmentTest {
     public void onDoodleItemClick_startsDoodleActivityWithDoodleId() throws Exception {
         setupWithType(ANY_TYPE);
 
-        Doodle doodle = new Doodle("title", "content", "image url", MILLIS_2016_6_12_0_0);
+        Doodle doodle = new Doodle("title", "content", "some url", "image url", MILLIS_2016_6_12_0_0);
         subject.onDoodleItemClick(doodle);
 
         Intent expected = new Intent(subject.getActivity(), DoodleActivity.class);
-        expected.putExtra("doodle", new Doodle("title", "content", "image url", MILLIS_2016_6_12_0_0));
+        expected.putExtra("doodle", new Doodle("title", "content", "some url", "image url", MILLIS_2016_6_12_0_0));
 
         assertThat(shadowOf(RuntimeEnvironment.application).getNextStartedActivity()).isEqualTo(expected);
     }

@@ -5,25 +5,23 @@ import org.joda.time.DateTime;
 import java.io.Serializable;
 
 public class Doodle implements Serializable {
-    private String title;
-    private String content;
-    private String imageUrl;
-    private String elapsedHours;
-    private long createdAt;
+    private final String title;
+    private final String content;
+    private final String imageUrl;
+    private final String elapsedHours;
+    private final long createdAt;
+    private final String url;
 
     public Doodle(DoodleJson doodleJson) {
-        this.title = doodleJson.title;
-        this.content = doodleJson.content;
-        this.imageUrl = doodleJson.imageUrl;
-        this.createdAt = doodleJson.createdAt;
-        this.elapsedHours = calculateElapsedHours(doodleJson.createdAt) + " hours ago";
+        this(doodleJson.title, doodleJson.content, doodleJson.url, doodleJson.imageUrl, doodleJson.createdAt);
     }
 
-    public Doodle(String title, String content, String imageUrl, long createdAt) {
+    public Doodle(String title, String content, String url, String imageUrl, long createdAt) {
         this.title = title;
         this.content = content;
         this.imageUrl = imageUrl;
         this.createdAt = createdAt;
+        this.url = url;
         this.elapsedHours = calculateElapsedHours(createdAt) + " hours ago";
     }
 
@@ -55,6 +53,10 @@ public class Doodle implements Serializable {
         return elapsedHours;
     }
 
+    public String getUrl() {
+        return url;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -68,7 +70,9 @@ public class Doodle implements Serializable {
             return false;
         if (imageUrl != null ? !imageUrl.equals(doodle.imageUrl) : doodle.imageUrl != null)
             return false;
-        return elapsedHours != null ? elapsedHours.equals(doodle.elapsedHours) : doodle.elapsedHours == null;
+        if (elapsedHours != null ? !elapsedHours.equals(doodle.elapsedHours) : doodle.elapsedHours != null)
+            return false;
+        return url != null ? url.equals(doodle.url) : doodle.url == null;
 
     }
 
@@ -79,6 +83,7 @@ public class Doodle implements Serializable {
         result = 31 * result + (imageUrl != null ? imageUrl.hashCode() : 0);
         result = 31 * result + (elapsedHours != null ? elapsedHours.hashCode() : 0);
         result = 31 * result + (int) (createdAt ^ (createdAt >>> 32));
+        result = 31 * result + (url != null ? url.hashCode() : 0);
         return result;
     }
 }

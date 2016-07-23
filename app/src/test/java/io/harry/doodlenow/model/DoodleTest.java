@@ -20,14 +20,14 @@ public class DoodleTest {
 
     @Test
     public void constructor_setsElapsedHours() throws Exception {
-        subject = new Doodle("title", "content", "image url", MILLIS_2016_7_19_2_0);
+        subject = new Doodle("title", "content", "url", "image url", MILLIS_2016_7_19_2_0);
 
         assertThat(subject.getElapsedHours()).isEqualTo("2 hours ago");
     }
 
     @Test
     public void constructor_setsElapsedHours_whenDaysPassed() throws Exception {
-        subject = new Doodle("title", "content", "image url", MILLIS_2016_7_18_2_0);
+        subject = new Doodle("title", "content", "url", "image url", MILLIS_2016_7_18_2_0);
 
         assertThat(subject.getElapsedHours()).isEqualTo("26 hours ago");
     }

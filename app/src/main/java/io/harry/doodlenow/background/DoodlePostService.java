@@ -49,11 +49,11 @@ public class DoodlePostService extends Service {
         return START_STICKY;
     }
 
-    public void postDoodle(String url) {
+    public void postDoodle(final String url) {
         jsoupWrapper.getDocument(url, new JsoupCallback() {
             @Override
             public void onSuccess(String title, String content, String imageUrl) {
-                saveDoodle(title, content, imageUrl);
+                saveDoodle(title, content, imageUrl, url);
             }
 
             @Override
@@ -63,8 +63,9 @@ public class DoodlePostService extends Service {
         });
     }
 
-    private void saveDoodle(String title, String content, String imageUrl) {
-        doodleService.saveDoodle(new Doodle(title, content, imageUrl, new DateTime().getMillis()), new ServiceCallback<Void>() {
+    private void saveDoodle(String title, String content, String imageUrl, String url) {
+        doodleService.saveDoodle(new Doodle(title, content, url, imageUrl, new DateTime().getMillis()),
+                new ServiceCallback<Void>() {
             @Override
             public void onSuccess(Void item) {
                 showDoodled();

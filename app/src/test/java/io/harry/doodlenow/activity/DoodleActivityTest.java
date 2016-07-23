@@ -79,32 +79,32 @@ public class DoodleActivityTest {
 
     @Test
     public void onCreate_showsDoodleTitle() throws Exception {
-        setupActivityWithDoodle(new Doodle("title", ANY_STRING, ANY_STRING, ANY_MILLIS));
+        setupActivityWithDoodle(new Doodle("title", ANY_STRING, ANY_STRING, ANY_STRING, ANY_MILLIS));
         assertThat(doodleTitle.getText()).isEqualTo("title");
     }
 
     @Test
     public void onCreate_showsDoodleElapsedHours() throws Exception {
-        setupActivityWithDoodle(new Doodle(ANY_STRING, ANY_STRING, ANY_STRING, MILLIS_2016_6_19_9_0));
+        setupActivityWithDoodle(new Doodle(ANY_STRING, ANY_STRING, ANY_STRING, ANY_STRING, MILLIS_2016_6_19_9_0));
         assertThat(hoursElapsed.getText()).isEqualTo("1 hours ago");
     }
 
     @Test
     public void onCreate_showsDoodleContent() throws Exception {
-        setupActivityWithDoodle(new Doodle(ANY_STRING, "content", ANY_STRING, ANY_MILLIS));
+        setupActivityWithDoodle(new Doodle(ANY_STRING, "content", ANY_STRING, ANY_STRING, ANY_MILLIS));
         assertThat(doodleContent.getText()).isEqualTo("content");
     }
 
     @Test
     public void onCreate_setsImageWithUrlViaPicasso() throws Exception {
-        setupActivityWithDoodle(new Doodle(ANY_STRING, ANY_STRING, "image url", ANY_MILLIS));
+        setupActivityWithDoodle(new Doodle(ANY_STRING, ANY_STRING, ANY_STRING, "image url", ANY_MILLIS));
         verify(mockPicasso).load("image url");
         verify(mockRequestCreator).into(doodleImage);
     }
 
     @Test
     public void onCreate_setsDefaultImage_whenImageUrlIsEmpty() throws Exception {
-        setupActivityWithDoodle(new Doodle(ANY_STRING, ANY_STRING, "", ANY_MILLIS));
+        setupActivityWithDoodle(new Doodle(ANY_STRING, ANY_STRING, ANY_STRING, "", ANY_MILLIS));
 
         verify(mockPicasso).load(R.drawable.main_logo);
         verify(mockRequestCreator).into(doodleImage);
@@ -112,14 +112,14 @@ public class DoodleActivityTest {
 
     @Test
     public void actionBar_shouldNotHaveTitle() throws Exception {
-        setupActivityWithDoodle(new Doodle(ANY_STRING, ANY_STRING, ANY_STRING, ANY_MILLIS));
+        setupActivityWithDoodle(new Doodle(ANY_STRING, ANY_STRING, ANY_STRING, ANY_STRING, ANY_MILLIS));
 
         assertThat(subject.getSupportActionBar().getTitle()).isEqualTo("");
     }
 
     @Test
     public void clickOnBackArrowAtActionBar_finishesActivity() throws Exception {
-        setupActivityWithDoodle(new Doodle(ANY_STRING, ANY_STRING, ANY_STRING, ANY_MILLIS));
+        setupActivityWithDoodle(new Doodle(ANY_STRING, ANY_STRING, ANY_STRING, ANY_STRING, ANY_MILLIS));
 
         subject.onOptionsItemSelected(new RoboMenuItem(android.R.id.home));
 

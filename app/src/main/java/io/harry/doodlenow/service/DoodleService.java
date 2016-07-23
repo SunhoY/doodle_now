@@ -1,7 +1,5 @@
 package io.harry.doodlenow.service;
 
-import org.joda.time.DateTime;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +20,6 @@ public class DoodleService {
     }
 
     public void saveDoodle(Doodle doodle, final ServiceCallback<Void> serviceCallback) {
-        long currentMillis = new DateTime().getMillis();
         Call<Void> postDoodleCall = doodleApi.postDoodle(new DoodleJson(doodle));
         postDoodleCall.enqueue(new Callback<Void>() {
             @Override

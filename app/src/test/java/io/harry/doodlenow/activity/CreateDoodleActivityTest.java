@@ -84,7 +84,7 @@ public class CreateDoodleActivityTest {
     public void clickOnSaveAtActionBar_callsDoodleService() throws Exception {
         tryToSave("This is real doodle", "And this is real content");
 
-        Doodle expectedDoodle = new Doodle("This is real doodle", "And this is real content", "", MILLIS_2016_6_19_10_0);
+        Doodle expectedDoodle = new Doodle("This is real doodle", "And this is real content", "", "", MILLIS_2016_6_19_10_0);
 
         verify(mockDoodleService).saveDoodle(
                 eq(expectedDoodle),

@@ -67,8 +67,9 @@ public class CreateDoodleActivity extends AppCompatActivity {
 
         Doodle doodle = new Doodle(doodleTitle.getText().toString(),
                 doodleContent.getText().toString(),
-                "",
-                DateTime.now().getMillis());
+                "", "",
+                DateTime.now().getMillis()
+        );
 
         doodleService.saveDoodle(doodle, new ServiceCallback<Void>() {
             @Override

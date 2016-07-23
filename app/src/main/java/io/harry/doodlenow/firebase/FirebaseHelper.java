@@ -4,6 +4,8 @@ import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import io.harry.doodlenow.model.Doodle;
+
 public class FirebaseHelper {
     private final String child;
     private final FirebaseDatabase firebaseDatabase;
@@ -21,5 +23,9 @@ public class FirebaseHelper {
 
     public void removeChildEventListener(ChildEventListener listener) {
         databaseReference.removeEventListener(listener);
+    }
+
+    public void saveDoodle(Doodle doodle) {
+
     }
 }

@@ -11,6 +11,7 @@ import io.harry.doodlenow.adapter.DoodlePagerAdapter;
 import io.harry.doodlenow.background.DoodlePostService;
 import io.harry.doodlenow.fragment.DoodleListFragment;
 import io.harry.doodlenow.module.DoodleModule;
+import io.harry.doodlenow.module.FirebaseModule;
 import io.harry.doodlenow.module.HTMLModule;
 import io.harry.doodlenow.module.NetworkModule;
 import io.harry.doodlenow.module.PicassoModule;
@@ -21,6 +22,7 @@ import io.harry.doodlenow.module.PicassoModule;
         NetworkModule.class,
         HTMLModule.class,
         PicassoModule.class,
+        FirebaseModule.class,
     }
 )
 public interface DoodleComponent {

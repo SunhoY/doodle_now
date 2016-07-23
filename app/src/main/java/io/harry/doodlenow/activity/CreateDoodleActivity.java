@@ -9,6 +9,10 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+
 import org.joda.time.DateTime;
 
 import javax.inject.Inject;
@@ -17,18 +21,20 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.harry.doodlenow.DoodleApplication;
 import io.harry.doodlenow.R;
+import io.harry.doodlenow.firebase.FirebaseHelper;
+import io.harry.doodlenow.firebase.FirebaseHelperWrapper;
 import io.harry.doodlenow.model.Doodle;
-import io.harry.doodlenow.service.DoodleService;
-import io.harry.doodlenow.service.ServiceCallback;
 
-public class CreateDoodleActivity extends AppCompatActivity {
+public class CreateDoodleActivity extends AppCompatActivity implements ChildEventListener {
     @Inject
-    DoodleService doodleService;
+    FirebaseHelperWrapper firebaseHelperWrapper;
 
     @BindView(R.id.doodle_title)
     EditText doodleTitle;
     @BindView(R.id.doodle_content)
     EditText doodleContent;
+
+    private FirebaseHelper firebaseHelper;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -36,6 +42,9 @@ public class CreateDoodleActivity extends AppCompatActivity {
         setContentView(R.layout.activity_create_doodle);
 
         ((DoodleApplication)getApplication()).getDoodleComponent().inject(this);
+
+        firebaseHelper = firebaseHelperWrapper.getFirebaseHelper("doodles");
+        firebaseHelper.addChildEventListener(this);
 
         ButterKnife.bind(this);
 
@@ -71,19 +80,7 @@ public class CreateDoodleActivity extends AppCompatActivity {
                 DateTime.now().getMillis()
         );
 
-        doodleService.saveDoodle(doodle, new ServiceCallback<Void>() {
-            @Override
-            public void onSuccess(Void item) {
-                Toast.makeText(CreateDoodleActivity.this, "저장되었습니다", Toast.LENGTH_SHORT).show();
-                finish();
-            }
-
-            @Override
-            public void onFailure(String message) {
-
-            }
-        });
-
+        firebaseHelper.saveDoodle(doodle);
     }
 
     private boolean validate(EditText doodleTitle, EditText doodleContent) {
@@ -94,5 +91,37 @@ public class CreateDoodleActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.create_doodle_menu, menu);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    protected void onDestroy() {
+        firebaseHelper.removeChildEventListener(this);
+        super.onDestroy();
+    }
+
+    @Override
+    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+        Toast.makeText(CreateDoodleActivity.this, R.string.saved, Toast.LENGTH_SHORT).show();
+        finish();
+    }
+
+    @Override
+    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+    }
+
+    @Override
+    public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+    }
+
+    @Override
+    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+    }
+
+    @Override
+    public void onCancelled(DatabaseError databaseError) {
+
     }
 }

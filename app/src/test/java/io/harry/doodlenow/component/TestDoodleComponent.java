@@ -11,6 +11,7 @@ import io.harry.doodlenow.adapter.DoodlePagerAdapterTest;
 import io.harry.doodlenow.background.DoodlePostServiceTest;
 import io.harry.doodlenow.fragment.DoodleListFragmentTest;
 import io.harry.doodlenow.module.TestDoodleModule;
+import io.harry.doodlenow.module.TestFirebaseModule;
 import io.harry.doodlenow.module.TestHTMLModule;
 import io.harry.doodlenow.module.TestNetworkModule;
 import io.harry.doodlenow.module.TestPicassoModule;
@@ -21,6 +22,7 @@ import io.harry.doodlenow.module.TestPicassoModule;
         TestNetworkModule.class,
         TestHTMLModule.class,
         TestPicassoModule.class,
+        TestFirebaseModule.class,
     }
 )
 public interface TestDoodleComponent extends DoodleComponent {

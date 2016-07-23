@@ -35,6 +35,10 @@ public class DoodleListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         this.onDoodleItemClickListener = onDoodleItemClickListener;
     }
 
+    public void insertDoodle(int position, Doodle doodle) {
+
+    }
+
     public interface OnDoodleItemClickListener {
         void onDoodleItemClick(Doodle doodle);
     }

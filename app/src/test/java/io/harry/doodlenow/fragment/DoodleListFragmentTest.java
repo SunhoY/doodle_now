@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import com.google.firebase.database.DataSnapshot;
+
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 import org.junit.Before;
@@ -12,14 +14,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
-import org.mockito.Matchers;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.support.v4.SupportFragmentTestUtil;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -32,18 +33,18 @@ import io.harry.doodlenow.R;
 import io.harry.doodlenow.activity.DoodleActivity;
 import io.harry.doodlenow.adapter.DoodleListAdapter;
 import io.harry.doodlenow.component.TestDoodleComponent;
+import io.harry.doodlenow.firebase.FirebaseHelper;
+import io.harry.doodlenow.firebase.FirebaseHelperWrapper;
 import io.harry.doodlenow.fragment.doodlerange.DoodleRange;
 import io.harry.doodlenow.fragment.doodlerange.DoodleRangeCalculator;
 import io.harry.doodlenow.model.Doodle;
-import io.harry.doodlenow.service.DoodleService;
 import io.harry.doodlenow.service.ServiceCallback;
 
-import static io.harry.doodlenow.fragment.DoodleListType.*;
+import static io.harry.doodlenow.fragment.DoodleListType.Archive;
+import static io.harry.doodlenow.fragment.DoodleListType.Today;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
@@ -53,6 +54,7 @@ import static org.robolectric.Shadows.shadowOf;
 public class DoodleListFragmentTest {
     private static final DoodleListType ANY_TYPE = Archive;
     private static final long ANY_LONG = -1L;
+    public static final String ANY_STRING = "any string";
     private long MILLIS_2016_6_19_10_0 = 1466298000000L;
     private long MILLIS_2016_6_19_9_0 = 1466294400000L;
     private long MILLIS_2016_6_18_9_0 = 1466208000000L;
@@ -64,12 +66,17 @@ public class DoodleListFragmentTest {
     @Inject
     DoodleRangeCalculator mockDoodleRangeCalculator;
     @Inject
-    DoodleService mockDoodleService;
+    FirebaseHelperWrapper mockFirebaseHelperWrapper;
     @Inject
     DoodleListAdapter mockDoodleListAdapter;
 
     @Captor
     ArgumentCaptor<ServiceCallback<List<Doodle>>> doodleListServiceCallbackCaptor;
+
+    @Mock
+    FirebaseHelper mockFirebaseHelper;
+    @Mock
+    DataSnapshot mockDataSnapshot;
 
     private DoodleListFragment subject;
 
@@ -80,6 +87,8 @@ public class DoodleListFragmentTest {
 
         DateTimeUtils.setCurrentMillisFixed(MILLIS_2016_6_19_10_0);
 
+        when(mockFirebaseHelperWrapper.getFirebaseHelper("doodles"))
+                .thenReturn(mockFirebaseHelper);
         when(mockDoodleRangeCalculator.calculateRange(any(DoodleListType.class), any(DateTime.class), anyInt(), anyInt()))
                 .thenReturn(new DoodleRange(MILLIS_2016_6_18_9_0, MILLIS_2016_6_19_9_0));
     }
@@ -104,6 +113,13 @@ public class DoodleListFragmentTest {
     }
 
     @Test
+    public void onResume_addChildEventListenerToFirebaseHelper() throws Exception {
+        setupWithType(ANY_TYPE);
+
+        verify(mockFirebaseHelper).addChildEventListener(subject);
+    }
+
+    @Test
     public void onResume_calculateDateRangeWithCalculator() throws Exception {
         when(mockDoodleRangeCalculator.calculateRange(Today, new DateTime(1466298000000L), 10, 7))
                 .thenReturn(new DoodleRange(ANY_LONG, ANY_LONG));
@@ -116,32 +132,32 @@ public class DoodleListFragmentTest {
     }
 
     @Test
-    public void onResume_callsDoodleServiceToGetDoodlesWithCalculatedDateRange() throws Exception {
+    public void onResume_callsFirebaseHelperToGetDoodlesWithCalculatedDateRange() throws Exception {
         when(mockDoodleRangeCalculator.calculateRange(any(DoodleListType.class), any(DateTime.class), anyInt(), anyInt()))
                 .thenReturn(new DoodleRange(MILLIS_2016_6_18_9_0, MILLIS_2016_6_19_9_0));
 
         setupWithType(ANY_TYPE);
 
-        verify(mockDoodleService).getDoodles(eq(MILLIS_2016_6_18_9_0), eq(MILLIS_2016_6_19_9_0), Matchers.<ServiceCallback<List<Doodle>>>any());
+        verify(mockFirebaseHelper).getDoodles(MILLIS_2016_6_18_9_0, MILLIS_2016_6_19_9_0);
     }
 
     @Test
-    public void afterGettingDoodleList_refreshesContentListView() throws Exception {
+    public void onChildAdded_insertItemIntoDoodleListAdapter() throws Exception {
         setupWithType(ANY_TYPE);
 
-        verify(mockDoodleService).getDoodles(anyLong(), anyLong(), doodleListServiceCallbackCaptor.capture());
+        when(mockDataSnapshot.getValue(Doodle.class))
+                .thenReturn(new Doodle("beat it", "beat it!", "http://beatit.com", "http://beatit.com/pic.png", MILLIS_2016_6_19_9_0));
 
-        ArrayList<Doodle> items = new ArrayList<>();
-        items.add(new Doodle("beat it", "beat it!", "http://beatit.com", "http://beatit.com/pic.png", MILLIS_2016_6_19_9_0));
-        items.add(new Doodle("air walk", "air walk!", "http://airwalk.com", "http://airwalk.com/ture.png", MILLIS_2016_6_18_9_0));
+        subject.onChildAdded(mockDataSnapshot, ANY_STRING);
 
-        doodleListServiceCallbackCaptor.getValue().onSuccess(items);
+        verify(mockDoodleListAdapter).insertDoodle(0, new Doodle("beat it", "beat it!", "http://beatit.com", "http://beatit.com/pic.png", MILLIS_2016_6_19_9_0));
 
-        ArrayList<Doodle> expected = new ArrayList<>();
-        expected.add(new Doodle("beat it", "beat it!", "http://beatit.com", "http://beatit.com/pic.png", MILLIS_2016_6_19_9_0));
-        expected.add(new Doodle("air walk", "air walk!", "http://airwalk.com", "http://airwalk.com/ture.png", MILLIS_2016_6_18_9_0));
+        when(mockDataSnapshot.getValue(Doodle.class))
+                .thenReturn(new Doodle("air walk", "air walk!", "http://airwalk.com", "http://airwalk.com/ture.png", MILLIS_2016_6_18_9_0));
 
-        verify(mockDoodleListAdapter).refreshDoodles(expected);
+        subject.onChildAdded(mockDataSnapshot, ANY_STRING);
+
+        verify(mockDoodleListAdapter).insertDoodle(0, new Doodle("air walk", "air walk!", "http://airwalk.com", "http://airwalk.com/ture.png", MILLIS_2016_6_18_9_0));
     }
 
     @Test
@@ -156,6 +172,15 @@ public class DoodleListFragmentTest {
         setupWithType(ANY_TYPE);
         
         assertThat(doodleList.getLayoutManager() instanceof LinearLayoutManager).isTrue();
+    }
+
+    @Test
+    public void onPause_removeChildEventListenerFromFirebaseHelper() throws Exception {
+        setupWithType(ANY_TYPE);
+
+        subject.onPause();
+
+        verify(mockFirebaseHelper).removeChildEventListener(subject);
     }
 
     @Test

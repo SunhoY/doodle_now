@@ -28,4 +28,8 @@ public class FirebaseHelper {
     public void saveDoodle(Doodle doodle) {
 
     }
+
+    public void getDoodles(long startAt, long endAt) {
+
+    }
 }

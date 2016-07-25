@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="192dp"
@@ -7,39 +8,47 @@
     android:padding="14dp"
     >
 
-    <TextView
-        android:id="@+id/hours_elapsed"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="#999999"
-        android:textSize="14sp"
-        tools:text="7 hours ago" />
-
-    <TextView
-        android:id="@+id/doodle_title"
+    <android.support.v7.widget.CardView
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="31dp"
-        android:lines="1"
-        android:textColor="#555555"
-        android:textSize="16sp"
-        tools:text="Hello People!" />
+        card_view:cardElevation="1dp"
+        >
+        <TextView
+            android:id="@+id/hours_elapsed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#999999"
+            android:textSize="14sp"
+            tools:text="7 hours ago" />
 
-    <TextView
-        android:id="@+id/doodle_content"
-        android:layout_width="198dp"
-        android:layout_height="100dp"
-        android:layout_marginTop="57dp"
-        android:textColor="@color/secondary_text_default_material_light"
-        android:textSize="14sp"
-        tools:text="jsoup is a Java library for working with real-world HTML. It provides a very convenient API for extracting and manipulating data, using the best of DOM, CSS, and jquery-like methods. \n jsoup implements the WHATWG HTML5 specification, and parses HTML to the same DOM as modern browsers do." />
+        <TextView
+            android:id="@+id/doodle_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="31dp"
+            android:lines="1"
+            android:textColor="#555555"
+            android:textSize="16sp"
+            tools:text="Hello People!" />
 
-    <ImageView
-        android:id="@+id/doodle_preview"
-        android:layout_width="104dp"
-        android:layout_height="104dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:scaleType="fitCenter"
-        android:src="@mipmap/app_logo" />
-</RelativeLayout>
+        <TextView
+            android:id="@+id/doodle_content"
+            android:layout_width="198dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="57dp"
+            android:textColor="@color/secondary_text_default_material_light"
+            android:textSize="14sp"
+            tools:text="jsoup is a Java library for working with real-world HTML. It provides a very convenient API for extracting and manipulating data, using the best of DOM, CSS, and jquery-like methods. \n jsoup implements the WHATWG HTML5 specification, and parses HTML to the same DOM as modern browsers do." />
+
+        <ImageView
+            android:id="@+id/doodle_preview"
+            android:layout_width="104dp"
+            android:layout_height="104dp"
+            android:scaleType="fitCenter"
+            android:src="@mipmap/app_logo"
+            android:layout_gravity="bottom|end"
+            />
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>

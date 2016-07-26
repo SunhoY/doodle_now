@@ -13,13 +13,11 @@ import io.harry.doodlenow.fragment.DoodleListFragment;
 import io.harry.doodlenow.module.DoodleModule;
 import io.harry.doodlenow.module.FirebaseModule;
 import io.harry.doodlenow.module.HTMLModule;
-import io.harry.doodlenow.module.NetworkModule;
 import io.harry.doodlenow.module.PicassoModule;
 
 @Singleton
 @Component(modules = {
         DoodleModule.class,
-        NetworkModule.class,
         HTMLModule.class,
         PicassoModule.class,
         FirebaseModule.class,

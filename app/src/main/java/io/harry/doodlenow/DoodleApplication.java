@@ -5,7 +5,6 @@ import android.app.Application;
 import io.harry.doodlenow.component.DaggerDoodleComponent;
 import io.harry.doodlenow.component.DoodleComponent;
 import io.harry.doodlenow.module.DoodleModule;
-import io.harry.doodlenow.module.NetworkModule;
 
 public class DoodleApplication extends Application {
     private DoodleComponent doodleComponent;
@@ -22,11 +21,8 @@ public class DoodleApplication extends Application {
     }
 
     private void initComponent() {
-        String backendUrl = getString(R.string.backend_url);
-        String authentication = getString(R.string.authentication_string);
         doodleComponent = DaggerDoodleComponent.builder()
                 .doodleModule(new DoodleModule(this))
-                .networkModule(new NetworkModule(backendUrl, authentication))
                 .build();
     }
 }

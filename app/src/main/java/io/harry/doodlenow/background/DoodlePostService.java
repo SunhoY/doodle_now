@@ -7,27 +7,34 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
+
 import org.joda.time.DateTime;
 
 import javax.inject.Inject;
 
 import io.harry.doodlenow.DoodleApplication;
 import io.harry.doodlenow.callback.JsoupCallback;
+import io.harry.doodlenow.firebase.FirebaseHelper;
+import io.harry.doodlenow.firebase.FirebaseHelperWrapper;
 import io.harry.doodlenow.model.Doodle;
-import io.harry.doodlenow.service.DoodleService;
-import io.harry.doodlenow.service.ServiceCallback;
+import io.harry.doodlenow.model.DoodleJson;
 import io.harry.doodlenow.view.DoodleIcon;
 import io.harry.doodlenow.wrapper.JsoupWrapper;
 
-public class DoodlePostService extends Service {
+public class DoodlePostService extends Service implements ValueEventListener {
     @Inject
-    DoodleService doodleService;
+    FirebaseHelperWrapper firebaseHelperWrapper;
     @Inject
     JsoupWrapper jsoupWrapper;
     @Inject
     DoodleIcon doodleIcon;
 
     private BackgroundServiceBinder backgroundServiceBinder;
+    private FirebaseHelper firebaseHelper;
+    private String createdDoodleKey;
 
     public class BackgroundServiceBinder extends Binder {
         public DoodlePostService getService() {
@@ -43,10 +50,23 @@ public class DoodlePostService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         ((DoodleApplication) getApplication()).getDoodleComponent().inject(this);
+        firebaseHelper = firebaseHelperWrapper.getFirebaseHelper("doodles");
 
         backgroundServiceBinder = new BackgroundServiceBinder();
 
         return START_STICKY;
+    }
+
+    @Override
+    public void onDataChange(DataSnapshot dataSnapshot) {
+        if(dataSnapshot.getKey().equals(createdDoodleKey)) {
+            showDoodled();
+        }
+    }
+
+    @Override
+    public void onCancelled(DatabaseError databaseError) {
+
     }
 
     public void postDoodle(final String url) {
@@ -63,21 +83,6 @@ public class DoodlePostService extends Service {
         });
     }
 
-    private void saveDoodle(String title, String content, String imageUrl, String url) {
-        doodleService.saveDoodle(new Doodle(title, content, url, imageUrl, new DateTime().getMillis()),
-                new ServiceCallback<Void>() {
-            @Override
-            public void onSuccess(Void item) {
-                showDoodled();
-            }
-
-            @Override
-            public void onFailure(String message) {
-
-            }
-        });
-    }
-
     public void showDoodled() {
         doodleIcon.show();
         doodleIcon.animate()
@@ -89,5 +94,11 @@ public class DoodlePostService extends Service {
                         doodleIcon.hide();
                     }
                 }).start();
+    }
+
+    private void saveDoodle(String title, String content, String imageUrl, String url) {
+        Doodle doodle = new Doodle(title, content, url, imageUrl, new DateTime().getMillis());
+        createdDoodleKey = firebaseHelper.saveDoodle(new DoodleJson(doodle));
+        firebaseHelper.addSingleValueChangeListener(createdDoodleKey, this);
     }
 }

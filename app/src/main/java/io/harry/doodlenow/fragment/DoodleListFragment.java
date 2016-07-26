@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.Query;
 
 import org.joda.time.DateTime;
 
@@ -28,8 +29,8 @@ import io.harry.doodlenow.firebase.FirebaseHelper;
 import io.harry.doodlenow.firebase.FirebaseHelperWrapper;
 import io.harry.doodlenow.fragment.doodlerange.DoodleRange;
 import io.harry.doodlenow.fragment.doodlerange.DoodleRangeCalculator;
-import io.harry.doodlenow.itemdecoration.VerticalSpaceItemDecoration;
 import io.harry.doodlenow.model.Doodle;
+import io.harry.doodlenow.model.DoodleJson;
 
 public class DoodleListFragment extends Fragment
         implements DoodleListAdapter.OnDoodleItemClickListener, ChildEventListener {
@@ -45,6 +46,7 @@ public class DoodleListFragment extends Fragment
 
     private FirebaseHelper firebaseHelper;
     private DoodleListType doodleListType;
+    private Query doodlesQuery;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -68,27 +70,14 @@ public class DoodleListFragment extends Fragment
 
         doodleListAdapter.setOnDoodleClickListener(this);
 
-        return view;
-    }
-
-    @Override
-    public void onResume() {
-        firebaseHelper.addChildEventListener(this);
-
-        int standUpStartsAt = getResources().getInteger(R.integer.stand_up_starts_at);
+        int standUpStartTime = getResources().getInteger(R.integer.stand_up_starts_at);
         int archiveDuration = getResources().getInteger(R.integer.archive_duration);
+        DoodleRange doodleRange = doodleRangeCalculator.calculateRange(doodleListType, DateTime.now(), standUpStartTime, archiveDuration);
 
-        DoodleRange doodleRange = doodleRangeCalculator.calculateRange(doodleListType, new DateTime(), standUpStartsAt, archiveDuration);
+        doodlesQuery = firebaseHelper.getOrderByChildQuery("createdAt", doodleRange.getStartAt(), doodleRange.getEndAt());
+        doodlesQuery.addChildEventListener(this);
 
-        firebaseHelper.getDoodles(doodleRange.getStartAt(), doodleRange.getEndAt());
-
-        super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        firebaseHelper.removeChildEventListener(this);
-        super.onPause();
+        return view;
     }
 
     @Override
@@ -100,8 +89,8 @@ public class DoodleListFragment extends Fragment
 
     @Override
     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-        Doodle doodle = dataSnapshot.getValue(Doodle.class);
-        doodleListAdapter.insertDoodle(0, doodle);
+        DoodleJson doodleJson = dataSnapshot.getValue(DoodleJson.class);
+        doodleListAdapter.insertDoodle(0, new Doodle(doodleJson));
     }
 
     @Override

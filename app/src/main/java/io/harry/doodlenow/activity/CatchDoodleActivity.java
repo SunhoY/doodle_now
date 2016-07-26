@@ -22,7 +22,6 @@ public class CatchDoodleActivity extends AppCompatActivity {
                 DoodlePostService service = ((DoodlePostService.BackgroundServiceBinder)iBinder).getService();
 
                 service.postDoodle(intent.getStringExtra(Intent.EXTRA_TEXT));
-                service.showDoodled();
                 unbindService(this);
             }
 

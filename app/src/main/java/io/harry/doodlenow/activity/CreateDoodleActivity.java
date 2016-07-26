@@ -1,6 +1,5 @@
 package io.harry.doodlenow.activity;
 
-import android.app.ActionBar;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -11,9 +10,9 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 
 import org.joda.time.DateTime;
 
@@ -26,8 +25,9 @@ import io.harry.doodlenow.R;
 import io.harry.doodlenow.firebase.FirebaseHelper;
 import io.harry.doodlenow.firebase.FirebaseHelperWrapper;
 import io.harry.doodlenow.model.Doodle;
+import io.harry.doodlenow.model.DoodleJson;
 
-public class CreateDoodleActivity extends AppCompatActivity implements ChildEventListener {
+public class CreateDoodleActivity extends AppCompatActivity implements ValueEventListener{
     @Inject
     FirebaseHelperWrapper firebaseHelperWrapper;
 
@@ -39,6 +39,7 @@ public class CreateDoodleActivity extends AppCompatActivity implements ChildEven
     Toolbar toolbar;
 
     private FirebaseHelper firebaseHelper;
+    private String createdDoodleKey;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -48,7 +49,6 @@ public class CreateDoodleActivity extends AppCompatActivity implements ChildEven
         ((DoodleApplication)getApplication()).getDoodleComponent().inject(this);
 
         firebaseHelper = firebaseHelperWrapper.getFirebaseHelper("doodles");
-        firebaseHelper.addChildEventListener(this);
 
         ButterKnife.bind(this);
 
@@ -84,7 +84,8 @@ public class CreateDoodleActivity extends AppCompatActivity implements ChildEven
                 DateTime.now().getMillis()
         );
 
-        firebaseHelper.saveDoodle(doodle);
+        createdDoodleKey = firebaseHelper.saveDoodle(new DoodleJson(doodle));
+        firebaseHelper.addSingleValueChangeListener(createdDoodleKey, this);
     }
 
     private boolean validate(EditText doodleTitle, EditText doodleContent) {
@@ -99,29 +100,17 @@ public class CreateDoodleActivity extends AppCompatActivity implements ChildEven
 
     @Override
     protected void onDestroy() {
-        firebaseHelper.removeChildEventListener(this);
         super.onDestroy();
     }
 
     @Override
-    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+    public void onDataChange(DataSnapshot dataSnapshot) {
+        if(!dataSnapshot.getKey().equals(createdDoodleKey)) {
+            return;
+        }
+
         Toast.makeText(CreateDoodleActivity.this, R.string.saved, Toast.LENGTH_SHORT).show();
         finish();
-    }
-
-    @Override
-    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-    }
-
-    @Override
-    public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-    }
-
-    @Override
-    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
     }
 
     @Override

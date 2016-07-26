@@ -36,7 +36,8 @@ public class DoodleListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
     public void insertDoodle(int position, Doodle doodle) {
-
+        doodles.add(position, doodle);
+        notifyItemInserted(position);
     }
 
     public interface OnDoodleItemClickListener {
@@ -84,13 +85,6 @@ public class DoodleListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     @Override
     public int getItemCount() {
         return doodles.size();
-    }
-
-    public void refreshDoodles(List<Doodle> doodles) {
-        this.doodles.clear();
-        this.doodles.addAll(doodles);
-
-        notifyDataSetChanged();
     }
 
     public class SimpleViewHolder extends RecyclerView.ViewHolder {

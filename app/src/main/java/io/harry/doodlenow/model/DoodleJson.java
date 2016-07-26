@@ -1,11 +1,13 @@
 package io.harry.doodlenow.model;
 
 public class DoodleJson {
-    public final String title;
-    public final String content;
-    public final String imageUrl;
-    public final long createdAt;
-    public final String url;
+    public String title;
+    public String content;
+    public String imageUrl;
+    public long createdAt;
+    public String url;
+
+    public DoodleJson() {}
 
     public DoodleJson(Doodle doodle) {
         this.title = doodle.getTitle();

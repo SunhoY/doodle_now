@@ -17,7 +17,6 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -68,9 +67,9 @@ public class DoodleListAdapterTest {
 
         ArrayList<Doodle> doodle = new ArrayList<>();
 
-        doodle.add(createMockDoodle("title 1", "content 1", "image url 1", "1"));
-        doodle.add(createMockDoodle("title 2", "content 2", "image url 2", "2"));
-        doodle.add(createMockDoodle("title 3", "content 3", "", "3"));
+        doodle.add(createMockDoodle("title 1", "content 1", "image url 1", "1", "url 1"));
+        doodle.add(createMockDoodle("title 2", "content 2", "image url 2", "2", "url 2"));
+        doodle.add(createMockDoodle("title 3", "content 3", "", "3", "url 3"));
 
         subject = new DoodleListAdapter(RuntimeEnvironment.application, doodle);
 
@@ -130,16 +129,13 @@ public class DoodleListAdapterTest {
     }
 
     @Test
-    public void refreshDoodles_clearsAllDoodlesAndAddNewDoodles() throws Exception {
-        List<Doodle> newDoodles = new ArrayList<>();
-        newDoodles.add(createMockDoodle("title 1", "content 1", "image url 1", "1"));
-        newDoodles.add(createMockDoodle("title 2", "content 2", "image url 2", "2"));
-        newDoodles.add(createMockDoodle("title 3", "content 3", "", "3"));
-        newDoodles.add(createMockDoodle("title 4", "content 4", "image url 4", "4"));
-
-        subject.refreshDoodles(newDoodles);
+    public void insertDoodle_insertsDoodleIntoDoodleList() throws Exception {
+        subject.insertDoodle(0, new Doodle("new title", "new content", "new url", "new image url", 123L));
 
         assertThat(subject.getItemCount()).isEqualTo(4);
+        DoodleListAdapter.SimpleViewHolder firstViewHolder = createAndBindViewHolder(0);
+
+        assertThat(firstViewHolder.title.getText()).isEqualTo("new title");
     }
 
     @Test
@@ -150,7 +146,7 @@ public class DoodleListAdapterTest {
 
         verify(mockOnDoodleItemClickListener).onDoodleItemClick(doodleCaptor.capture());
 
-        assertMockDoodle(doodleCaptor.getValue(), "title 1", "content 1", "image url 1", "1 hours ago");
+        assertMockDoodle(doodleCaptor.getValue(), "title 1", "content 1", "image url 1", "1 hours ago", "url 1");
 
         DoodleListAdapter.SimpleViewHolder secondViewHolder = createAndBindViewHolder(1);
 
@@ -158,7 +154,7 @@ public class DoodleListAdapterTest {
 
         verify(mockOnDoodleItemClickListener, times(2)).onDoodleItemClick(doodleCaptor.capture());
 
-        assertMockDoodle(doodleCaptor.getValue(), "title 2", "content 2", "image url 2", "2 hours ago");
+        assertMockDoodle(doodleCaptor.getValue(), "title 2", "content 2", "image url 2", "2 hours ago", "url 2");
     }
 
     @Test
@@ -172,20 +168,22 @@ public class DoodleListAdapterTest {
         verify(mockOnDoodleItemClickListener, never()).onDoodleItemClick(any(Doodle.class));
     }
 
-    private void assertMockDoodle(Doodle mockDoodle, String title, String content, String imageUrl, String elapsedHours) {
+    private void assertMockDoodle(Doodle mockDoodle, String title, String content, String imageUrl, String elapsedHours, String url) {
         assertThat(mockDoodle.getTitle()).isEqualTo(title);
         assertThat(mockDoodle.getContent()).isEqualTo(content);
         assertThat(mockDoodle.getImageUrl()).isEqualTo(imageUrl);
         assertThat(mockDoodle.getElapsedHours()).isEqualTo(elapsedHours);
+        assertThat(mockDoodle.getUrl()).isEqualTo(url);
     }
 
-    private Doodle createMockDoodle(String title, String content, String imageUrl, String hours) {
+    private Doodle createMockDoodle(String title, String content, String imageUrl, String hours, String url) {
         Doodle doodle = mock(Doodle.class);
 
         when(doodle.getTitle()).thenReturn(title);
         when(doodle.getContent()).thenReturn(content);
         when(doodle.getImageUrl()).thenReturn(imageUrl);
         when(doodle.getElapsedHours()).thenReturn(hours + " hours ago");
+        when(doodle.getUrl()).thenReturn(url);
 
         return doodle;
     }

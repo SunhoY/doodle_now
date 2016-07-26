@@ -1,35 +1,31 @@
 package io.harry.doodlenow.firebase;
 
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-
-import io.harry.doodlenow.model.Doodle;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 public class FirebaseHelper {
-    private final String child;
     private final FirebaseDatabase firebaseDatabase;
     private final DatabaseReference databaseReference;
 
     public FirebaseHelper(String child) {
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference(child);
-        this.child = child;
     }
 
-    public void addChildEventListener(ChildEventListener listener) {
-        databaseReference.addChildEventListener(listener);
+    public <T> String saveDoodle(T object) {
+        String key = databaseReference.push().getKey();
+        databaseReference.child(key).setValue(object);
+
+        return key;
     }
 
-    public void removeChildEventListener(ChildEventListener listener) {
-        databaseReference.removeEventListener(listener);
+    public Query getOrderByChildQuery(String field, long startAt, long endAt) {
+        return databaseReference.orderByChild(field).startAt(startAt).endAt(endAt);
     }
 
-    public void saveDoodle(Doodle doodle) {
-
-    }
-
-    public void getDoodles(long startAt, long endAt) {
-
+    public void addSingleValueChangeListener(String key, ValueEventListener eventListener) {
+        databaseReference.child(key).addListenerForSingleValueEvent(eventListener);
     }
 }

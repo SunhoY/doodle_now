@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 
 import javax.inject.Inject;
 
@@ -23,6 +24,8 @@ public class LandingActivity extends AppCompatActivity {
     ViewPager doodleViewPager;
     @BindView(R.id.doodle_tabs)
     TabLayout doodleTabs;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
 
     @Inject
     DoodlePagerAdapterWrapper doodlePagerAdapterWrapper;
@@ -39,7 +42,7 @@ public class LandingActivity extends AppCompatActivity {
         DoodleComponent doodleComponent = ((DoodleApplication) getApplicationContext()).getDoodleComponent();
         doodleComponent.inject(this);
 
-        getSupportActionBar().setElevation(0);
+        setSupportActionBar(toolbar);
 
         doodlePagerAdapter = doodlePagerAdapterWrapper.getDoodlePagerAdapter(this);
         doodleViewPager.setAdapter(doodlePagerAdapter);

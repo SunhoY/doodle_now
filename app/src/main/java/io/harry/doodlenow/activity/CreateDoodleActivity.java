@@ -1,8 +1,10 @@
 package io.harry.doodlenow.activity;
 
+import android.app.ActionBar;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -33,6 +35,8 @@ public class CreateDoodleActivity extends AppCompatActivity implements ChildEven
     EditText doodleTitle;
     @BindView(R.id.doodle_content)
     EditText doodleContent;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
 
     private FirebaseHelper firebaseHelper;
 
@@ -48,8 +52,8 @@ public class CreateDoodleActivity extends AppCompatActivity implements ChildEven
 
         ButterKnife.bind(this);
 
-        getSupportActionBar().setElevation(0);
-        getSupportActionBar().setTitle("");
+        toolbar.setTitle("");
+        setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 

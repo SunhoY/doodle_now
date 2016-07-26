@@ -2,6 +2,7 @@ package io.harry.doodlenow.activity;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.widget.ImageView;
@@ -26,6 +27,8 @@ public class DoodleActivity extends AppCompatActivity {
     TextView doodleContent;
     @BindView(R.id.doodle_image)
     ImageView doodleImage;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
 
     @Inject
     PicassoWrapper picassoWrapper;
@@ -39,13 +42,12 @@ public class DoodleActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
-        getSupportActionBar().setElevation(0);
-        getSupportActionBar().setTitle("");
-
         Doodle doodle = (Doodle) getIntent().getSerializableExtra("doodle");
 
         setDoodle(doodle);
 
+        toolbar.setTitle("");
+        setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 

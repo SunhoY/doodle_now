@@ -1,34 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    >
-    <android.support.design.widget.TabLayout
-        android:id="@+id/doodle_tabs"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
-        android:background="@color/white"
         android:layout_height="wrap_content"
-        />
+        app:elevation="1dp"
+        >
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/doodle_tabs"
+            android:layout_width="match_parent"
+            android:background="@color/white"
+            android:layout_height="wrap_content"
+            />
+    </android.support.design.widget.AppBarLayout>
     <android.support.v4.view.ViewPager
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:id="@+id/doodle_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/doodle_tabs"
-        android:paddingTop="16dp"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
         />
-    <ImageButton
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/create_doodle"
         android:layout_width="56dp"
         android:layout_height="56dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
+        android:layout_gravity="bottom|end"
         android:layout_marginEnd="35dp"
         android:layout_marginBottom="35dp"
         android:scaleType="fitXY"
-        android:src="@drawable/create_doodle"
-        android:background="#00000000"
+        android:src="@drawable/create_doodle_icon"
         />
-</RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>

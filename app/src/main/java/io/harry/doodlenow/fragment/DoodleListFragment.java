@@ -65,7 +65,6 @@ public class DoodleListFragment extends Fragment
         final LinearLayoutManager contentListLayoutManager = new LinearLayoutManager(getActivity());
         doodleList.setLayoutManager(contentListLayoutManager);
         doodleList.setAdapter(doodleListAdapter);
-        doodleList.addItemDecoration(new VerticalSpaceItemDecoration(getActivity(), R.dimen.list_view_vertical_space));
 
         doodleListAdapter.setOnDoodleClickListener(this);
 

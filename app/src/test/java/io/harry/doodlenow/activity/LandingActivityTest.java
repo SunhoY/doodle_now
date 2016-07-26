@@ -1,10 +1,10 @@
 package io.harry.doodlenow.activity;
 
 import android.content.Intent;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.ImageButton;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -30,7 +30,6 @@ import io.harry.doodlenow.wrapper.DoodlePagerAdapterWrapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 
@@ -45,7 +44,7 @@ public class LandingActivityTest {
     @BindView(R.id.doodle_tabs)
     TabLayout doodleTabs;
     @BindView(R.id.create_doodle)
-    ImageButton createDoodle;
+    FloatingActionButton createDoodle;
 
     @Inject
     DoodlePagerAdapterWrapper mockDoodlePagerAdapterWrapper;
@@ -71,11 +70,6 @@ public class LandingActivityTest {
         subject = Robolectric.setupActivity(LandingActivity.class);
 
         ButterKnife.bind(this, subject);
-    }
-
-    @Test
-    public void onCreate_setsElevationOfActionBarWith0() throws Exception {
-        assertThat(subject.getSupportActionBar().getElevation()).isEqualTo(0);
     }
 
     @Test

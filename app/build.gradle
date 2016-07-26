@@ -22,6 +22,9 @@ android {
         unitTests.returnDefaultValues = true
     }
     useLibrary 'org.apache.http.legacy'
+    defaultConfig {
+        vectorDrawables.useSupportLibrary = true
+    }
 }
 
 def supportLibraryVersion = '23.3.0'

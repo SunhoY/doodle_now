@@ -9,6 +9,7 @@ import io.harry.doodlenow.activity.LandingActivity;
 import io.harry.doodlenow.adapter.DoodleListAdapter;
 import io.harry.doodlenow.adapter.DoodlePagerAdapter;
 import io.harry.doodlenow.background.DoodlePostService;
+import io.harry.doodlenow.chrometab.ChromeTabHelper;
 import io.harry.doodlenow.fragment.DoodleListFragment;
 import io.harry.doodlenow.module.DoodleModule;
 import io.harry.doodlenow.module.FirebaseModule;
@@ -37,4 +38,6 @@ public interface DoodleComponent {
     void inject(DoodleActivity doodleActivity);
 
     void inject(CreateDoodleActivity createDoodleActivity);
+
+    void inject(ChromeTabHelper chromeTabHelper);
 }

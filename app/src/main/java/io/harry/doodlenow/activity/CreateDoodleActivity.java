@@ -55,6 +55,7 @@ public class CreateDoodleActivity extends AppCompatActivity implements ValueEven
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.back_arrow_vector);
     }
 
     @Override

@@ -5,6 +5,8 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import io.harry.doodlenow.adapter.DoodleListAdapter;
+import io.harry.doodlenow.chrometab.ChromeTabHelper;
+import io.harry.doodlenow.converter.DoodleBitmapFactory;
 import io.harry.doodlenow.fragment.doodlerange.DoodleRangeCalculator;
 import io.harry.doodlenow.view.DoodleIcon;
 import io.harry.doodlenow.wrapper.DoodleListFragmentWrapper;
@@ -35,5 +37,15 @@ public class TestDoodleModule {
     @Provides @Singleton
     public DoodleRangeCalculator provideDoodleRangeCalculator() {
         return mock(DoodleRangeCalculator.class);
+    }
+
+    @Provides @Singleton
+    public DoodleBitmapFactory provideDoodleBitmapFactory() {
+        return mock(DoodleBitmapFactory.class);
+    }
+
+    @Provides @Singleton
+    public ChromeTabHelper provideChromeTabHelper() {
+        return mock(ChromeTabHelper.class);
     }
 }

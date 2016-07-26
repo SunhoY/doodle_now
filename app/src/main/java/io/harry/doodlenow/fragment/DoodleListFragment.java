@@ -1,9 +1,9 @@
 package io.harry.doodlenow.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -23,8 +23,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.harry.doodlenow.DoodleApplication;
 import io.harry.doodlenow.R;
-import io.harry.doodlenow.activity.DoodleActivity;
 import io.harry.doodlenow.adapter.DoodleListAdapter;
+import io.harry.doodlenow.chrometab.ChromeTabHelper;
+import io.harry.doodlenow.converter.DoodleBitmapFactory;
 import io.harry.doodlenow.firebase.FirebaseHelper;
 import io.harry.doodlenow.firebase.FirebaseHelperWrapper;
 import io.harry.doodlenow.fragment.doodlerange.DoodleRange;
@@ -43,6 +44,10 @@ public class DoodleListFragment extends Fragment
     DoodleListAdapter doodleListAdapter;
     @Inject
     FirebaseHelperWrapper firebaseHelperWrapper;
+    @Inject
+    DoodleBitmapFactory doodleBitmapFactory;
+    @Inject
+    ChromeTabHelper chromeTabHelper;
 
     private FirebaseHelper firebaseHelper;
     private DoodleListType doodleListType;
@@ -82,9 +87,9 @@ public class DoodleListFragment extends Fragment
 
     @Override
     public void onDoodleItemClick(Doodle doodle) {
-        Intent intent = new Intent(getActivity(), DoodleActivity.class);
-        intent.putExtra("doodle", doodle);
-        getActivity().startActivity(intent);
+        String url = doodle.getUrl();
+
+        chromeTabHelper.launchChromeTab((AppCompatActivity) getActivity(), url);
     }
 
     @Override

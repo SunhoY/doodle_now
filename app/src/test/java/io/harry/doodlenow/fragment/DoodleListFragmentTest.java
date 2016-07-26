@@ -1,8 +1,8 @@
 package io.harry.doodlenow.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
@@ -32,8 +32,9 @@ import butterknife.ButterKnife;
 import io.harry.doodlenow.BuildConfig;
 import io.harry.doodlenow.DoodleApplication;
 import io.harry.doodlenow.R;
-import io.harry.doodlenow.activity.DoodleActivity;
+import io.harry.doodlenow.activity.LandingActivity;
 import io.harry.doodlenow.adapter.DoodleListAdapter;
+import io.harry.doodlenow.chrometab.ChromeTabHelper;
 import io.harry.doodlenow.component.TestDoodleComponent;
 import io.harry.doodlenow.firebase.FirebaseHelper;
 import io.harry.doodlenow.firebase.FirebaseHelperWrapper;
@@ -52,7 +53,6 @@ import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.robolectric.Shadows.shadowOf;
 
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class)
@@ -74,6 +74,8 @@ public class DoodleListFragmentTest {
     FirebaseHelperWrapper mockFirebaseHelperWrapper;
     @Inject
     DoodleListAdapter mockDoodleListAdapter;
+    @Inject
+    ChromeTabHelper mockChromeTabHelper;
 
     @Captor
     ArgumentCaptor<ServiceCallback<List<Doodle>>> doodleListServiceCallbackCaptor;
@@ -110,7 +112,7 @@ public class DoodleListFragmentTest {
 
         subject.setArguments(arguments);
 
-        SupportFragmentTestUtil.startFragment(subject);
+        SupportFragmentTestUtil.startFragment(subject, LandingActivity.class);
 
         ButterKnife.bind(this, subject.getView());
     }
@@ -205,15 +207,12 @@ public class DoodleListFragmentTest {
     }
 
     @Test
-    public void onDoodleItemClick_startsDoodleActivityWithDoodleId() throws Exception {
+    public void onDoodleItemClick_launchChromeTabWithUrl() throws Exception {
         setupWithType(ANY_TYPE);
 
         Doodle doodle = new Doodle("title", "content", "some url", "image url", MILLIS_2016_6_12_0_0);
         subject.onDoodleItemClick(doodle);
 
-        Intent expected = new Intent(subject.getActivity(), DoodleActivity.class);
-        expected.putExtra("doodle", new Doodle("title", "content", "some url", "image url", MILLIS_2016_6_12_0_0));
-
-        assertThat(shadowOf(RuntimeEnvironment.application).getNextStartedActivity()).isEqualTo(expected);
+        verify(mockChromeTabHelper).launchChromeTab((AppCompatActivity) subject.getActivity(), "some url");
     }
 }

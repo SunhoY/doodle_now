@@ -25,7 +25,6 @@ import io.harry.doodlenow.DoodleApplication;
 import io.harry.doodlenow.R;
 import io.harry.doodlenow.adapter.DoodleListAdapter;
 import io.harry.doodlenow.chrometab.ChromeTabHelper;
-import io.harry.doodlenow.converter.DoodleBitmapFactory;
 import io.harry.doodlenow.firebase.FirebaseHelper;
 import io.harry.doodlenow.firebase.FirebaseHelperWrapper;
 import io.harry.doodlenow.fragment.doodlerange.DoodleRange;
@@ -44,8 +43,6 @@ public class DoodleListFragment extends Fragment
     DoodleListAdapter doodleListAdapter;
     @Inject
     FirebaseHelperWrapper firebaseHelperWrapper;
-    @Inject
-    DoodleBitmapFactory doodleBitmapFactory;
     @Inject
     ChromeTabHelper chromeTabHelper;
 

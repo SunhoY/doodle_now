@@ -28,6 +28,7 @@ android {
 }
 
 def supportLibraryVersion = '23.3.0'
+def powerMockVersion = '1.6.5'
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
@@ -55,9 +56,9 @@ dependencies {
     testCompile('com.squareup.assertj:assertj-android:1.1.1') {
         exclude module: 'support-annotations'
     }
-    testCompile 'org.powermock:powermock:1.6.5'
-    testCompile 'org.powermock:powermock-module-junit4:1.6.5'
-    testCompile 'org.powermock:powermock-api-easymock:1.6.5'
+    testCompile "org.powermock:powermock:${powerMockVersion}"
+    testCompile "org.powermock:powermock-module-junit4:${powerMockVersion}"
+    testCompile "org.powermock:powermock-api-easymock:${powerMockVersion}"
     testCompile 'org.easymock:easymock:3.4'
     testCompile "org.robolectric:shadows-support-v4:3.0"
     testApt 'com.google.dagger:dagger-compiler:2.4'

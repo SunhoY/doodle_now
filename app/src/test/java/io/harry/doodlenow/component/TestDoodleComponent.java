@@ -9,6 +9,7 @@ import io.harry.doodlenow.activity.LandingActivityTest;
 import io.harry.doodlenow.adapter.DoodleListAdapterTest;
 import io.harry.doodlenow.adapter.DoodlePagerAdapterTest;
 import io.harry.doodlenow.background.DoodlePostServiceTest;
+import io.harry.doodlenow.chrometab.ChromeTabHelperTest;
 import io.harry.doodlenow.fragment.DoodleListFragmentTest;
 import io.harry.doodlenow.module.TestDoodleModule;
 import io.harry.doodlenow.module.TestFirebaseModule;
@@ -37,4 +38,6 @@ public interface TestDoodleComponent extends DoodleComponent {
     void inject(DoodleActivityTest doodleActivityTest);
 
     void inject(CreateDoodleActivityTest createDoodleActivityTest);
+
+    void inject(ChromeTabHelperTest chromeTabHelperTest);
 }

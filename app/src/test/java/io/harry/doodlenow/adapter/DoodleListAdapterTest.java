@@ -33,6 +33,7 @@ import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -55,6 +56,7 @@ public class DoodleListAdapterTest {
 
     private final int ANY_VIEW_TYPE = 99;
     private DoodleListAdapter.OnDoodleItemClickListener mockOnDoodleItemClickListener;
+    private DoodleListAdapter spySubject;
 
     @Before
     public void setUp() throws Exception {
@@ -72,6 +74,7 @@ public class DoodleListAdapterTest {
         doodle.add(createMockDoodle("title 3", "content 3", "", "3", "url 3"));
 
         subject = new DoodleListAdapter(RuntimeEnvironment.application, doodle);
+        spySubject = spy(subject);
 
         mockOnDoodleItemClickListener = mock(DoodleListAdapter.OnDoodleItemClickListener.class);
         subject.setOnDoodleClickListener(mockOnDoodleItemClickListener);
@@ -79,8 +82,8 @@ public class DoodleListAdapterTest {
 
     @Test
     public void eachViewShouldShowDoodleContent() throws Exception {
-        DoodleListAdapter.SimpleViewHolder firstViewHolder = createAndBindViewHolder(0);
-        DoodleListAdapter.SimpleViewHolder secondViewHolder = createAndBindViewHolder(1);
+        DoodleListAdapter.SimpleViewHolder firstViewHolder = createAndBindViewHolder(0, subject);
+        DoodleListAdapter.SimpleViewHolder secondViewHolder = createAndBindViewHolder(1, subject);
 
         assertThat(firstViewHolder.content.getText()).isEqualTo("content 1");
         assertThat(secondViewHolder.content.getText()).isEqualTo("content 2");
@@ -88,8 +91,8 @@ public class DoodleListAdapterTest {
 
     @Test
     public void eachViewShouldShowDoodleTitle() throws Exception {
-        DoodleListAdapter.SimpleViewHolder firstViewHolder = createAndBindViewHolder(0);
-        DoodleListAdapter.SimpleViewHolder secondViewHolder = createAndBindViewHolder(1);
+        DoodleListAdapter.SimpleViewHolder firstViewHolder = createAndBindViewHolder(0, subject);
+        DoodleListAdapter.SimpleViewHolder secondViewHolder = createAndBindViewHolder(1, subject);
 
         assertThat(firstViewHolder.title.getText()).isEqualTo("title 1");
         assertThat(secondViewHolder.title.getText()).isEqualTo("title 2");
@@ -97,8 +100,8 @@ public class DoodleListAdapterTest {
 
     @Test
     public void eachViewShouldShowDoodlePreviewImage() throws Exception {
-        DoodleListAdapter.SimpleViewHolder firstViewHolder = createAndBindViewHolder(0);
-        DoodleListAdapter.SimpleViewHolder secondViewHolder = createAndBindViewHolder(1);
+        DoodleListAdapter.SimpleViewHolder firstViewHolder = createAndBindViewHolder(0, subject);
+        DoodleListAdapter.SimpleViewHolder secondViewHolder = createAndBindViewHolder(1, subject);
 
         verify(mockPicasso).load("image url 1");
         verify(mockPicasso).load("image url 2");
@@ -108,7 +111,7 @@ public class DoodleListAdapterTest {
 
     @Test
     public void eachViewShouldLoadMainLogo_whenPreviewUrlIsEmpty() throws Exception {
-        DoodleListAdapter.SimpleViewHolder thirdViewHolder = createAndBindViewHolder(2);
+        DoodleListAdapter.SimpleViewHolder thirdViewHolder = createAndBindViewHolder(2, subject);
 
         verify(mockPicasso).load(R.drawable.main_logo);
         verify(mockRequestCreator).into(thirdViewHolder.preview);
@@ -116,8 +119,8 @@ public class DoodleListAdapterTest {
 
     @Test
     public void eachViewShouldShowHoursElapsed() throws Exception {
-        DoodleListAdapter.SimpleViewHolder firstViewHolder = createAndBindViewHolder(0);
-        DoodleListAdapter.SimpleViewHolder secondViewHolder = createAndBindViewHolder(1);
+        DoodleListAdapter.SimpleViewHolder firstViewHolder = createAndBindViewHolder(0, subject);
+        DoodleListAdapter.SimpleViewHolder secondViewHolder = createAndBindViewHolder(1, subject);
 
         assertThat(firstViewHolder.hoursElapsed.getText()).isEqualTo("1 hours ago");
         assertThat(secondViewHolder.hoursElapsed.getText()).isEqualTo("2 hours ago");
@@ -130,17 +133,24 @@ public class DoodleListAdapterTest {
 
     @Test
     public void insertDoodle_insertsDoodleIntoDoodleList() throws Exception {
-        subject.insertDoodle(0, new Doodle("new title", "new content", "new url", "new image url", 123L));
+        spySubject.insertDoodle(0, new Doodle("new title", "new content", "new url", "new image url", 123L));
 
-        assertThat(subject.getItemCount()).isEqualTo(4);
-        DoodleListAdapter.SimpleViewHolder firstViewHolder = createAndBindViewHolder(0);
+        assertThat(spySubject.getItemCount()).isEqualTo(4);
+        DoodleListAdapter.SimpleViewHolder firstViewHolder = createAndBindViewHolder(0, subject);
 
         assertThat(firstViewHolder.title.getText()).isEqualTo("new title");
     }
 
     @Test
+    public void insertDoodle_notifiesDataInsertedAtTheFront() throws Exception {
+        spySubject.insertDoodle(0, new Doodle("new title", "new content", "new url", "new image url", 123L));
+
+        verify(spySubject).notifyItemInserted(0);
+    }
+
+    @Test
     public void clickOnDoodleItem_launchesSetClickListener() throws Exception {
-        DoodleListAdapter.SimpleViewHolder firstViewHolder = createAndBindViewHolder(0);
+        DoodleListAdapter.SimpleViewHolder firstViewHolder = createAndBindViewHolder(0, subject);
 
         firstViewHolder.container.performClick();
 
@@ -148,7 +158,7 @@ public class DoodleListAdapterTest {
 
         assertMockDoodle(doodleCaptor.getValue(), "title 1", "content 1", "image url 1", "1 hours ago", "url 1");
 
-        DoodleListAdapter.SimpleViewHolder secondViewHolder = createAndBindViewHolder(1);
+        DoodleListAdapter.SimpleViewHolder secondViewHolder = createAndBindViewHolder(1, subject);
 
         secondViewHolder.container.performClick();
 
@@ -161,11 +171,19 @@ public class DoodleListAdapterTest {
     public void clickOnDoodleItem_doesNothing_whenListenerIsNotSet() throws Exception {
         subject.setOnDoodleClickListener(null);
 
-        DoodleListAdapter.SimpleViewHolder firstViewHolder = createAndBindViewHolder(0);
+        DoodleListAdapter.SimpleViewHolder firstViewHolder = createAndBindViewHolder(0, subject);
 
         firstViewHolder.container.performClick();
 
         verify(mockOnDoodleItemClickListener, never()).onDoodleItemClick(any(Doodle.class));
+    }
+
+    @Test
+    public void clearDoodles_emptiesDoodleList() throws Exception {
+        spySubject.clearDoodles();
+
+        assertThat(spySubject.getItemCount()).isEqualTo(0);
+        verify(spySubject).notifyDataSetChanged();
     }
 
     private void assertMockDoodle(Doodle mockDoodle, String title, String content, String imageUrl, String elapsedHours, String url) {
@@ -188,7 +206,7 @@ public class DoodleListAdapterTest {
         return doodle;
     }
 
-    private DoodleListAdapter.SimpleViewHolder createAndBindViewHolder(int position) {
+    private DoodleListAdapter.SimpleViewHolder createAndBindViewHolder(int position, DoodleListAdapter subject) {
         DoodleListAdapter.SimpleViewHolder firstViewHolder =
                 (DoodleListAdapter.SimpleViewHolder) subject.onCreateViewHolder(null, ANY_VIEW_TYPE);
 

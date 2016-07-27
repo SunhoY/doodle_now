@@ -40,6 +40,11 @@ public class DoodleListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         notifyItemInserted(position);
     }
 
+    public void clearDoodles() {
+        doodles.clear();
+        notifyDataSetChanged();
+    }
+
     public interface OnDoodleItemClickListener {
         void onDoodleItemClick(Doodle doodle);
     }

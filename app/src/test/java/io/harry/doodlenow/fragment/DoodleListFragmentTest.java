@@ -2,12 +2,15 @@ package io.harry.doodlenow.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
@@ -51,6 +54,9 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -60,6 +66,8 @@ public class DoodleListFragmentTest {
     private static final DoodleListType ANY_TYPE = Archive;
     private static final long ANY_LONG = -1L;
     public static final String ANY_STRING = "any string";
+    public static final int STAND_UP_STARTS_AT = 10;
+    public static final int ARCHIVE_DURATION = 7;
     private long MILLIS_2016_6_19_10_0 = 1466298000000L;
     private long MILLIS_2016_6_19_9_0 = 1466294400000L;
     private long MILLIS_2016_6_18_9_0 = 1466208000000L;
@@ -67,6 +75,8 @@ public class DoodleListFragmentTest {
 
     @BindView(R.id.doodle_list)
     RecyclerView doodleList;
+    @BindView(R.id.swipe_refresh_container)
+    SwipeRefreshLayout swipeRefreshLayout;
 
     @Inject
     DoodleRangeCalculator mockDoodleRangeCalculator;
@@ -126,14 +136,14 @@ public class DoodleListFragmentTest {
 
     @Test
     public void onResume_calculateDateRangeWithCalculator() throws Exception {
-        when(mockDoodleRangeCalculator.calculateRange(Today, new DateTime(1466298000000L), 10, 7))
+        when(mockDoodleRangeCalculator.calculateRange(Today, new DateTime(1466298000000L), STAND_UP_STARTS_AT, ARCHIVE_DURATION))
                 .thenReturn(new DoodleRange(ANY_LONG, ANY_LONG));
 
         setupWithType(Today);
 
         //spying resource in TestDoodleApplication
         verify(mockDoodleRangeCalculator).calculateRange(
-                Today, new DateTime(1466298000000L), 10, 7);
+                Today, new DateTime(1466298000000L), STAND_UP_STARTS_AT, ARCHIVE_DURATION);
     }
 
     @Test
@@ -214,5 +224,108 @@ public class DoodleListFragmentTest {
         subject.onDoodleItemClick(doodle);
 
         verify(mockChromeTabHelper).launchChromeTab((AppCompatActivity) subject.getActivity(), "some url");
+    }
+
+    @Test
+    public void onRefresh_emptiesDoodleListAdapter() throws Exception {
+        setupWithType(ANY_TYPE);
+
+        subject.onRefresh();
+
+        verify(mockDoodleListAdapter).clearDoodles();
+    }
+
+    @Test
+    public void onRefresh_removeChildEventListenerFromQuery() throws Exception {
+        setupWithType(ANY_TYPE);
+
+        subject.onRefresh();
+
+        verify(mockQuery).removeEventListener((ChildEventListener) subject);
+    }
+
+    @Test
+    public void onRefresh_removeValueEventListenerFromQuery() throws Exception {
+        setupWithType(ANY_TYPE);
+
+        subject.onRefresh();
+
+        verify(mockQuery).removeEventListener((ValueEventListener) subject);
+    }
+
+    @Test
+    public void onRefresh_calculateDoodleRangeForNewQuery() throws Exception {
+        setupWithType(Today);
+
+        reset(mockDoodleRangeCalculator);
+        long newCurrentMillis = MILLIS_2016_6_19_10_0 + 1000;
+
+        DateTimeUtils.setCurrentMillisFixed(newCurrentMillis);
+
+        DoodleRange anyDoodleRange = new DoodleRange(1000, 2000);
+
+        when(mockDoodleRangeCalculator.calculateRange(any(DoodleListType.class), any(DateTime.class), anyInt(), anyInt()))
+                .thenReturn(anyDoodleRange);
+
+        subject.onRefresh();
+
+        verify(mockDoodleRangeCalculator).calculateRange(Today, new DateTime(newCurrentMillis), STAND_UP_STARTS_AT, ARCHIVE_DURATION);
+    }
+
+    @Test
+    public void onRefresh_getNewQueryFromFirebaseHelper() throws Exception {
+        setupWithType(Today);
+
+        int newStartAt = 1000;
+        int newEndAt = 2000;
+        when(mockDoodleRangeCalculator.calculateRange(any(DoodleListType.class), any(DateTime.class), anyInt(), anyInt()))
+                .thenReturn(new DoodleRange(newStartAt, newEndAt));
+
+        subject.onRefresh();
+
+        verify(mockFirebaseHelper).getOrderByChildQuery("createdAt", newStartAt, newEndAt);
+    }
+
+    @Test
+    public void onRefresh_addChildEventListenerToNewDoodleQuery() throws Exception {
+        Query mockQuery = setForRefresh();
+
+        subject.onRefresh();
+
+        verify(mockQuery).addChildEventListener(subject);
+    }
+
+    @Test
+    public void onRefresh_addValueEventListenerToNewDoodleQuery() throws Exception {
+        Query mockQuery = setForRefresh();
+
+        subject.onRefresh();
+
+        verify(mockQuery).addValueEventListener(subject);
+    }
+
+    @Test
+    public void onDataChange_setRefreshingAsFalse_whenSwipeRefreshLayoutIsRefreshing() throws Exception {
+        setupWithType(ANY_TYPE);
+
+        swipeRefreshLayout.setRefreshing(true);
+
+        subject.onDataChange(mockDataSnapshot);
+
+        assertThat(swipeRefreshLayout.isRefreshing()).isFalse();
+    }
+
+    private Query setForRefresh() {
+        setupWithType(Today);
+
+        int newStartAt = 1000;
+        int newEndAt = 2000;
+        Query mockQuery = mock(Query.class);
+
+        when(mockDoodleRangeCalculator.calculateRange(any(DoodleListType.class), any(DateTime.class), anyInt(), anyInt()))
+                .thenReturn(new DoodleRange(newStartAt, newEndAt));
+
+        when(mockFirebaseHelper.getOrderByChildQuery(anyString(), anyLong(), anyLong())).thenReturn(mockQuery);
+        return mockQuery;
     }
 }

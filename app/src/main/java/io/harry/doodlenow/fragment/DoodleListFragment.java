@@ -3,6 +3,7 @@ package io.harry.doodlenow.fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,6 +15,7 @@ import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import org.joda.time.DateTime;
 
@@ -33,9 +35,15 @@ import io.harry.doodlenow.model.Doodle;
 import io.harry.doodlenow.model.DoodleJson;
 
 public class DoodleListFragment extends Fragment
-        implements DoodleListAdapter.OnDoodleItemClickListener, ChildEventListener {
+        implements  DoodleListAdapter.OnDoodleItemClickListener,
+                    ChildEventListener,
+                    ValueEventListener,
+                    SwipeRefreshLayout.OnRefreshListener
+{
     @BindView(R.id.doodle_list)
     RecyclerView doodleList;
+    @BindView(R.id.swipe_refresh_container)
+    SwipeRefreshLayout swipeRefreshContainer;
 
     @Inject
     DoodleRangeCalculator doodleRangeCalculator;
@@ -49,6 +57,8 @@ public class DoodleListFragment extends Fragment
     private FirebaseHelper firebaseHelper;
     private DoodleListType doodleListType;
     private Query doodlesQuery;
+    private int standUpStartTime;
+    private int archiveDuration;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -58,6 +68,9 @@ public class DoodleListFragment extends Fragment
         firebaseHelper = firebaseHelperWrapper.getFirebaseHelper("doodles");
 
         doodleListType = (DoodleListType) getArguments().getSerializable("doodleListType");
+
+        standUpStartTime = getResources().getInteger(R.integer.stand_up_starts_at);
+        archiveDuration = getResources().getInteger(R.integer.archive_duration);
     }
 
     @Override
@@ -72,12 +85,13 @@ public class DoodleListFragment extends Fragment
 
         doodleListAdapter.setOnDoodleClickListener(this);
 
-        int standUpStartTime = getResources().getInteger(R.integer.stand_up_starts_at);
-        int archiveDuration = getResources().getInteger(R.integer.archive_duration);
         DoodleRange doodleRange = doodleRangeCalculator.calculateRange(doodleListType, DateTime.now(), standUpStartTime, archiveDuration);
 
         doodlesQuery = firebaseHelper.getOrderByChildQuery("createdAt", doodleRange.getStartAt(), doodleRange.getEndAt());
+        doodlesQuery.addValueEventListener(this);
         doodlesQuery.addChildEventListener(this);
+
+        swipeRefreshContainer.setOnRefreshListener(this);
 
         return view;
     }
@@ -90,9 +104,29 @@ public class DoodleListFragment extends Fragment
     }
 
     @Override
+    public void onRefresh() {
+        doodleListAdapter.clearDoodles();
+        doodlesQuery.removeEventListener((ChildEventListener) this);
+        doodlesQuery.removeEventListener((ValueEventListener) this);
+
+        DoodleRange doodleRange = doodleRangeCalculator.calculateRange(doodleListType, DateTime.now(), standUpStartTime, archiveDuration);
+
+        doodlesQuery = firebaseHelper.getOrderByChildQuery("createdAt", doodleRange.getStartAt(), doodleRange.getEndAt());
+        doodlesQuery.addValueEventListener(this);
+        doodlesQuery.addChildEventListener(this);
+    }
+
+    @Override
     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
         DoodleJson doodleJson = dataSnapshot.getValue(DoodleJson.class);
         doodleListAdapter.insertDoodle(0, new Doodle(doodleJson));
+    }
+
+    @Override
+    public void onDataChange(DataSnapshot dataSnapshot) {
+        if(swipeRefreshContainer.isRefreshing()) {
+            swipeRefreshContainer.setRefreshing(false);
+        }
     }
 
     @Override

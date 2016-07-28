@@ -1,5 +1,6 @@
 package io.harry.doodlenow.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -7,6 +8,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +27,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.harry.doodlenow.DoodleApplication;
 import io.harry.doodlenow.R;
+import io.harry.doodlenow.activity.DoodleActivity;
 import io.harry.doodlenow.adapter.DoodleListAdapter;
 import io.harry.doodlenow.chrometab.ChromeTabHelper;
 import io.harry.doodlenow.firebase.FirebaseHelper;
@@ -98,9 +101,15 @@ public class DoodleListFragment extends Fragment
 
     @Override
     public void onDoodleItemClick(Doodle doodle) {
-        String url = doodle.getUrl();
+        if(!TextUtils.isEmpty(doodle.getUrl())) {
+            String url = doodle.getUrl();
 
-        chromeTabHelper.launchChromeTab((AppCompatActivity) getActivity(), url);
+            chromeTabHelper.launchChromeTab((AppCompatActivity) getActivity(), url);
+        }
+        else {
+            Intent intent = DoodleActivity.getIntent(getContext(), doodle);
+            startActivity(intent);
+        }
     }
 
     @Override

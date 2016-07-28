@@ -1,5 +1,6 @@
 package io.harry.doodlenow.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -35,6 +36,7 @@ import butterknife.ButterKnife;
 import io.harry.doodlenow.BuildConfig;
 import io.harry.doodlenow.DoodleApplication;
 import io.harry.doodlenow.R;
+import io.harry.doodlenow.activity.DoodleActivity;
 import io.harry.doodlenow.activity.LandingActivity;
 import io.harry.doodlenow.adapter.DoodleListAdapter;
 import io.harry.doodlenow.chrometab.ChromeTabHelper;
@@ -56,9 +58,9 @@ import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.robolectric.Shadows.shadowOf;
 
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class)
@@ -217,13 +219,27 @@ public class DoodleListFragmentTest {
     }
 
     @Test
-    public void onDoodleItemClick_launchChromeTabWithUrl() throws Exception {
+    public void onDoodleItemClick_launchChromeTabWithUrl_whenDoodleHasUrl() throws Exception {
         setupWithType(ANY_TYPE);
 
         Doodle doodle = new Doodle("title", "content", "some url", "image url", MILLIS_2016_6_12_0_0);
         subject.onDoodleItemClick(doodle);
 
         verify(mockChromeTabHelper).launchChromeTab((AppCompatActivity) subject.getActivity(), "some url");
+    }
+
+    @Test
+    public void onDoodleItemClick_launchDoodleActivity_whenDoodleDoesNotHaveUrl() throws Exception {
+        setupWithType(ANY_TYPE);
+
+        Doodle doodle = new Doodle("title", "content", "", "image url", MILLIS_2016_6_12_0_0);
+        subject.onDoodleItemClick(doodle);
+
+        Intent actualIntent = shadowOf(RuntimeEnvironment.application).getNextStartedActivity();
+        Intent expectedIntent = new Intent(RuntimeEnvironment.application, DoodleActivity.class);
+        expectedIntent.putExtra("doodle", doodle);
+
+        assertThat(actualIntent).isEqualTo(expectedIntent);
     }
 
     @Test

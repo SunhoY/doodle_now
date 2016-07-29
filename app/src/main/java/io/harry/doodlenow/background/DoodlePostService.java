@@ -86,7 +86,7 @@ public class DoodlePostService extends Service implements ValueEventListener {
     public void showDoodled() {
         doodleIcon.show();
         doodleIcon.animate()
-                .setDuration(2000)
+                .setDuration(3000)
                 .setListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {

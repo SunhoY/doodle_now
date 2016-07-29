@@ -160,7 +160,7 @@ public class DoodlePostServiceTest {
         subject.showDoodled();
 
         verify(mockDoodleIcon).animate();
-        verify(mockViewPropertyAnimator).setDuration(2000);
+        verify(mockViewPropertyAnimator).setDuration(3000);
     }
 
     @Test

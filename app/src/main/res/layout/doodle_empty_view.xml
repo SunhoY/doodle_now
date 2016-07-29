@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/empty_placeholder"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
+    <TextView
+        android:layout_marginTop="91dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Nothing yet for Today"
+        android:textColor="#cc000000"
+        android:textSize="23sp"
+        />
+    <TextView
+        android:layout_marginTop="8.5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:paddingStart="31dp"
+        android:paddingEnd="31dp"
+        android:gravity="center"
+        android:textColor="#cc000000"
+        android:text="스탠덥 시간에 공유할 흥미롭고 재미난 이야기를 Doodle Now를 통해 공유해보세요"
+        android:textSize="16sp"
+        />
+</LinearLayout>

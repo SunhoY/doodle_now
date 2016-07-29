@@ -9,9 +9,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -36,17 +38,21 @@ import io.harry.doodlenow.fragment.doodlerange.DoodleRange;
 import io.harry.doodlenow.fragment.doodlerange.DoodleRangeCalculator;
 import io.harry.doodlenow.model.Doodle;
 import io.harry.doodlenow.model.DoodleJson;
+import io.harry.doodlenow.widget.CustomSwipeRefreshLayout;
 
 public class DoodleListFragment extends Fragment
         implements  DoodleListAdapter.OnDoodleItemClickListener,
                     ChildEventListener,
                     ValueEventListener,
-                    SwipeRefreshLayout.OnRefreshListener
+                    SwipeRefreshLayout.OnRefreshListener,
+                    CustomSwipeRefreshLayout.OnChildScrollUpListener
 {
+    @BindView(R.id.swipe_refresh_container)
+    CustomSwipeRefreshLayout swipeRefreshContainer;
     @BindView(R.id.doodle_list)
     RecyclerView doodleList;
-    @BindView(R.id.swipe_refresh_container)
-    SwipeRefreshLayout swipeRefreshContainer;
+    @BindView(R.id.empty_placeholder)
+    LinearLayout emptyPlaceholder;
 
     @Inject
     DoodleRangeCalculator doodleRangeCalculator;
@@ -91,10 +97,10 @@ public class DoodleListFragment extends Fragment
         DoodleRange doodleRange = doodleRangeCalculator.calculateRange(doodleListType, DateTime.now(), standUpStartTime, archiveDuration);
 
         doodlesQuery = firebaseHelper.getOrderByChildQuery("createdAt", doodleRange.getStartAt(), doodleRange.getEndAt());
-        doodlesQuery.addValueEventListener(this);
-        doodlesQuery.addChildEventListener(this);
+        addChildAndValueEventListenersInOrder(doodlesQuery);
 
         swipeRefreshContainer.setOnRefreshListener(this);
+        swipeRefreshContainer.setOnChildScrollUpListener(this);
 
         return view;
     }
@@ -121,8 +127,7 @@ public class DoodleListFragment extends Fragment
         DoodleRange doodleRange = doodleRangeCalculator.calculateRange(doodleListType, DateTime.now(), standUpStartTime, archiveDuration);
 
         doodlesQuery = firebaseHelper.getOrderByChildQuery("createdAt", doodleRange.getStartAt(), doodleRange.getEndAt());
-        doodlesQuery.addValueEventListener(this);
-        doodlesQuery.addChildEventListener(this);
+        addChildAndValueEventListenersInOrder(doodlesQuery);
     }
 
     @Override
@@ -136,6 +141,8 @@ public class DoodleListFragment extends Fragment
         if(swipeRefreshContainer.isRefreshing()) {
             swipeRefreshContainer.setRefreshing(false);
         }
+
+        setListAndEmptyViewVisibility(doodleListAdapter.getItemCount());
     }
 
     @Override
@@ -156,5 +163,21 @@ public class DoodleListFragment extends Fragment
     @Override
     public void onCancelled(DatabaseError databaseError) {
 
+    }
+
+    @Override
+    public boolean canChildScrollUp() {
+        return false;
+    }
+
+
+    private void setListAndEmptyViewVisibility(int doodleListItemCount) {
+        doodleList.setVisibility(doodleListItemCount == 0 ? View.GONE : View.VISIBLE);
+        emptyPlaceholder.setVisibility(doodleListItemCount == 0 ? View.VISIBLE : View.GONE);
+    }
+
+    private void addChildAndValueEventListenersInOrder(Query doodlesQuery) {
+        doodlesQuery.addChildEventListener(this);
+        doodlesQuery.addValueEventListener(this);
     }
 }

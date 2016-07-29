@@ -7,6 +7,8 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.LinearLayout;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -20,6 +22,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
+import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricGradleTestRunner;
@@ -56,6 +59,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
@@ -79,6 +83,8 @@ public class DoodleListFragmentTest {
     RecyclerView doodleList;
     @BindView(R.id.swipe_refresh_container)
     SwipeRefreshLayout swipeRefreshLayout;
+    @BindView(R.id.empty_placeholder)
+    LinearLayout emptyPlaceholder;
 
     @Inject
     DoodleRangeCalculator mockDoodleRangeCalculator;
@@ -169,6 +175,28 @@ public class DoodleListFragmentTest {
     }
 
     @Test
+    public void afterGettingQuery_addValueEventListenerToQuery() throws Exception {
+        when(mockDoodleRangeCalculator.calculateRange(any(DoodleListType.class), any(DateTime.class), anyInt(), anyInt()))
+                .thenReturn(new DoodleRange(MILLIS_2016_6_18_9_0, MILLIS_2016_6_19_9_0));
+
+        setupWithType(ANY_TYPE);
+
+        verify(mockQuery).addValueEventListener(subject);
+    }
+
+    @Test
+    public void childAndValueEventListeners_shouldBeAddedInSequence() throws Exception {
+        when(mockDoodleRangeCalculator.calculateRange(any(DoodleListType.class), any(DateTime.class), anyInt(), anyInt()))
+                .thenReturn(new DoodleRange(MILLIS_2016_6_18_9_0, MILLIS_2016_6_19_9_0));
+
+        setupWithType(ANY_TYPE);
+
+        InOrder order = inOrder(mockQuery);
+        order.verify(mockQuery).addChildEventListener(subject);
+        order.verify(mockQuery).addValueEventListener(subject);
+    }
+
+    @Test
     public void onChildAdded_insertItemIntoDoodleListAdapter() throws Exception {
         setupWithType(ANY_TYPE);
 
@@ -191,17 +219,6 @@ public class DoodleListFragmentTest {
         subject.onChildAdded(mockDataSnapshot, ANY_STRING);
 
         verify(mockDoodleListAdapter).insertDoodle(0, secondExpectedDoodle);
-    }
-
-    @NonNull
-    private DoodleJson createDoodleJson(String title, String content, String url, String imageUrl, long createdAt) {
-        DoodleJson doodleJsonFirst = new DoodleJson();
-        doodleJsonFirst.title = title;
-        doodleJsonFirst.content = content;
-        doodleJsonFirst.url = url;
-        doodleJsonFirst.imageUrl = imageUrl;
-        doodleJsonFirst.createdAt = createdAt;
-        return doodleJsonFirst;
     }
 
     @Test
@@ -329,6 +346,41 @@ public class DoodleListFragmentTest {
         subject.onDataChange(mockDataSnapshot);
 
         assertThat(swipeRefreshLayout.isRefreshing()).isFalse();
+    }
+
+    @Test
+    public void onDataChange_hidesDoodleListAndShowsEmptyView_whenListAdapterIsEmpty() throws Exception {
+        setupWithType(ANY_TYPE);
+
+        when(mockDoodleListAdapter.getItemCount()).thenReturn(0);
+
+        subject.onDataChange(mock(DataSnapshot.class));
+
+        assertThat(doodleList.getVisibility()).isEqualTo(View.GONE);
+        assertThat(emptyPlaceholder.getVisibility()).isEqualTo(View.VISIBLE);
+    }
+
+    @Test
+    public void onDataChange_showsDoodleListAndHidesEmptyView_whenListAdapterIsNotEmpty() throws Exception {
+        setupWithType(ANY_TYPE);
+
+        when(mockDoodleListAdapter.getItemCount()).thenReturn(1);
+
+        subject.onDataChange(mock(DataSnapshot.class));
+
+        assertThat(doodleList.getVisibility()).isEqualTo(View.VISIBLE);
+        assertThat(emptyPlaceholder.getVisibility()).isEqualTo(View.GONE);
+    }
+
+    @NonNull
+    private DoodleJson createDoodleJson(String title, String content, String url, String imageUrl, long createdAt) {
+        DoodleJson doodleJsonFirst = new DoodleJson();
+        doodleJsonFirst.title = title;
+        doodleJsonFirst.content = content;
+        doodleJsonFirst.url = url;
+        doodleJsonFirst.imageUrl = imageUrl;
+        doodleJsonFirst.createdAt = createdAt;
+        return doodleJsonFirst;
     }
 
     private Query setForRefresh() {

@@ -37,6 +37,8 @@ public class CreateDoodleActivity extends AppCompatActivity implements ValueEven
     EditText doodleContent;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
+    @BindView(R.id.doodle_url)
+    EditText doodleUrl;
 
     private FirebaseHelper firebaseHelper;
     private String createdDoodleKey;
@@ -79,9 +81,14 @@ public class CreateDoodleActivity extends AppCompatActivity implements ValueEven
             return;
         }
 
+        if(!doodleUrl.getText().toString().startsWith("http")) {
+            Toast.makeText(this, "유효한 URL을 입력해주세요.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         Doodle doodle = new Doodle(doodleTitle.getText().toString(),
                 doodleContent.getText().toString(),
-                "", "",
+                doodleUrl.getText().toString(), "",
                 DateTime.now().getMillis()
         );
 

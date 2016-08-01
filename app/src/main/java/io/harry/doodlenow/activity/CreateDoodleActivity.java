@@ -7,6 +7,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.webkit.URLUtil;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -37,6 +38,8 @@ public class CreateDoodleActivity extends AppCompatActivity implements ValueEven
     EditText doodleContent;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
+    @BindView(R.id.doodle_url)
+    EditText doodleUrl;
 
     private FirebaseHelper firebaseHelper;
     private String createdDoodleKey;
@@ -75,13 +78,20 @@ public class CreateDoodleActivity extends AppCompatActivity implements ValueEven
 
     private void saveDoodle() {
         if(!validate(doodleTitle, doodleContent)) {
-            Toast.makeText(this, "저장할 수 없습니다", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.unable_to_save, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String doodleLink = doodleUrl.getText().toString();
+
+        if(!URLUtil.isValidUrl(doodleLink)) {
+            Toast.makeText(this, R.string.link_form_is_not_valid, Toast.LENGTH_SHORT).show();
             return;
         }
 
         Doodle doodle = new Doodle(doodleTitle.getText().toString(),
                 doodleContent.getText().toString(),
-                "", "",
+                doodleLink, "",
                 DateTime.now().getMillis()
         );
 

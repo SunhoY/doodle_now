@@ -12,4 +12,7 @@
     <string name="contents">Contents</string>
     <string name="for_stand_up">for Stand Up</string>
     <string name="saved">저장되었습니다</string>
+    <string name="url">URL</string>
+    <string name="unable_to_save">저장할 수 없습니다</string>
+    <string name="link_form_is_not_valid">링크(URL) 형식이 올바르지 않습니다.</string>
 </resources>

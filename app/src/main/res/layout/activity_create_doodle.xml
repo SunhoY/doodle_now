@@ -23,8 +23,20 @@
         android:textSize="16sp"
         android:padding="17dp"
         android:hint="@string/title"
-        android:background="@color/white"
+        android:background="@drawable/white_background_with_bottom_border"
         />
+
+    <EditText
+        android:id="@+id/doodle_url"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:padding="17dp"
+        android:inputType="textUri"
+        android:hint="@string/url"
+        android:background="@drawable/white_background_with_bottom_border"
+        />
+
     <EditText
         android:id="@+id/doodle_content"
         android:layout_width="match_parent"
@@ -33,7 +45,7 @@
         android:gravity="start|top"
         android:padding="17dp"
         android:textSize="16sp"
-        android:background="@color/white"
+        android:background="@drawable/white_background_with_bottom_border"
         />
 
 </LinearLayout>

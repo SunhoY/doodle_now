@@ -42,9 +42,9 @@ import static org.mockito.Mockito.when;
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class)
 public class CreateDoodleActivityTest {
-    public static final String EMPTY_URL = "";
     public static final String EMPTY_IMAGE_URL = "";
     private long MILLIS_2016_6_19_10_0 = 1466298000000L;
+
     @Inject
     FirebaseHelperWrapper mockFirebaseHelperWrapper;
 
@@ -52,6 +52,8 @@ public class CreateDoodleActivityTest {
     EditText doodleTitle;
     @BindView(R.id.doodle_content)
     EditText doodleContent;
+    @BindView(R.id.doodle_url)
+    EditText doodleUrl;
 
     @Captor
     ArgumentCaptor<ServiceCallback<Void>> voidServiceCallbackCaptor;
@@ -90,33 +92,42 @@ public class CreateDoodleActivityTest {
 
     @Test
     public void clickOnSaveOnActionBar_doesNotCallFirebaseHelper_whenTitleOrContentIsEmpty() throws Exception {
-        tryToSave("", "And this is real content");
+        tryToSave("", "And this is real content", "http://awesome.com");
 
         verify(mockFirebaseHelper, never()).saveDoodle(any(Doodle.class));
     }
 
     @Test
     public void clickOnSaveOnActionBar_showsCanNotBeSaveMessage_whenIsNotValid() {
-        tryToSave("This is real doodle", "");
+        tryToSave("This is real doodle", "", "http://awesome.com");
 
         assertThat(ShadowToast.getTextOfLatestToast()).isEqualTo("저장할 수 없습니다");
     }
 
     @Test
     public void clickOnSaveOnActionBar_callsFirebaseHelperToSaveDoodle() throws Exception {
-        tryToSave("This is real doodle", "And this is real content");
+        tryToSave("This is real doodle", "And this is real content", "http://awesome.com");
 
-        Doodle expectedDoodle = new Doodle("This is real doodle", "And this is real content", EMPTY_URL, EMPTY_IMAGE_URL, MILLIS_2016_6_19_10_0);
+        Doodle expectedDoodle =
+                new Doodle("This is real doodle", "And this is real content", "http://awesome.com",
+                        EMPTY_IMAGE_URL, MILLIS_2016_6_19_10_0);
         DoodleJson expectedDoodleJson = new DoodleJson(expectedDoodle);
 
         verify(mockFirebaseHelper).saveDoodle(expectedDoodleJson);
     }
 
     @Test
+    public void whenUrlIsNotValid_showsToastMessageURLIsWrong() throws Exception {
+        tryToSave("This is real doodle", "And this is real content", "I'm bad. http://awesome.com");
+
+        assertThat(ShadowToast.getTextOfLatestToast()).isEqualTo("링크(URL) 형식이 올바르지 않습니다.");
+    }
+
+    @Test
     public void afterObtainKeyFromFirebase_andAddSingleValueChangeListenerToFirebaseHelper() throws Exception {
         when(mockFirebaseHelper.saveDoodle(any(Doodle.class))).thenReturn("this is key");
 
-        tryToSave("This is real doodle", "And this is real content");
+        tryToSave("This is real doodle", "And this is real content", "http://awesome.com");
 
         verify(mockFirebaseHelper).addSingleValueChangeListener("this is key", subject);
     }
@@ -125,7 +136,7 @@ public class CreateDoodleActivityTest {
     public void afterSavedSuccessfully_showsToastMessage() throws Exception {
         when(mockFirebaseHelper.saveDoodle(any(Doodle.class))).thenReturn("this is valid key");
 
-        tryToSave("This is real doodle", "And this is real content");
+        tryToSave("This is real doodle", "And this is real content", "http://awesome.com");
 
         when(mockDataSnapshot.getKey()).thenReturn("this is valid key");
 
@@ -138,7 +149,7 @@ public class CreateDoodleActivityTest {
     public void afterSavedSuccessfully_finishesActivity() throws Exception {
         when(mockFirebaseHelper.saveDoodle(any(Doodle.class))).thenReturn("this is valid key");
 
-        tryToSave("This is real doodle", "And this is real content");
+        tryToSave("This is real doodle", "And this is real content", "http://awesome.com");
 
         when(mockDataSnapshot.getKey()).thenReturn("this is valid key");
 
@@ -151,7 +162,7 @@ public class CreateDoodleActivityTest {
     public void whenDoodleIsNotSavedSuccessfully_doesNothing() throws Exception {
         when(mockFirebaseHelper.saveDoodle(any(Doodle.class))).thenReturn("this is valid key");
 
-        tryToSave("This is real doodle", "And this is real content");
+        tryToSave("This is real doodle", "And this is real content", "http://awesome.com");
 
         when(mockDataSnapshot.getKey()).thenReturn("this is invalid key");
 
@@ -161,9 +172,10 @@ public class CreateDoodleActivityTest {
         assertThat(ShadowToast.getTextOfLatestToast()).isEqualTo(null);
     }
 
-    private void tryToSave(String title, String content) {
+    private void tryToSave(String title, String content, String url) {
         doodleTitle.setText(title);
         doodleContent.setText(content);
+        doodleUrl.setText(url);
 
         subject.onOptionsItemSelected(new RoboMenuItem(R.id.action_save));
     }

@@ -6,7 +6,12 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
+import android.webkit.URLUtil;
+import android.widget.Toast;
 
+import java.net.MalformedURLException;
+
+import io.harry.doodlenow.R;
 import io.harry.doodlenow.background.DoodlePostService;
 
 public class CatchDoodleActivity extends AppCompatActivity {
@@ -21,7 +26,16 @@ public class CatchDoodleActivity extends AppCompatActivity {
             public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
                 DoodlePostService service = ((DoodlePostService.BackgroundServiceBinder)iBinder).getService();
 
-                service.postDoodle(intent.getStringExtra(Intent.EXTRA_TEXT));
+                String url = intent.getStringExtra(Intent.EXTRA_TEXT);
+                if(!URLUtil.isValidUrl(url)) {
+                    url = url.substring(url.indexOf("http"));
+                }
+
+                try {
+                    service.postDoodle(url);
+                } catch (MalformedURLException e) {
+                    Toast.makeText(CatchDoodleActivity.this, R.string.unable_to_share_tell_harry_about_it, Toast.LENGTH_SHORT).show();
+                }
                 unbindService(this);
             }
 

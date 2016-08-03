@@ -19,6 +19,8 @@ import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
+import java.net.MalformedURLException;
+
 import javax.inject.Inject;
 
 import io.harry.doodlenow.BuildConfig;
@@ -68,7 +70,7 @@ public class DoodlePostServiceTest {
 
     private static final int ANY_FLAG = 99;
     private static final int ANY_START_ID = 88;
-    private static final String ANY_URL = "this is url";
+    private static final String ANY_URL = "http://anyurl.com";
     private static final long MILLIS_2016_6_19_9_0 = 1466294400000L;
     private static final String ANY_STRING = "any string";
     private DoodlePostService subject;
@@ -90,22 +92,27 @@ public class DoodlePostServiceTest {
         assertThat(subject.onStartCommand(null, ANY_FLAG, ANY_START_ID)).isEqualTo(Service.START_STICKY);
     }
 
+    @Test(expected = MalformedURLException.class)
+    public void postDoodle_throwsURLMalformedException_whenUrlIsNotValid() throws Exception {
+        subject.postDoodle("this is url - http://someurl.com");
+    }
+
     @Test
     public void postDoodle_callsJsoupWrapperToGetDocumentWithProvidedUrl() throws Exception {
-        subject.postDoodle("this is url");
+        subject.postDoodle("http://someurl.com");
 
-        verify(mockJsoupWrapper).getDocument(eq("this is url"), Matchers.<JsoupCallback>any());
+        verify(mockJsoupWrapper).getDocument(eq("http://someurl.com"), Matchers.<JsoupCallback>any());
     }
 
     @Test
     public void afterGettingDocument_callsFirebaseHelperToSaveDoodle() throws Exception {
-        subject.postDoodle("this is url");
+        subject.postDoodle("http://someurl.com");
 
         verify(mockJsoupWrapper).getDocument(anyString(), jsoupCallbackCaptor.capture());
 
         jsoupCallbackCaptor.getValue().onSuccess("title", "content", "image url");
 
-        Doodle expectedDoodle = new Doodle("title", "content", "this is url", "image url", MILLIS_2016_6_19_9_0);
+        Doodle expectedDoodle = new Doodle("title", "content", "http://someurl.com", "image url", MILLIS_2016_6_19_9_0);
         DoodleJson expectedDoodleJson = new DoodleJson(expectedDoodle);
 
         verify(mockFirebaseHelper).saveDoodle(expectedDoodleJson);
@@ -173,7 +180,7 @@ public class DoodlePostServiceTest {
         verify(mockDoodleIcon).hide();
     }
 
-    private void gotJsoupSuccessfully() {
+    private void gotJsoupSuccessfully() throws Exception {
         subject.postDoodle(ANY_URL);
 
         verify(mockJsoupWrapper).getDocument(anyString(), jsoupCallbackCaptor.capture());

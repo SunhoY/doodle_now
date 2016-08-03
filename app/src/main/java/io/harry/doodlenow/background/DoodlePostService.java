@@ -6,12 +6,15 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
+import android.webkit.URLUtil;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
 import org.joda.time.DateTime;
+
+import java.net.MalformedURLException;
 
 import javax.inject.Inject;
 
@@ -69,7 +72,11 @@ public class DoodlePostService extends Service implements ValueEventListener {
 
     }
 
-    public void postDoodle(final String url) {
+    public void postDoodle(final String url) throws MalformedURLException {
+        if(!URLUtil.isValidUrl(url)) {
+            throw new MalformedURLException("url is not valid");
+        }
+
         jsoupWrapper.getDocument(url, new JsoupCallback() {
             @Override
             public void onSuccess(String title, String content, String imageUrl) {

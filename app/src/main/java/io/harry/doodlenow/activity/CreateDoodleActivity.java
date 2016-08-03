@@ -1,5 +1,7 @@
 package io.harry.doodlenow.activity;
 
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -59,6 +61,18 @@ public class CreateDoodleActivity extends AppCompatActivity implements ValueEven
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.back_arrow_vector);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+        String clippedData = clipboardManager.getPrimaryClip().getItemAt(0).getText().toString();
+
+        if(URLUtil.isValidUrl(clippedData)) {
+            doodleUrl.setText(clippedData);
+        }
     }
 
     @Override

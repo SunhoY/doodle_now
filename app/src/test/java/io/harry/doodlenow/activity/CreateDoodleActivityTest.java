@@ -1,5 +1,7 @@
 package io.harry.doodlenow.activity;
 
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.widget.EditText;
 
 import com.google.firebase.database.DataSnapshot;
@@ -17,6 +19,7 @@ import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.fakes.RoboMenuItem;
+import org.robolectric.shadows.ShadowClipboardManager;
 import org.robolectric.shadows.ShadowToast;
 
 import javax.inject.Inject;
@@ -38,6 +41,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.robolectric.Shadows.shadowOf;
 
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class)
@@ -73,7 +77,7 @@ public class CreateDoodleActivityTest {
         when(mockFirebaseHelperWrapper.getFirebaseHelper("doodles")).thenReturn(mockFirebaseHelper);
         DateTimeUtils.setCurrentMillisFixed(MILLIS_2016_6_19_10_0);
 
-        subject = Robolectric.setupActivity(CreateDoodleActivity.class);
+        subject = Robolectric.buildActivity(CreateDoodleActivity.class).create().get();
 
         ButterKnife.bind(this, subject);
     }
@@ -81,6 +85,32 @@ public class CreateDoodleActivityTest {
     @Test
     public void actionBar_doesNotHaveTitle() throws Exception {
         assertThat(subject.getSupportActionBar().getTitle()).isEqualTo("");
+    }
+
+    @Test
+    public void onResume_pastesURLInTheClipboard_whenClippedDataIsAnURL() throws Exception {
+        ClipboardManager clipboardManager =
+                (ClipboardManager) RuntimeEnvironment.application.getSystemService(Context.CLIPBOARD_SERVICE);
+        ShadowClipboardManager shadowClipboardManager = shadowOf(clipboardManager);
+
+        shadowClipboardManager.setText("http://someurl.com");
+
+        subject.onResume();
+
+        assertThat(doodleUrl.getText().toString()).isEqualTo("http://someurl.com");
+    }
+
+    @Test
+    public void onResume_doesNotPastesURL_whenClippedDataIsNotValidURL() throws Exception {
+        ClipboardManager clipboardManager =
+                (ClipboardManager) RuntimeEnvironment.application.getSystemService(Context.CLIPBOARD_SERVICE);
+        ShadowClipboardManager shadowClipboardManager = shadowOf(clipboardManager);
+
+        shadowClipboardManager.setText("not valid - http://someurl.com");
+
+        subject.onResume();
+
+        assertThat(doodleUrl.getText().toString()).isEqualTo("");
     }
 
     @Test

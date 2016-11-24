@@ -9,8 +9,8 @@ android {
         applicationId "io.harry.doodlenow"
         minSdkVersion 19
         targetSdkVersion 21
-        versionCode 132
-        versionName "1.32"
+        versionCode 134
+        versionName "1.34"
     }
     buildTypes {
         release {

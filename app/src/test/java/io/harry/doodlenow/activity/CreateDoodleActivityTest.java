@@ -101,6 +101,13 @@ public class CreateDoodleActivityTest {
     }
 
     @Test
+    public void onResume_doesNothing_whenClipDataIsEmpty() throws Exception {
+        subject.onResume();
+
+        assertThat(doodleUrl.getText().toString()).isEqualTo("");
+    }
+
+    @Test
     public void onResume_doesNotPastesURL_whenClippedDataIsNotValidURL() throws Exception {
         ClipboardManager clipboardManager =
                 (ClipboardManager) RuntimeEnvironment.application.getSystemService(Context.CLIPBOARD_SERVICE);

@@ -132,8 +132,17 @@ public class DoodleListFragment extends Fragment
 
     @Override
     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-        DoodleJson doodleJson = dataSnapshot.getValue(DoodleJson.class);
-        doodleListAdapter.insertDoodle(0, new Doodle(doodleJson));
+        DoodleJson doodleJson = null;
+
+        try {
+            doodleJson = dataSnapshot.getValue(DoodleJson.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if(doodleJson != null) {
+            doodleListAdapter.insertDoodle(0, new Doodle(doodleJson));
+        }
     }
 
     @Override

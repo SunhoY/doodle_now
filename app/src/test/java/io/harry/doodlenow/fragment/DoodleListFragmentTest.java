@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseException;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
@@ -63,6 +64,7 @@ import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 import static org.robolectric.Shadows.shadowOf;
 
@@ -219,6 +221,20 @@ public class DoodleListFragmentTest {
         subject.onChildAdded(mockDataSnapshot, ANY_STRING);
 
         verify(mockDoodleListAdapter).insertDoodle(0, secondExpectedDoodle);
+    }
+
+    @Test
+    public void onChildAdded_skipsItem_whenSnapshotGetValueThrowsAnError() throws Exception {
+        setupWithType(ANY_TYPE);
+
+        when(mockDataSnapshot.getValue(DoodleJson.class))
+                .thenThrow(DatabaseException.class);
+
+        reset(mockDoodleListAdapter);
+
+        subject.onChildAdded(mockDataSnapshot, ANY_STRING);
+
+        verifyZeroInteractions(mockDoodleListAdapter);
     }
 
     @Test
